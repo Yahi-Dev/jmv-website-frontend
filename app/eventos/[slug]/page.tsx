@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Star, Calendar, MapPin, Users, Mail, Phone, ArrowLeft, Share2 } from "lucide-react"
+import { Star, Calendar, MapPin, Users, Mail, Phone, ArrowLeft, Share2, CheckCircle, Sparkles, User, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import Navbar from "@/components/Navbar"
 
 // Dummy event data (in a real app, this would come from a database)
 const events = {
@@ -12,13 +13,11 @@ const events = {
     id: "taller-liderazgo-2024",
     title: "Taller de Liderazgo JMV",
     description: "Desarrollo de habilidades de liderazgo cristiano para jóvenes comprometidos con el servicio",
-    fullDescription: `
-      Este taller intensivo está diseñado para jóvenes que desean desarrollar sus habilidades de liderazgo desde una perspectiva cristiana y vicenciana. Durante una jornada completa, los participantes explorarán los fundamentos del liderazgo servicial, aprenderán técnicas de comunicación efectiva y desarrollarán herramientas prácticas para la gestión de equipos y proyectos pastorales.
+    fullDescription: `Este taller intensivo está diseñado para jóvenes que desean desarrollar sus habilidades de liderazgo desde una perspectiva cristiana y vicenciana. Durante una jornada completa, los participantes explorarán los fundamentos del liderazgo servicial, aprenderán técnicas de comunicación efectiva y desarrollarán herramientas prácticas para la gestión de equipos y proyectos pastorales.
 
       El programa incluye dinámicas grupales, estudios de caso basados en la vida de San Vicente de Paúl, y ejercicios prácticos de planificación pastoral. Los facilitadores son líderes experimentados de JMV con formación en desarrollo organizacional y espiritualidad vicenciana.
 
-      Al finalizar el taller, los participantes habrán desarrollado un plan personal de crecimiento en liderazgo y estarán preparados para asumir mayores responsabilidades en sus capítulos locales.
-    `,
+      Al finalizar el taller, los participantes habrán desarrollado un plan personal de crecimiento en liderazgo y estarán preparados para asumir mayores responsabilidades en sus capítulos locales.`,
     date: "2024-12-15",
     time: "9:00 AM - 5:00 PM",
     location: "Centro Pastoral San Vicente, Santo Domingo",
@@ -68,253 +67,275 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
   const availableSpots = event.capacity - event.registered
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-background via-card/30 to-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-              <Star className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-heading text-lg font-semibold">JMV RD</span>
-          </div>
+      <Navbar />
 
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
-              Inicio
+      <div className="px-10">
+        <div className="container py-6 ">
+          <Button variant="ghost" asChild className="hover:bg-primary/5 hover:text-primary">
+            <Link href="/eventos">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver a eventos
             </Link>
-            <Link href="/quienes-somos" className="text-sm font-medium hover:text-primary transition-colors">
-              Quiénes Somos
-            </Link>
-            <Link href="/formacion" className="text-sm font-medium hover:text-primary transition-colors">
-              Formación
-            </Link>
-            <Link href="/eventos" className="text-sm font-medium text-primary">
-              Eventos
-            </Link>
-            <Link href="/noticias" className="text-sm font-medium hover:text-primary transition-colors">
-              Noticias
-            </Link>
-            <Link href="/unete" className="text-sm font-medium hover:text-primary transition-colors">
-              Únete
-            </Link>
-          </div>
-
-          <Button asChild>
-            <Link href="/unete">Únete a JMV</Link>
           </Button>
         </div>
-      </nav>
 
-      {/* Back Button */}
-      <div className="container py-4">
-        <Button variant="ghost" asChild>
-          <Link href="/eventos">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a eventos
-          </Link>
-        </Button>
-      </div>
-
-      {/* Event Header */}
-      <section className="py-8">
-        <div className="container">
-          <div className="grid gap-8 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <div className="aspect-video overflow-hidden rounded-lg mb-6">
-                <img src={event.image || "/placeholder.svg"} alt={event.title} className="h-full w-full object-cover" />
-              </div>
-
-              <div className="flex items-center gap-2 mb-4">
-                <Badge variant="secondary">{event.type}</Badge>
-                <Badge variant="outline">{event.organizer}</Badge>
-              </div>
-
-              <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
-              <p className="text-xl text-muted-foreground mb-6">{event.description}</p>
-
-              <div className="grid gap-4 sm:grid-cols-2 mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Calendar className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <div className="font-medium">
-                      {new Date(event.date).toLocaleDateString("es-DO", {
-                        weekday: "long",
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
+        {/* Event Header */}
+        <section className="pb-12">
+          <div className="container">
+            <div className="grid gap-12 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <div className="relative mb-8 overflow-hidden shadow-2xl aspect-video rounded-2xl">
+                  <img
+                    src={event.image || `/placeholder.svg?height=400&width=800&query=${encodeURIComponent(event.title)}`}
+                    alt={event.title}
+                    className="object-cover w-full h-full"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Badge variant="secondary" className="bg-white/90 text-primary border-primary/20">
+                        {event.type}
+                      </Badge>
+                      <Badge variant="outline" className="bg-white/90 border-white/50">
+                        {event.organizer}
+                      </Badge>
                     </div>
-                    <div className="text-sm text-muted-foreground">{event.time}</div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <MapPin className="h-5 w-5 text-primary" />
-                  </div>
+                <div className="space-y-8">
                   <div>
-                    <div className="font-medium">{event.location}</div>
-                    <div className="text-sm text-muted-foreground">{event.region}</div>
+                    <h1 className="mb-4 text-4xl font-bold leading-tight text-transparent lg:text-5xl bg-gradient-to-r from-primary to-secondary bg-clip-text">
+                      {event.title}
+                    </h1>
+                    <p className="text-xl leading-relaxed text-muted-foreground">{event.description}</p>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Users className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <div className="font-medium">
-                      {event.registered}/{event.capacity} inscritos
-                    </div>
-                    <div className="text-sm text-muted-foreground">{availableSpots} cupos disponibles</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Mail className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <div className="font-medium">Contacto</div>
-                    <div className="text-sm text-muted-foreground">{event.contact.email}</div>
-                  </div>
-                </div>
-              </div>
-
-              <Separator className="my-8" />
-
-              <div className="prose prose-gray max-w-none">
-                <h2 className="text-2xl font-bold mb-4">Descripción del evento</h2>
-                <div className="whitespace-pre-line text-muted-foreground leading-relaxed">{event.fullDescription}</div>
-              </div>
-
-              <Separator className="my-8" />
-
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Agenda</h2>
-                <div className="space-y-4">
-                  {event.agenda.map((item, index) => (
-                    <div key={index} className="flex gap-4 p-4 rounded-lg bg-card">
-                      <div className="flex items-center justify-center w-20 h-10 rounded bg-primary/10 text-primary font-medium text-sm">
-                        {item.time}
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="flex items-center gap-4 p-6 border rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20">
+                        <Calendar className="w-6 h-6 text-primary" />
                       </div>
-                      <div className="flex-1">
-                        <div className="font-medium">{item.activity}</div>
+                      <div>
+                        <div className="font-semibold text-foreground">
+                          {new Date(event.date).toLocaleDateString("es-DO", {
+                            weekday: "long",
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                        </div>
+                        <div className="text-sm text-muted-foreground">{event.time}</div>
                       </div>
                     </div>
-                  ))}
+
+                    <div className="flex items-center gap-4 p-6 border rounded-xl bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-secondary/20">
+                        <MapPin className="w-6 h-6 text-secondary" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-foreground">{event.location}</div>
+                        <div className="text-sm text-muted-foreground">{event.region}</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-6 border rounded-xl bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-accent/20">
+                        <Users className="w-6 h-6 text-accent" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-foreground">
+                          {event.registered}/{event.capacity} inscritos
+                        </div>
+                        <div className="text-sm text-muted-foreground">{availableSpots} cupos disponibles</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 p-6 border rounded-xl bg-gradient-to-br from-muted/20 to-muted/30 border-border">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-muted/40">
+                        <Mail className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-foreground">Contacto</div>
+                        <div className="text-sm text-muted-foreground">{event.contact.email}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator className="my-12" />
+
+                  <div className="prose prose-lg max-w-none">
+                    <h2 className="mb-6 text-3xl font-bold text-foreground">Descripción del evento</h2>
+                    <div className="p-8 text-lg leading-relaxed whitespace-pre-line border text-muted-foreground bg-card/50 rounded-xl border-border/50">
+                      {event.fullDescription}
+                    </div>
+                  </div>
+
+                  <Separator className="my-12" />
+
+                  <div>
+                    <h2 className="mb-8 text-3xl font-bold text-foreground">Agenda del evento</h2>
+                    <div className="space-y-4">
+                      {event.agenda.map((item, index) => (
+                        <div
+                          key={index}
+                          className="flex gap-6 p-6 transition-all duration-200 border rounded-xl bg-card/80 border-border/50 hover:shadow-lg"
+                        >
+                          <div className="flex items-center justify-center min-w-[100px] h-12 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-semibold text-sm shadow-lg">
+                            {item.time}
+                          </div>
+                          <div className="flex items-center flex-1">
+                            <div className="text-lg font-medium text-foreground">{item.activity}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Separator className="my-12" />
+
+                  <div>
+                    <h2 className="mb-8 text-3xl font-bold text-foreground">Requisitos</h2>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {event.requirements.map((requirement, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start gap-4 p-4 border rounded-lg bg-card/50 border-border/50"
+                        >
+                          <div className="flex items-center justify-center flex-shrink-0 w-6 h-6 mt-1 rounded-full bg-primary/20">
+                            <CheckCircle className="w-4 h-4 text-primary" />
+                          </div>
+                          <span className="leading-relaxed text-muted-foreground">{requirement}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <Separator className="my-8" />
+              {/* Registration Sidebar */}
+              <div className="lg:col-span-1">
+                <Card className="sticky shadow-2xl top-24 bg-card/80 backdrop-blur-sm border-border/50">
+                  <CardHeader className="pb-6 text-center">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 mx-auto mb-4 border rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                      <span className="text-sm font-medium text-primary">Inscripción</span>
+                    </div>
+                    <CardTitle className="text-2xl">{availableSpots > 0 ? "¡Únete ahora!" : "Lista de espera"}</CardTitle>
+                    <CardDescription className="text-base">
+                      {availableSpots > 0
+                        ? `${availableSpots} cupos disponibles`
+                        : "Evento completo - Lista de espera disponible"}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="p-6 text-center border rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
+                      <div className="mb-2 text-4xl font-bold text-primary">Gratis</div>
+                      <div className="text-sm text-muted-foreground">Evento sin costo</div>
+                    </div>
 
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Requisitos</h2>
-                <ul className="space-y-2">
-                  {event.requirements.map((requirement, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span className="text-muted-foreground">{requirement}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Registration Sidebar */}
-            <div className="lg:col-span-1">
-              <Card className="sticky top-24">
-                <CardHeader>
-                  <CardTitle>Inscripción</CardTitle>
-                  <CardDescription>
-                    {availableSpots > 0
-                      ? `${availableSpots} cupos disponibles`
-                      : "Evento completo - Lista de espera disponible"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-primary">Gratis</div>
-                    <div className="text-sm text-muted-foreground">Evento sin costo</div>
-                  </div>
-
-                  <Button className="w-full" size="lg" disabled={availableSpots === 0}>
-                    {availableSpots > 0 ? "Inscribirse ahora" : "Unirse a lista de espera"}
-                  </Button>
-
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-                      <Share2 className="mr-2 h-4 w-4" />
-                      Compartir
+                    <Button
+                      className="w-full h-12 text-lg font-semibold shadow-lg bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                      size="lg"
+                      disabled={availableSpots === 0}
+                    >
+                      {availableSpots > 0 ? "Inscribirse ahora" : "Unirse a lista de espera"}
                     </Button>
-                    <Button variant="outline" size="sm">
-                      <Phone className="h-4 w-4" />
-                    </Button>
-                  </div>
 
-                  <Separator />
+                    <div className="flex gap-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 bg-background/80 border-primary/20 hover:bg-primary/5"
+                      >
+                        <Share2 className="w-4 h-4 mr-2" />
+                        Compartir
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-background/80 border-primary/20 hover:bg-primary/5"
+                      >
+                        <Phone className="w-4 h-4" />
+                      </Button>
+                    </div>
 
-                  <div className="space-y-3">
-                    <h3 className="font-semibold">Información de contacto</h3>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        <a href={`mailto:${event.contact.email}`} className="hover:underline">
-                          {event.contact.email}
-                        </a>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-muted-foreground" />
-                        <a href={`tel:${event.contact.phone}`} className="hover:underline">
-                          {event.contact.phone}
-                        </a>
+                    <Separator />
+
+                    <div className="space-y-4">
+                      <h3 className="font-semibold text-foreground">Información de contacto</h3>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card/50 border-border/50">
+                          <Mail className="w-4 h-4 text-primary" />
+                          <a
+                            href={`mailto:${event.contact.email}`}
+                            className="transition-colors hover:underline text-muted-foreground hover:text-primary"
+                          >
+                            {event.contact.email}
+                          </a>
+                        </div>
+                        <div className="flex items-center gap-3 p-3 border rounded-lg bg-card/50 border-border/50">
+                          <Phone className="w-4 h-4 text-primary" />
+                          <a
+                            href={`tel:${event.contact.phone}`}
+                            className="transition-colors hover:underline text-muted-foreground hover:text-primary"
+                          >
+                            {event.contact.phone}
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
+      {/* Back Button */}
+
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-12">
+      <footer className="py-16 mt-20 text-white bg-gradient-to-br from-primary via-primary to-secondary">
         <div className="container">
           <div className="grid gap-8 md:grid-cols-4">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-background">
-                  <Star className="h-4 w-4 text-foreground" />
+              <div className="flex items-center mb-6 space-x-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/20">
+                  <Star className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-heading text-lg font-semibold">JMV RD</span>
+                <div>
+                  <span className="text-xl font-bold font-heading">JMV RD</span>
+                  <p className="text-sm text-white/90">Juventud Mariana Vicenciana</p>
+                </div>
               </div>
-              <p className="text-sm text-background/80">Juventud Mariana Vicenciana República Dominicana</p>
+              <p className="text-sm leading-relaxed text-white/80">
+                Formando jóvenes comprometidos con el servicio y la fe cristiana.
+              </p>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Enlaces</h3>
-              <ul className="space-y-2 text-sm">
+              <h3 className="mb-4 font-semibold text-white">Enlaces</h3>
+              <ul className="space-y-3 text-sm">
                 <li>
-                  <Link href="/quienes-somos" className="hover:underline">
+                  <Link href="/quienes-somos" className="transition-colors text-white/80 hover:text-white">
                     Quiénes Somos
                   </Link>
                 </li>
                 <li>
-                  <Link href="/formacion" className="hover:underline">
+                  <Link href="/formacion" className="transition-colors text-white/80 hover:text-white">
                     Formación
                   </Link>
                 </li>
                 <li>
-                  <Link href="/eventos" className="hover:underline">
+                  <Link href="/eventos" className="transition-colors text-white/80 hover:text-white">
                     Eventos
                   </Link>
                 </li>
                 <li>
-                  <Link href="/noticias" className="hover:underline">
+                  <Link href="/noticias" className="transition-colors text-white/80 hover:text-white">
                     Noticias
                   </Link>
                 </li>
@@ -322,8 +343,8 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Contacto</h3>
-              <ul className="space-y-2 text-sm text-background/80">
+              <h3 className="mb-4 font-semibold text-white">Contacto</h3>
+              <ul className="space-y-3 text-sm text-white/80">
                 <li>Santo Domingo, RD</li>
                 <li>info@jmvrd.org</li>
                 <li>+1 (809) 123-4567</li>
@@ -331,22 +352,22 @@ export default function EventDetailPage({ params }: EventDetailPageProps) {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Síguenos</h3>
+              <h3 className="mb-4 font-semibold text-white">Síguenos</h3>
               <div className="flex space-x-4">
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="transition-colors text-white/80 hover:text-white">
                   Instagram
                 </Link>
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="transition-colors text-white/80 hover:text-white">
                   Facebook
                 </Link>
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="transition-colors text-white/80 hover:text-white">
                   YouTube
                 </Link>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-background/20 mt-8 pt-8 text-center text-sm text-background/80">
+          <div className="pt-8 mt-12 text-sm text-center border-t border-white/20 text-white/80">
             <p>&copy; 2024 JMV República Dominicana. Todos los derechos reservados.</p>
           </div>
         </div>

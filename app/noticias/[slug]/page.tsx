@@ -2,9 +2,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Star, Calendar, User, ArrowLeft, Share2, Clock } from "lucide-react"
+import { Star, Calendar, User, ArrowLeft, Share2, Clock, ArrowRight, BookOpen } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import Navbar from "@/components/Navbar"
 
 // Dummy news data (in a real app, this would come from a database)
 const newsArticles = {
@@ -13,8 +14,7 @@ const newsArticles = {
     title: "Exitosa Misión de Verano en Monte Plata",
     excerpt:
       "Más de 30 jóvenes participaron en la misión anual llevando esperanza y servicios básicos a comunidades rurales",
-    content: `
-      La misión de verano 2024 en Monte Plata fue un éxito rotundo, con la participación de más de 30 jóvenes de diferentes capítulos de JMV República Dominicana. Durante dos semanas intensas, nuestros misioneros llevaron esperanza, servicios básicos y el mensaje del Evangelio a comunidades rurales que más lo necesitan.
+    content: `La misión de verano 2024 en Monte Plata fue un éxito rotundo, con la participación de más de 30 jóvenes de diferentes capítulos de JMV República Dominicana. Durante dos semanas intensas, nuestros misioneros llevaron esperanza, servicios básicos y el mensaje del Evangelio a comunidades rurales que más lo necesitan.
 
       ## Actividades Realizadas
 
@@ -110,129 +110,112 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-background via-card/30 to-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-              <Star className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-heading text-lg font-semibold">JMV RD</span>
-          </div>
-
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
-              Inicio
-            </Link>
-            <Link href="/quienes-somos" className="text-sm font-medium hover:text-primary transition-colors">
-              Quiénes Somos
-            </Link>
-            <Link href="/formacion" className="text-sm font-medium hover:text-primary transition-colors">
-              Formación
-            </Link>
-            <Link href="/eventos" className="text-sm font-medium hover:text-primary transition-colors">
-              Eventos
-            </Link>
-            <Link href="/noticias" className="text-sm font-medium text-primary">
-              Noticias
-            </Link>
-            <Link href="/unete" className="text-sm font-medium hover:text-primary transition-colors">
-              Únete
-            </Link>
-          </div>
-
-          <Button asChild>
-            <Link href="/unete">Únete a JMV</Link>
-          </Button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Back Button */}
-      <div className="container py-4">
-        <Button variant="ghost" asChild>
-          <Link href="/noticias">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+      <div className="container py-6">
+        <Button
+          variant="ghost"
+          asChild
+          className="transition-all duration-300 hover:bg-primary/10 hover:text-primary group"
+        >
+          <Link href="/noticias" className="flex items-center gap-2">
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             Volver a noticias
           </Link>
         </Button>
       </div>
 
       {/* Article Content */}
-      <article className="py-8">
+      <article className="pb-16">
         <div className="container">
-          <div className="mx-auto max-w-4xl">
+          <div className="max-w-4xl mx-auto">
             {/* Article Header */}
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <Badge variant="secondary">{article.category}</Badge>
+            <div className="mb-12">
+              <div className="flex items-center gap-3 mb-6">
+                <Badge
+                  variant="secondary"
+                  className="px-4 py-2 font-medium bg-gradient-to-r from-secondary/20 to-accent/20 text-primary border-secondary/30"
+                >
+                  {article.category}
+                </Badge>
                 {article.tags.map((tag) => (
-                  <Badge key={tag} variant="outline">
+                  <Badge key={tag} variant="outline" className="border-primary/30 text-primary bg-primary/5">
                     {tag}
                   </Badge>
                 ))}
               </div>
 
-              <h1 className="text-4xl font-bold mb-4">{article.title}</h1>
-              <p className="text-xl text-muted-foreground mb-6">{article.excerpt}</p>
+              <h1 className="mb-6 text-4xl font-bold leading-tight text-transparent lg:text-5xl bg-gradient-to-br from-foreground to-primary bg-clip-text">
+                {article.title}
+              </h1>
+              <p className="max-w-3xl mb-8 text-xl leading-relaxed text-muted-foreground">{article.excerpt}</p>
 
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-6 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center justify-between gap-6 p-6 border bg-gradient-to-r from-card/50 to-background/50 rounded-xl border-border/50 backdrop-blur-sm">
+                <div className="flex items-center gap-8 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    {article.author}
+                    <User className="w-4 h-4 text-primary" />
+                    <span className="font-medium">{article.author}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    {new Date(article.date).toLocaleDateString("es-DO", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
+                    <Calendar className="w-4 h-4 text-primary" />
+                    <span>
+                      {new Date(article.date).toLocaleDateString("es-DO", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    {article.readTime} de lectura
+                    <Clock className="w-4 h-4 text-primary" />
+                    <span>{article.readTime} de lectura</span>
                   </div>
                 </div>
 
-                <Button variant="outline" size="sm">
-                  <Share2 className="mr-2 h-4 w-4" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="transition-all duration-300 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-primary hover:text-primary-foreground hover:border-primary"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
                   Compartir
                 </Button>
               </div>
             </div>
 
             {/* Featured Image */}
-            <div className="aspect-video overflow-hidden rounded-lg mb-8">
+            <div className="mb-12 overflow-hidden shadow-2xl aspect-video rounded-2xl">
               <img
                 src={article.image || "/placeholder.svg"}
                 alt={article.title}
-                className="h-full w-full object-cover"
+                className="object-cover w-full h-full"
               />
             </div>
 
             {/* Article Body */}
-            <div className="prose prose-gray max-w-none mb-12">
-              <div className="whitespace-pre-line leading-relaxed">
+            <div className="mb-16 prose prose-gray max-w-none">
+              <div className="text-lg leading-relaxed whitespace-pre-line">
                 {article.content.split("\n").map((paragraph, index) => {
                   if (paragraph.startsWith("## ")) {
                     return (
-                      <h2 key={index} className="text-2xl font-bold mt-8 mb-4">
+                      <h2 key={index} className="mt-12 mb-6 text-3xl font-bold text-foreground">
                         {paragraph.replace("## ", "")}
                       </h2>
                     )
                   }
                   if (paragraph.startsWith("### ")) {
                     return (
-                      <h3 key={index} className="text-xl font-semibold mt-6 mb-3">
+                      <h3 key={index} className="mt-8 mb-4 text-2xl font-semibold text-primary">
                         {paragraph.replace("### ", "")}
                       </h3>
                     )
                   }
                   if (paragraph.startsWith("- ")) {
                     return (
-                      <li key={index} className="ml-4">
+                      <li key={index} className="mb-2 ml-6 text-muted-foreground">
                         {paragraph.replace("- ", "")}
                       </li>
                     )
@@ -241,7 +224,7 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
                     return <br key={index} />
                   }
                   return (
-                    <p key={index} className="mb-4 text-muted-foreground">
+                    <p key={index} className="mb-6 leading-relaxed text-muted-foreground">
                       {paragraph}
                     </p>
                   )
@@ -249,44 +232,57 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
               </div>
             </div>
 
-            <Separator className="my-12" />
+            <Separator className="my-16 bg-gradient-to-r from-transparent via-border to-transparent" />
 
             {/* Related Articles */}
             <div>
-              <h2 className="text-2xl font-bold mb-8">Artículos Relacionados</h2>
-              <div className="grid gap-6 md:grid-cols-3">
+              <div className="flex items-center gap-3 mb-12">
+                <div className="w-12 h-1 rounded-full bg-gradient-to-r from-primary to-secondary"></div>
+                <h2 className="text-3xl font-bold">Artículos Relacionados</h2>
+              </div>
+              <div className="grid gap-8 md:grid-cols-3">
                 {relatedArticles.map((relatedArticle) => (
                   <Card
                     key={relatedArticle.id}
-                    className="group cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1"
+                    className="overflow-hidden transition-all duration-300 cursor-pointer group hover:shadow-xl hover:-translate-y-2 bg-gradient-to-br from-background to-card border-border/50"
                   >
-                    <div className="aspect-video overflow-hidden rounded-t-lg">
+                    <div className="overflow-hidden aspect-video">
                       <img
                         src={relatedArticle.image || "/placeholder.svg"}
                         alt={relatedArticle.title}
-                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                        className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="outline" className="text-xs">
+                    <CardHeader className="p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <Badge
+                          variant="outline"
+                          className="text-xs font-medium border-primary/30 text-primary bg-primary/5"
+                        >
                           {relatedArticle.category}
                         </Badge>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Calendar className="w-3 h-3" />
                           {new Date(relatedArticle.date).toLocaleDateString("es-DO", {
                             day: "numeric",
                             month: "short",
                           })}
                         </div>
                       </div>
-                      <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
+                      <CardTitle className="text-lg leading-tight transition-colors duration-300 line-clamp-2 group-hover:text-primary">
                         {relatedArticle.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <CardDescription className="line-clamp-2">{relatedArticle.excerpt}</CardDescription>
-                      <Button variant="ghost" size="sm" className="mt-3 p-0 h-auto" asChild>
-                        <Link href={`/noticias/${relatedArticle.id}`}>Leer más →</Link>
+                    <CardContent className="p-6 pt-0">
+                      <CardDescription className="mb-4 leading-relaxed line-clamp-2">
+                        {relatedArticle.excerpt}
+                      </CardDescription>
+                      <Button variant="ghost" size="sm" className="h-auto p-0 group/btn hover:text-primary" asChild>
+                        <Link href={`/noticias/${relatedArticle.id}`} className="flex items-center gap-2">
+                          <BookOpen className="w-4 h-4" />
+                          Leer más
+                          <ArrowRight className="w-3 h-3 transition-transform group-hover/btn:translate-x-1" />
+                        </Link>
                       </Button>
                     </CardContent>
                   </Card>
@@ -298,39 +294,56 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
       </article>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-12">
-        <div className="container">
-          <div className="grid gap-8 md:grid-cols-4">
+      <footer className="relative py-16 overflow-hidden bg-gradient-to-br from-primary via-primary to-secondary text-primary-foreground">
+        <div className="absolute inset-0 bg-[url('/images/pattern.png')] opacity-10"></div>
+        <div className="container relative">
+          <div className="grid gap-12 md:grid-cols-4">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-background">
-                  <Star className="h-4 w-4 text-foreground" />
+              <div className="flex items-center mb-6 space-x-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm">
+                  <Star className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-heading text-lg font-semibold">JMV RD</span>
+                <div>
+                  <span className="text-xl font-bold font-heading">JMV RD</span>
+                  <p className="text-sm text-white/80">Juventud Mariana Vicenciana</p>
+                </div>
               </div>
-              <p className="text-sm text-background/80">Juventud Mariana Vicenciana República Dominicana</p>
+              <p className="text-sm leading-relaxed text-white/90">República Dominicana</p>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Enlaces</h3>
-              <ul className="space-y-2 text-sm">
+              <h3 className="mb-6 text-lg font-semibold">Enlaces</h3>
+              <ul className="space-y-3 text-sm">
                 <li>
-                  <Link href="/quienes-somos" className="hover:underline">
+                  <Link
+                    href="/quienes-somos"
+                    className="flex items-center gap-2 transition-colors hover:text-white/80 group"
+                  >
+                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                     Quiénes Somos
                   </Link>
                 </li>
                 <li>
-                  <Link href="/formacion" className="hover:underline">
+                  <Link
+                    href="/formacion"
+                    className="flex items-center gap-2 transition-colors hover:text-white/80 group"
+                  >
+                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                     Formación
                   </Link>
                 </li>
                 <li>
-                  <Link href="/eventos" className="hover:underline">
+                  <Link href="/eventos" className="flex items-center gap-2 transition-colors hover:text-white/80 group">
+                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                     Eventos
                   </Link>
                 </li>
                 <li>
-                  <Link href="/noticias" className="hover:underline">
+                  <Link
+                    href="/noticias"
+                    className="flex items-center gap-2 transition-colors hover:text-white/80 group"
+                  >
+                    <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                     Noticias
                   </Link>
                 </li>
@@ -338,8 +351,8 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Contacto</h3>
-              <ul className="space-y-2 text-sm text-background/80">
+              <h3 className="mb-6 text-lg font-semibold">Contacto</h3>
+              <ul className="space-y-3 text-sm text-white/90">
                 <li>Santo Domingo, RD</li>
                 <li>info@jmvrd.org</li>
                 <li>+1 (809) 123-4567</li>
@@ -347,22 +360,25 @@ export default function NewsDetailPage({ params }: NewsDetailPageProps) {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Síguenos</h3>
-              <div className="flex space-x-4">
-                <Link href="#" className="hover:text-secondary transition-colors">
+              <h3 className="mb-6 text-lg font-semibold">Síguenos</h3>
+              <div className="flex flex-col space-y-3">
+                <Link href="#" className="flex items-center gap-2 transition-colors hover:text-white/80 group">
+                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                   Instagram
                 </Link>
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="flex items-center gap-2 transition-colors hover:text-white/80 group">
+                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                   Facebook
                 </Link>
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="flex items-center gap-2 transition-colors hover:text-white/80 group">
+                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
                   YouTube
                 </Link>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-background/20 mt-8 pt-8 text-center text-sm text-background/80">
+          <div className="pt-8 mt-12 text-sm text-center border-t border-white/20 text-white/80">
             <p>&copy; 2024 JMV República Dominicana. Todos los derechos reservados.</p>
           </div>
         </div>

@@ -6,8 +6,24 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Star, Heart, Users, MapPin, Phone, Mail, MessageCircle, Send, CheckCircle } from "lucide-react"
+import {
+  Star,
+  Heart,
+  Users,
+  MapPin,
+  Phone,
+  Mail,
+  MessageCircle,
+  Send,
+  CheckCircle,
+  ArrowRight,
+  Sparkles,
+  Target,
+  Globe,
+  User,
+} from "lucide-react"
 import Link from "next/link"
+import Navbar from "@/components/Navbar"
 
 // Local chapters data
 const chapters = [
@@ -87,62 +103,49 @@ const chapters = [
 
 export default function UnetePage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-background via-card/30 to-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-              <Star className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-heading text-lg font-semibold">JMV RD</span>
-          </div>
-
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
-              Inicio
-            </Link>
-            <Link href="/quienes-somos" className="text-sm font-medium hover:text-primary transition-colors">
-              Quiénes Somos
-            </Link>
-            <Link href="/formacion" className="text-sm font-medium hover:text-primary transition-colors">
-              Formación
-            </Link>
-            <Link href="/eventos" className="text-sm font-medium hover:text-primary transition-colors">
-              Eventos
-            </Link>
-            <Link href="/noticias" className="text-sm font-medium hover:text-primary transition-colors">
-              Noticias
-            </Link>
-            <Link href="/unete" className="text-sm font-medium text-primary">
-              Únete
-            </Link>
-          </div>
-
-          <Button asChild>
-            <Link href="/unete">Únete a JMV</Link>
-          </Button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-card via-background to-card py-16 lg:py-24">
-        <div className="container">
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="secondary" className="mb-6 px-4 py-2">
-              <Heart className="mr-2 h-4 w-4" />
+      <section className="relative py-20 overflow-hidden lg:py-32">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
+        <div className="absolute inset-0 bg-[url('/images/pattern.png')] opacity-5" />
+        <div className="container relative">
+          <div className="max-w-4xl mx-auto text-center">
+            <Badge
+              variant="secondary"
+              className="px-6 py-3 mb-8 text-sm font-medium bg-gradient-to-r from-secondary/10 to-accent/10 border-secondary/20"
+            >
+              <Heart className="w-4 h-4 mr-2 text-primary" />
               Únete a Nosotros
             </Badge>
-            <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Únete a JMV</h1>
-            <p className="text-xl text-muted-foreground mb-8">
+            <h1 className="mb-8 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+              <span className="text-transparent bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text">
+                Únete a JMV
+              </span>
+            </h1>
+            <p className="max-w-3xl mx-auto mb-12 text-xl leading-relaxed text-foreground/70">
               Descubre tu vocación de servicio y forma parte de una familia que transforma vidas siguiendo el ejemplo de
               María y San Vicente de Paúl
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" asChild>
-                <a href="#formulario">Completa tu solicitud</a>
+            <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
+              <Button
+                size="lg"
+                className="px-8 py-4 text-lg shadow-xl bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                asChild
+              >
+                <a href="#formulario">
+                  Completa tu solicitud
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </a>
               </Button>
-              <Button size="lg" variant="outline" asChild className="bg-transparent">
+              <Button
+                size="lg"
+                variant="outline"
+                className="px-8 py-4 text-lg bg-transparent border-2 border-primary/20 hover:bg-primary/5"
+                asChild
+              >
                 <a href="#capitulos">Encuentra tu capítulo</a>
               </Button>
             </div>
@@ -151,55 +154,61 @@ export default function UnetePage() {
       </section>
 
       {/* Why Join Section */}
-      <section className="py-16 lg:py-24">
+      <section className="py-20 lg:py-32">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">¿Por qué unirte a JMV?</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <div className="mb-16 text-center">
+            <Badge variant="outline" className="px-4 py-2 mb-6 border-primary/20">
+              <Sparkles className="w-4 h-4 mr-2 text-primary" />
+              Beneficios
+            </Badge>
+            <h2 className="mb-6 text-4xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
+              ¿Por qué unirte a JMV?
+            </h2>
+            <p className="max-w-3xl mx-auto text-xl leading-relaxed text-foreground/70">
               Ser parte de JMV significa crecer integralmente mientras sirves a los más necesitados
             </p>
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="text-center">
-              <CardHeader>
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                  <Users className="h-8 w-8 text-primary" />
+            <Card className="transition-all duration-300 border-0 group hover:shadow-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+              <CardHeader className="pb-4 text-center">
+                <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 transition-transform duration-300 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 group-hover:scale-110">
+                  <Users className="w-10 h-10 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Comunidad Fraterna</CardTitle>
+                <CardTitle className="text-2xl font-bold">Comunidad Fraterna</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
+                <CardDescription className="text-base leading-relaxed">
                   Forma parte de una familia de jóvenes comprometidos que se apoyan mutuamente en el crecimiento
                   espiritual y humano
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="text-center">
-              <CardHeader>
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                  <Star className="h-8 w-8 text-primary" />
+            <Card className="transition-all duration-300 border-0 group hover:shadow-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+              <CardHeader className="pb-4 text-center">
+                <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 transition-transform duration-300 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 group-hover:scale-110">
+                  <Target className="w-10 h-10 text-secondary" />
                 </div>
-                <CardTitle className="text-xl">Formación Integral</CardTitle>
+                <CardTitle className="text-2xl font-bold">Formación Integral</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
+                <CardDescription className="text-base leading-relaxed">
                   Accede a programas de formación en liderazgo, espiritualidad, doctrina social y habilidades para la
                   vida
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="text-center">
-              <CardHeader>
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                  <Heart className="h-8 w-8 text-primary" />
+            <Card className="transition-all duration-300 border-0 group hover:shadow-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm md:col-span-2 lg:col-span-1">
+              <CardHeader className="pb-4 text-center">
+                <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 transition-transform duration-300 rounded-2xl bg-gradient-to-br from-accent/10 to-primary/10 group-hover:scale-110">
+                  <Heart className="w-10 h-10 text-accent" />
                 </div>
-                <CardTitle className="text-xl">Servicio Transformador</CardTitle>
+                <CardTitle className="text-2xl font-bold">Servicio Transformador</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
+                <CardDescription className="text-base leading-relaxed">
                   Participa en misiones, proyectos sociales y actividades que impactan positivamente en las comunidades
                   más vulnerables
                 </CardDescription>
@@ -210,67 +219,123 @@ export default function UnetePage() {
       </section>
 
       {/* Contact Form Section */}
-      <section id="formulario" className="bg-card py-16 lg:py-24">
+      <section id="formulario" className="py-20 lg:py-32 bg-gradient-to-br from-card/30 to-muted/20">
         <div className="container">
-          <div className="mx-auto max-w-2xl">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-4">Solicitud de Membresía</h2>
-              <p className="text-muted-foreground">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-12 text-center">
+              <Badge variant="outline" className="px-4 py-2 mb-6 border-primary/20">
+                <Send className="w-4 h-4 mr-2 text-primary" />
+                Solicitud
+              </Badge>
+              <h2 className="mb-6 text-4xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
+                Solicitud de Membresía
+              </h2>
+              <p className="text-lg text-foreground/70">
                 Completa este formulario y nos pondremos en contacto contigo para iniciar tu proceso de integración
               </p>
             </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Send className="h-5 w-5" />
+            <Card className="border-0 shadow-2xl bg-gradient-to-br from-background to-card/50 backdrop-blur-sm">
+              <CardHeader className="pb-8">
+                <CardTitle className="flex items-center gap-3 text-2xl">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary">
+                    <Send className="w-5 h-5 text-primary-foreground" />
+                  </div>
                   Información Personal
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-base">
                   Todos los campos marcados con * son obligatorios. Tu información será tratada con total
                   confidencialidad.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="space-y-6">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">Nombre *</Label>
-                      <Input id="firstName" placeholder="Tu nombre" required />
+                <form className="space-y-8">
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="space-y-3">
+                      <Label htmlFor="firstName" className="text-sm font-medium">
+                        Nombre *
+                      </Label>
+                      <Input
+                        id="firstName"
+                        placeholder="Tu nombre"
+                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
+                        required
+                      />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Apellidos *</Label>
-                      <Input id="lastName" placeholder="Tus apellidos" required />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Correo Electrónico *</Label>
-                      <Input id="email" type="email" placeholder="tu@email.com" required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Teléfono *</Label>
-                      <Input id="phone" type="tel" placeholder="+1 (809) 000-0000" required />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="age">Edad *</Label>
-                      <Input id="age" type="number" min="16" max="35" placeholder="18" required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="occupation">Ocupación</Label>
-                      <Input id="occupation" placeholder="Estudiante, Profesional, etc." />
+                    <div className="space-y-3">
+                      <Label htmlFor="lastName" className="text-sm font-medium">
+                        Apellidos *
+                      </Label>
+                      <Input
+                        id="lastName"
+                        placeholder="Tus apellidos"
+                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
+                        required
+                      />
                     </div>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="province">Provincia/Diócesis *</Label>
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="space-y-3">
+                      <Label htmlFor="email" className="text-sm font-medium">
+                        Correo Electrónico *
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="tu@email.com"
+                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label htmlFor="phone" className="text-sm font-medium">
+                        Teléfono *
+                      </Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="+1 (809) 000-0000"
+                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="space-y-3">
+                      <Label htmlFor="age" className="text-sm font-medium">
+                        Edad *
+                      </Label>
+                      <Input
+                        id="age"
+                        type="number"
+                        min="16"
+                        max="35"
+                        placeholder="18"
+                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label htmlFor="occupation" className="text-sm font-medium">
+                        Ocupación
+                      </Label>
+                      <Input
+                        id="occupation"
+                        placeholder="Estudiante, Profesional, etc."
+                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="space-y-3">
+                      <Label htmlFor="province" className="text-sm font-medium">
+                        Provincia/Diócesis *
+                      </Label>
                       <Select required>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50">
                           <SelectValue placeholder="Selecciona tu provincia" />
                         </SelectTrigger>
                         <SelectContent>
@@ -288,16 +353,24 @@ export default function UnetePage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="parish">Parroquia</Label>
-                      <Input id="parish" placeholder="Nombre de tu parroquia" />
+                    <div className="space-y-3">
+                      <Label htmlFor="parish" className="text-sm font-medium">
+                        Parroquia
+                      </Label>
+                      <Input
+                        id="parish"
+                        placeholder="Nombre de tu parroquia"
+                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
+                      />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="experience">Experiencia en Movimientos Juveniles</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="experience" className="text-sm font-medium">
+                      Experiencia en Movimientos Juveniles
+                    </Label>
                     <Select>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50">
                         <SelectValue placeholder="Selecciona tu experiencia" />
                       </SelectTrigger>
                       <SelectContent>
@@ -309,20 +382,24 @@ export default function UnetePage() {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="motivation">¿Por qué quieres unirte a JMV? *</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="motivation" className="text-sm font-medium">
+                      ¿Por qué quieres unirte a JMV? *
+                    </Label>
                     <Textarea
                       id="motivation"
                       placeholder="Compártenos tu motivación para formar parte de JMV..."
-                      className="min-h-24"
+                      className="border-2 resize-none min-h-32 border-border/50 focus:border-primary/50 bg-background/50"
                       required
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="availability">Disponibilidad de Tiempo</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="availability" className="text-sm font-medium">
+                      Disponibilidad de Tiempo
+                    </Label>
                     <Select>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50">
                         <SelectValue placeholder="¿Cuánto tiempo puedes dedicar?" />
                       </SelectTrigger>
                       <SelectContent>
@@ -334,25 +411,31 @@ export default function UnetePage() {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="message">Mensaje Adicional</Label>
+                  <div className="space-y-3">
+                    <Label htmlFor="message" className="text-sm font-medium">
+                      Mensaje Adicional
+                    </Label>
                     <Textarea
                       id="message"
                       placeholder="¿Hay algo más que te gustaría compartir con nosotros?"
-                      className="min-h-20"
+                      className="border-2 resize-none min-h-24 border-border/50 focus:border-primary/50 bg-background/50"
                     />
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <input type="checkbox" id="terms" className="rounded" required />
-                    <Label htmlFor="terms" className="text-sm">
+                  <div className="flex items-start p-4 space-x-3 bg-muted/30 rounded-xl">
+                    <input type="checkbox" id="terms" className="mt-1 border-2 rounded border-border/50" required />
+                    <Label htmlFor="terms" className="text-sm leading-relaxed">
                       Acepto los términos y condiciones y autorizo el tratamiento de mis datos personales según la
                       política de privacidad de JMV RD *
                     </Label>
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg">
-                    <Send className="mr-2 h-4 w-4" />
+                  <Button
+                    type="submit"
+                    className="w-full text-lg shadow-xl h-14 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
+                    size="lg"
+                  >
+                    <Send className="w-5 h-5 mr-2" />
                     Enviar Solicitud
                   </Button>
                 </form>
@@ -363,60 +446,88 @@ export default function UnetePage() {
       </section>
 
       {/* Local Chapters Section */}
-      <section id="capitulos" className="py-16 lg:py-24">
+      <section id="capitulos" className="py-20 lg:py-32">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Capítulos Locales</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <div className="mb-16 text-center">
+            <Badge variant="outline" className="px-4 py-2 mb-6 border-primary/20">
+              <Globe className="w-4 h-4 mr-2 text-primary" />
+              Capítulos
+            </Badge>
+            <h2 className="mb-6 text-4xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
+              Capítulos Locales
+            </h2>
+            <p className="max-w-3xl mx-auto text-xl leading-relaxed text-foreground/70">
               Encuentra el capítulo más cercano a ti y conecta directamente con nuestros coordinadores locales
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {chapters.map((chapter) => (
-              <Card key={chapter.name} className="group hover:shadow-lg transition-all">
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-xl">{chapter.name}</CardTitle>
-                    <Badge variant="secondary">Activo</Badge>
+              <Card
+                key={chapter.name}
+                className="transition-all duration-300 border-0 group hover:shadow-2xl bg-gradient-to-br from-background to-card/50 backdrop-blur-sm"
+              >
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <CardTitle className="text-xl font-bold">{chapter.name}</CardTitle>
+                    <Badge
+                      variant="secondary"
+                      className="bg-gradient-to-r from-primary/10 to-accent/10 text-primary border-primary/20"
+                    >
+                      Activo
+                    </Badge>
                   </div>
-                  <CardDescription>{chapter.description}</CardDescription>
+                  <CardDescription className="text-base leading-relaxed">{chapter.description}</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                <CardContent className="space-y-6">
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                      <MapPin className="flex-shrink-0 w-4 h-4 text-primary" />
                       <span>{chapter.location}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                      <Users className="flex-shrink-0 w-4 h-4 text-secondary" />
                       <span>{chapter.meetingDay}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Star className="h-4 w-4 text-muted-foreground" />
+                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                      <Star className="flex-shrink-0 w-4 h-4 text-accent" />
                       <span>Coord: {chapter.coordinator}</span>
                     </div>
                   </div>
 
                   <div className="flex gap-2">
-                    <Button size="sm" className="flex-1" asChild>
+                    <Button
+                      size="sm"
+                      className="flex-1 bg-gradient-to-r from-secondary to-accent hover:from-secondary/90 hover:to-accent/90"
+                      asChild
+                    >
                       <a
                         href={`https://wa.me/${chapter.contact.whatsapp}?text=Hola, me interesa unirme al capítulo JMV ${chapter.name}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        <MessageCircle className="mr-2 h-4 w-4" />
+                        <MessageCircle className="w-4 h-4 mr-2" />
                         WhatsApp
                       </a>
                     </Button>
-                    <Button size="sm" variant="outline" asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-transparent border-2 border-primary/20 hover:bg-primary/5"
+                      asChild
+                    >
                       <a href={`mailto:${chapter.contact.email}`}>
-                        <Mail className="h-4 w-4" />
+                        <Mail className="w-4 h-4" />
                       </a>
                     </Button>
-                    <Button size="sm" variant="outline" asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-transparent border-2 border-primary/20 hover:bg-primary/5"
+                      asChild
+                    >
                       <a href={`tel:${chapter.contact.phone}`}>
-                        <Phone className="h-4 w-4" />
+                        <Phone className="w-4 h-4" />
                       </a>
                     </Button>
                   </div>
@@ -428,38 +539,57 @@ export default function UnetePage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="bg-card py-16 lg:py-24">
+      <section className="py-20 lg:py-32 bg-gradient-to-br from-card/30 to-muted/20">
         <div className="container">
-          <div className="mx-auto max-w-3xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Preguntas Frecuentes</h2>
-              <p className="text-muted-foreground text-lg">Resolvemos las dudas más comunes sobre cómo unirse a JMV</p>
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-16 text-center">
+              <Badge variant="outline" className="px-4 py-2 mb-6 border-primary/20">
+                <MessageCircle className="w-4 h-4 mr-2 text-primary" />
+                FAQ
+              </Badge>
+              <h2 className="mb-6 text-4xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
+                Preguntas Frecuentes
+              </h2>
+              <p className="text-xl text-foreground/70">Resolvemos las dudas más comunes sobre cómo unirse a JMV</p>
             </div>
 
             <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-1" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left">¿Cuáles son los requisitos para unirme a JMV?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+              <AccordionItem
+                value="item-1"
+                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
+                  ¿Cuáles son los requisitos para unirme a JMV?
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
                   Para unirte a JMV debes tener entre 16 y 35 años, ser católico practicante, tener disponibilidad para
                   participar en las actividades formativas y de servicio, y mostrar compromiso con los valores
                   cristianos y el carisma vicenciano. No se requiere experiencia previa en movimientos juveniles.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-2" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left">¿Cuál es el proceso de integración?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+              <AccordionItem
+                value="item-2"
+                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
+                  ¿Cuál es el proceso de integración?
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
                   El proceso incluye: 1) Completar el formulario de solicitud, 2) Entrevista personal con el coordinador
                   del capítulo, 3) Período de acompañamiento de 3 meses participando en actividades, 4) Formación básica
                   sobre el carisma vicenciano, y 5) Compromiso formal con la misión de JMV.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-3" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left">
+              <AccordionItem
+                value="item-3"
+                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
                   ¿Qué actividades realizan los miembros de JMV?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
                   Los miembros participan en encuentros formativos semanales, retiros espirituales, misiones de verano,
                   proyectos de servicio social, visitas a comunidades necesitadas, actividades de evangelización,
                   talleres de liderazgo, y eventos de fraternidad. También hay oportunidades de liderazgo en diferentes
@@ -467,9 +597,14 @@ export default function UnetePage() {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-4" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left">¿Hay algún costo por pertenecer a JMV?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+              <AccordionItem
+                value="item-4"
+                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
+                  ¿Hay algún costo por pertenecer a JMV?
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
                   La membresía en JMV es completamente gratuita. Sin embargo, para algunas actividades especiales como
                   retiros, misiones o encuentros nacionales, puede haber una contribución voluntaria para cubrir gastos
                   de alimentación y hospedaje. Siempre buscamos alternativas para que la situación económica no sea un
@@ -477,9 +612,14 @@ export default function UnetePage() {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-5" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left">¿Cuánto tiempo debo dedicar a JMV?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+              <AccordionItem
+                value="item-5"
+                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
+                  ¿Cuánto tiempo debo dedicar a JMV?
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
                   El compromiso mínimo incluye participar en el encuentro semanal (2-3 horas) y en al menos una
                   actividad de servicio al mes. Los miembros más comprometidos pueden dedicar tiempo adicional a
                   coordinación, formación de otros jóvenes, o proyectos especiales. La participación se adapta a tu
@@ -487,20 +627,28 @@ export default function UnetePage() {
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-6" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left">
+              <AccordionItem
+                value="item-6"
+                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
                   ¿Puedo participar si no vivo cerca de un capítulo?
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
                   Si no hay un capítulo cerca de tu ubicación, puedes participar en actividades virtuales, eventos
                   nacionales, y misiones. También te ayudamos a conectar con otros jóvenes de tu zona para eventualmente
                   formar un nuevo capítulo. Contáctanos para explorar las opciones disponibles en tu región.
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="item-7" className="border rounded-lg px-6">
-                <AccordionTrigger className="text-left">¿Qué formación recibiré como miembro de JMV?</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+              <AccordionItem
+                value="item-7"
+                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
+              >
+                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
+                  ¿Qué formación recibiré como miembro de JMV?
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
                   Recibirás formación integral que incluye: espiritualidad vicenciana, liderazgo cristiano, doctrina
                   social de la Iglesia, habilidades de comunicación, gestión de proyectos sociales, y desarrollo
                   personal. La formación es progresiva y se adapta a tu nivel de experiencia y responsabilidades dentro
@@ -513,24 +661,34 @@ export default function UnetePage() {
       </section>
 
       {/* Call to Action */}
-      <section className="bg-primary py-16 text-primary-foreground">
-        <div className="container text-center">
-          <div className="mx-auto max-w-2xl">
-            <CheckCircle className="mx-auto mb-6 h-16 w-16" />
-            <h2 className="mb-4 text-3xl font-bold">¿Listo para dar el primer paso?</h2>
-            <p className="mb-8 text-xl text-primary-foreground/80">
+      <section className="relative py-20 overflow-hidden text-white bg-gradient-to-br from-primary via-secondary to-accent">
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="container relative text-center">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex justify-center mb-8">
+              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm">
+                <CheckCircle className="w-10 h-10 text-white" />
+              </div>
+            </div>
+            <h2 className="mb-6 text-4xl font-bold">¿Listo para dar el primer paso?</h2>
+            <p className="mb-12 text-xl leading-relaxed text-white/90">
               Tu vocación de servicio te está esperando. Únete a una familia que transforma vidas y construye un mundo
               más justo y fraterno.
             </p>
-            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" variant="secondary" asChild>
+            <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="px-8 py-4 text-lg bg-white text-primary hover:bg-white/90"
+                asChild
+              >
                 <a href="#formulario">Completar solicitud</a>
               </Button>
               <Button
                 size="lg"
                 variant="outline"
+                className="px-8 py-4 text-lg text-white bg-transparent border-2 border-white hover:bg-white hover:text-primary"
                 asChild
-                className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
               >
                 <a href="mailto:info@jmvrd.org">Contactar directamente</a>
               </Button>
@@ -540,39 +698,42 @@ export default function UnetePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-12">
+      <footer className="py-16 bg-gradient-to-br from-foreground to-foreground/90 text-background">
         <div className="container">
-          <div className="grid gap-8 md:grid-cols-4">
+          <div className="grid gap-12 md:grid-cols-4">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-background">
-                  <Star className="h-4 w-4 text-foreground" />
+              <div className="flex items-center mb-6 space-x-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-secondary to-accent">
+                  <Star className="w-5 h-5 text-white" />
                 </div>
-                <span className="font-heading text-lg font-semibold">JMV RD</span>
+                <div>
+                  <span className="text-xl font-bold font-heading">JMV RD</span>
+                  <p className="text-sm text-background/80">Juventud Mariana Vicenciana</p>
+                </div>
               </div>
-              <p className="text-sm text-background/80">Juventud Mariana Vicenciana República Dominicana</p>
+              <p className="text-sm leading-relaxed text-background/70">República Dominicana</p>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Enlaces</h3>
-              <ul className="space-y-2 text-sm">
+              <h3 className="mb-6 text-lg font-semibold">Enlaces</h3>
+              <ul className="space-y-3 text-sm">
                 <li>
-                  <Link href="/quienes-somos" className="hover:underline">
+                  <Link href="/quienes-somos" className="transition-colors hover:text-secondary">
                     Quiénes Somos
                   </Link>
                 </li>
                 <li>
-                  <Link href="/formacion" className="hover:underline">
+                  <Link href="/formacion" className="transition-colors hover:text-secondary">
                     Formación
                   </Link>
                 </li>
                 <li>
-                  <Link href="/eventos" className="hover:underline">
+                  <Link href="/eventos" className="transition-colors hover:text-secondary">
                     Eventos
                   </Link>
                 </li>
                 <li>
-                  <Link href="/noticias" className="hover:underline">
+                  <Link href="/noticias" className="transition-colors hover:text-secondary">
                     Noticias
                   </Link>
                 </li>
@@ -580,8 +741,8 @@ export default function UnetePage() {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Contacto</h3>
-              <ul className="space-y-2 text-sm text-background/80">
+              <h3 className="mb-6 text-lg font-semibold">Contacto</h3>
+              <ul className="space-y-3 text-sm text-background/80">
                 <li>Santo Domingo, RD</li>
                 <li>info@jmvrd.org</li>
                 <li>+1 (809) 123-4567</li>
@@ -589,22 +750,22 @@ export default function UnetePage() {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Síguenos</h3>
-              <div className="flex space-x-4">
-                <Link href="#" className="hover:text-secondary transition-colors">
+              <h3 className="mb-6 text-lg font-semibold">Síguenos</h3>
+              <div className="flex space-x-6">
+                <Link href="#" className="transition-colors hover:text-secondary">
                   Instagram
                 </Link>
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="transition-colors hover:text-secondary">
                   Facebook
                 </Link>
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="transition-colors hover:text-secondary">
                   YouTube
                 </Link>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-background/20 mt-8 pt-8 text-center text-sm text-background/80">
+          <div className="pt-8 mt-12 text-sm text-center border-t border-background/20 text-background/70">
             <p>&copy; 2024 JMV República Dominicana. Todos los derechos reservados.</p>
           </div>
         </div>

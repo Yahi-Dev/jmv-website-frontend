@@ -2,55 +2,22 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Star, BookOpen, Users, Heart, Download, ExternalLink, FileText, Video, Headphones } from "lucide-react"
+import { Star, BookOpen, Users, Heart, Download, ExternalLink, FileText, Video, Headphones, ArrowRight, User } from "lucide-react"
 import Link from "next/link"
+import Navbar from "@/components/Navbar"
 
 export default function FormacionPage() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-              <Star className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="font-heading text-lg font-semibold">JMV RD</span>
-          </div>
-
-          <div className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
-              Inicio
-            </Link>
-            <Link href="/quienes-somos" className="text-sm font-medium hover:text-primary transition-colors">
-              Quiénes Somos
-            </Link>
-            <Link href="/formacion" className="text-sm font-medium text-primary">
-              Formación
-            </Link>
-            <Link href="/eventos" className="text-sm font-medium hover:text-primary transition-colors">
-              Eventos
-            </Link>
-            <Link href="/noticias" className="text-sm font-medium hover:text-primary transition-colors">
-              Noticias
-            </Link>
-            <Link href="/unete" className="text-sm font-medium hover:text-primary transition-colors">
-              Únete
-            </Link>
-          </div>
-
-          <Button asChild>
-            <Link href="/unete">Únete a JMV</Link>
-          </Button>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-card via-background to-card py-16 lg:py-24">
+      <section className="py-16 bg-gradient-to-br from-card via-background to-card lg:py-24">
         <div className="container">
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="secondary" className="mb-6 px-4 py-2">
-              <BookOpen className="mr-2 h-4 w-4" />
+          <div className="max-w-3xl mx-auto text-center">
+            <Badge variant="secondary" className="px-4 py-2 mb-6">
+              <BookOpen className="w-4 h-4 mr-2" />
               Crecimiento Integral
             </Badge>
             <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl">Formación JMV</h1>
@@ -64,15 +31,15 @@ export default function FormacionPage() {
       {/* Módulos de Formación */}
       <section className="py-16 lg:py-24">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Módulos de Formación</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold">Módulos de Formación</h2>
+            <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
               Nuestro programa formativo está estructurado en ciclos progresivos que acompañan el crecimiento espiritual
               y humano
             </p>
           </div>
 
-          <Tabs defaultValue="catequesis" className="mx-auto max-w-6xl">
+          <Tabs defaultValue="catequesis" className="max-w-6xl mx-auto">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="catequesis">Catequesis</TabsTrigger>
               <TabsTrigger value="liderazgo">Liderazgo</TabsTrigger>
@@ -94,14 +61,14 @@ export default function FormacionPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground mb-4">
+                    <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
                       <li>• Historia de la salvación</li>
                       <li>• Los sacramentos</li>
                       <li>• Vida de San Vicente de Paúl</li>
                       <li>• Devoción mariana</li>
                     </ul>
                     <Button variant="outline" className="w-full bg-transparent">
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="w-4 h-4 mr-2" />
                       Descargar material
                     </Button>
                   </CardContent>
@@ -119,14 +86,14 @@ export default function FormacionPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground mb-4">
+                    <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
                       <li>• Oración contemplativa</li>
                       <li>• Discernimiento vocacional</li>
                       <li>• Espiritualidad vicenciana</li>
                       <li>• Compromiso social</li>
                     </ul>
                     <Button variant="outline" className="w-full bg-transparent">
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="w-4 h-4 mr-2" />
                       Descargar material
                     </Button>
                   </CardContent>
@@ -148,14 +115,14 @@ export default function FormacionPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground mb-4">
+                    <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
                       <li>• Comunicación efectiva</li>
                       <li>• Trabajo en equipo</li>
                       <li>• Resolución de conflictos</li>
                       <li>• Planificación pastoral</li>
                     </ul>
                     <Button variant="outline" className="w-full bg-transparent">
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="w-4 h-4 mr-2" />
                       Descargar material
                     </Button>
                   </CardContent>
@@ -173,14 +140,14 @@ export default function FormacionPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground mb-4">
+                    <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
                       <li>• Diagnóstico comunitario</li>
                       <li>• Diseño de proyectos</li>
                       <li>• Gestión de recursos</li>
                       <li>• Evaluación de impacto</li>
                     </ul>
                     <Button variant="outline" className="w-full bg-transparent">
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="w-4 h-4 mr-2" />
                       Descargar material
                     </Button>
                   </CardContent>
@@ -200,14 +167,14 @@ export default function FormacionPage() {
                     <CardDescription>Principios fundamentales de la enseñanza social católica</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground mb-4">
+                    <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
                       <li>• Dignidad de la persona humana</li>
                       <li>• Bien común y solidaridad</li>
                       <li>• Justicia social</li>
                       <li>• Opción preferencial por los pobres</li>
                     </ul>
                     <Button variant="outline" className="w-full bg-transparent">
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="w-4 h-4 mr-2" />
                       Descargar material
                     </Button>
                   </CardContent>
@@ -225,14 +192,14 @@ export default function FormacionPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground mb-4">
+                    <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
                       <li>• Análisis de la realidad social</li>
                       <li>• Promoción humana integral</li>
                       <li>• Advocacy y incidencia</li>
                       <li>• Construcción de paz</li>
                     </ul>
                     <Button variant="outline" className="w-full bg-transparent">
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="w-4 h-4 mr-2" />
                       Descargar material
                     </Button>
                   </CardContent>
@@ -252,14 +219,14 @@ export default function FormacionPage() {
                     <CardDescription>Preparación integral para la experiencia misionera</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground mb-4">
+                    <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
                       <li>• Espiritualidad misionera</li>
                       <li>• Metodología de evangelización</li>
                       <li>• Trabajo con comunidades</li>
                       <li>• Primeros auxilios</li>
                     </ul>
                     <Button variant="outline" className="w-full bg-transparent">
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="w-4 h-4 mr-2" />
                       Descargar material
                     </Button>
                   </CardContent>
@@ -275,14 +242,14 @@ export default function FormacionPage() {
                     <CardDescription>Experiencia práctica de servicio misionero en comunidades rurales</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <ul className="space-y-2 text-sm text-muted-foreground mb-4">
+                    <ul className="mb-4 space-y-2 text-sm text-muted-foreground">
                       <li>• Convivencia comunitaria</li>
                       <li>• Actividades pastorales</li>
                       <li>• Proyectos de desarrollo</li>
                       <li>• Reflexión y sistematización</li>
                     </ul>
                     <Button variant="outline" className="w-full bg-transparent">
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="w-4 h-4 mr-2" />
                       Descargar material
                     </Button>
                   </CardContent>
@@ -294,19 +261,19 @@ export default function FormacionPage() {
       </section>
 
       {/* Recursos Descargables */}
-      <section className="bg-card py-16 lg:py-24">
+      <section className="py-16 bg-card lg:py-24">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Recursos de Formación</h2>
-            <p className="text-muted-foreground text-lg">Materiales complementarios para profundizar en tu formación</p>
+          <div className="mb-12 text-center">
+            <h2 className="mb-4 text-3xl font-bold">Recursos de Formación</h2>
+            <p className="text-lg text-muted-foreground">Materiales complementarios para profundizar en tu formación</p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 px-10 md:grid-cols-2 lg:grid-cols-3">
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <FileText className="h-5 w-5 text-primary" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                    <FileText className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Manual del Formador</CardTitle>
@@ -317,11 +284,11 @@ export default function FormacionPage() {
               <CardContent>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className="w-4 h-4 mr-2" />
                     PDF
                   </Button>
                   <Button size="sm" variant="outline">
-                    <ExternalLink className="h-4 w-4" />
+                    <ExternalLink className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -330,8 +297,8 @@ export default function FormacionPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Video className="h-5 w-5 text-primary" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                    <Video className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Videos Formativos</CardTitle>
@@ -342,11 +309,11 @@ export default function FormacionPage() {
               <CardContent>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                    <ExternalLink className="mr-2 h-4 w-4" />
+                    <ExternalLink className="w-4 h-4 mr-2" />
                     Ver online
                   </Button>
                   <Button size="sm" variant="outline">
-                    <Download className="h-4 w-4" />
+                    <Download className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -355,8 +322,8 @@ export default function FormacionPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Headphones className="h-5 w-5 text-primary" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                    <Headphones className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Podcast JMV</CardTitle>
@@ -367,11 +334,11 @@ export default function FormacionPage() {
               <CardContent>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                    <ExternalLink className="mr-2 h-4 w-4" />
+                    <ExternalLink className="w-4 h-4 mr-2" />
                     Escuchar
                   </Button>
                   <Button size="sm" variant="outline">
-                    <Download className="h-4 w-4" />
+                    <Download className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -380,8 +347,8 @@ export default function FormacionPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <BookOpen className="h-5 w-5 text-primary" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                    <BookOpen className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Biblioteca Digital</CardTitle>
@@ -392,11 +359,11 @@ export default function FormacionPage() {
               <CardContent>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                    <ExternalLink className="mr-2 h-4 w-4" />
+                    <ExternalLink className="w-4 h-4 mr-2" />
                     Acceder
                   </Button>
                   <Button size="sm" variant="outline">
-                    <Download className="h-4 w-4" />
+                    <Download className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -405,8 +372,8 @@ export default function FormacionPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Users className="h-5 w-5 text-primary" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                    <Users className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Dinámicas Grupales</CardTitle>
@@ -417,11 +384,11 @@ export default function FormacionPage() {
               <CardContent>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className="w-4 h-4 mr-2" />
                     PDF
                   </Button>
                   <Button size="sm" variant="outline">
-                    <ExternalLink className="h-4 w-4" />
+                    <ExternalLink className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -430,8 +397,8 @@ export default function FormacionPage() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Heart className="h-5 w-5 text-primary" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                    <Heart className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Oraciones JMV</CardTitle>
@@ -442,11 +409,11 @@ export default function FormacionPage() {
               <CardContent>
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                    <Download className="mr-2 h-4 w-4" />
+                    <Download className="w-4 h-4 mr-2" />
                     PDF
                   </Button>
                   <Button size="sm" variant="outline">
-                    <ExternalLink className="h-4 w-4" />
+                    <ExternalLink className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>
@@ -456,7 +423,7 @@ export default function FormacionPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="bg-primary py-16 text-primary-foreground">
+      <section className="py-16 bg-primary text-primary-foreground">
         <div className="container text-center">
           <h2 className="mb-4 text-3xl font-bold">¿Listo para comenzar tu formación?</h2>
           <p className="mb-8 text-xl text-primary-foreground/80">
@@ -479,21 +446,21 @@ export default function FormacionPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-foreground text-background py-12">
+      <footer className="py-12 bg-foreground text-background">
         <div className="container">
           <div className="grid gap-8 md:grid-cols-4">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-background">
-                  <Star className="h-4 w-4 text-foreground" />
+              <div className="flex items-center mb-4 space-x-2">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-background">
+                  <Star className="w-4 h-4 text-foreground" />
                 </div>
-                <span className="font-heading text-lg font-semibold">JMV RD</span>
+                <span className="text-lg font-semibold font-heading">JMV RD</span>
               </div>
               <p className="text-sm text-background/80">Juventud Mariana Vicenciana República Dominicana</p>
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Enlaces</h3>
+              <h3 className="mb-4 font-semibold">Enlaces</h3>
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link href="/quienes-somos" className="hover:underline">
@@ -519,7 +486,7 @@ export default function FormacionPage() {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Contacto</h3>
+              <h3 className="mb-4 font-semibold">Contacto</h3>
               <ul className="space-y-2 text-sm text-background/80">
                 <li>Santo Domingo, RD</li>
                 <li>info@jmvrd.org</li>
@@ -528,22 +495,22 @@ export default function FormacionPage() {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4">Síguenos</h3>
+              <h3 className="mb-4 font-semibold">Síguenos</h3>
               <div className="flex space-x-4">
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="transition-colors hover:text-secondary">
                   Instagram
                 </Link>
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="transition-colors hover:text-secondary">
                   Facebook
                 </Link>
-                <Link href="#" className="hover:text-secondary transition-colors">
+                <Link href="#" className="transition-colors hover:text-secondary">
                   YouTube
                 </Link>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-background/20 mt-8 pt-8 text-center text-sm text-background/80">
+          <div className="pt-8 mt-8 text-sm text-center border-t border-background/20 text-background/80">
             <p>&copy; 2024 JMV República Dominicana. Todos los derechos reservados.</p>
           </div>
         </div>
