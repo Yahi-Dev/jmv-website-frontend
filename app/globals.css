@@ -1,0 +1,147 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(1 0 0); /* Pure white */
+  --foreground: oklch(0.25 0.15 258.34); /* Marian blue #0D47A1 */
+  --card: oklch(0.98 0.02 258.34); /* Light blue tint #f0f4ff */
+  --card-foreground: oklch(0.25 0.15 258.34); /* Marian blue */
+  --popover: oklch(1 0 0); /* White */
+  --popover-foreground: oklch(0.25 0.15 258.34); /* Marian blue */
+  --primary: oklch(0.25 0.15 258.34); /* Marian blue #0D47A1 */
+  --primary-foreground: oklch(1 0 0); /* White text on primary */
+  --secondary: oklch(0.85 0.08 65.69); /* Warm amber #ffcc80 */
+  --secondary-foreground: oklch(0.25 0.15 258.34); /* Marian blue text */
+  --muted: oklch(0.75 0.02 258.34); /* Soft gray #b0bec5 */
+  --muted-foreground: oklch(0.25 0.15 258.34); /* Marian blue */
+  --accent: oklch(0.88 0.06 85.87); /* Soft yellow #ffe082 */
+  --accent-foreground: oklch(0.25 0.15 258.34); /* Marian blue text */
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0.01 258.34); /* Light border */
+  --input: oklch(1 0 0); /* White input fields */
+  --ring: oklch(0.25 0.15 258.34 / 0.5); /* Marian blue focus ring */
+  --chart-1: oklch(0.25 0.15 258.34); /* Marian blue */
+  --chart-2: oklch(0.85 0.08 65.69); /* Warm amber */
+  --chart-3: oklch(0.88 0.06 85.87); /* Soft yellow */
+  --chart-4: oklch(0.75 0.02 258.34); /* Soft gray */
+  --chart-5: oklch(0.98 0.02 258.34); /* Light blue tint */
+  --radius: 0.75rem; /* Slightly more rounded for modern feel */
+  --sidebar: oklch(0.98 0.02 258.34); /* Light blue tint */
+  --sidebar-foreground: oklch(0.25 0.15 258.34); /* Marian blue */
+  --sidebar-primary: oklch(0.25 0.15 258.34); /* Marian blue */
+  --sidebar-primary-foreground: oklch(1 0 0); /* White */
+  --sidebar-accent: oklch(0.85 0.08 65.69); /* Warm amber */
+  --sidebar-accent-foreground: oklch(0.25 0.15 258.34); /* Marian blue */
+  --sidebar-border: oklch(0.92 0.01 258.34); /* Light border */
+  --sidebar-ring: oklch(0.25 0.15 258.34 / 0.5); /* Marian blue focus ring */
+  --font-source-sans-3: "Source Sans Pro", sans-serif;
+  --font-inter: "Inter", sans-serif;
+}
+
+.dark {
+  --background: oklch(0.15 0.02 258.34); /* Dark blue background */
+  --foreground: oklch(0.98 0.02 258.34); /* Light blue foreground */
+  --card: oklch(0.18 0.02 258.34); /* Slightly lighter dark blue */
+  --card-foreground: oklch(0.98 0.02 258.34); /* Light blue text */
+  --popover: oklch(0.15 0.02 258.34); /* Dark blue */
+  --popover-foreground: oklch(0.98 0.02 258.34); /* Light blue */
+  --primary: oklch(0.98 0.02 258.34); /* Light blue primary in dark mode */
+  --primary-foreground: oklch(0.15 0.02 258.34); /* Dark blue text */
+  --secondary: oklch(0.35 0.05 65.69); /* Darker amber */
+  --secondary-foreground: oklch(0.98 0.02 258.34); /* Light blue text */
+  --muted: oklch(0.25 0.02 258.34); /* Darker muted */
+  --muted-foreground: oklch(0.75 0.02 258.34); /* Lighter muted text */
+  --accent: oklch(0.45 0.04 85.87); /* Darker yellow */
+  --accent-foreground: oklch(0.98 0.02 258.34); /* Light blue text */
+  --destructive: oklch(0.396 0.141 27.325);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: oklch(0.25 0.02 258.34); /* Dark border */
+  --input: oklch(0.25 0.02 258.34); /* Dark input */
+  --ring: oklch(0.55 0.08 258.34); /* Lighter ring in dark mode */
+  --chart-1: oklch(0.55 0.15 258.34); /* Lighter Marian blue */
+  --chart-2: oklch(0.75 0.08 65.69); /* Lighter amber */
+  --chart-3: oklch(0.78 0.06 85.87); /* Lighter yellow */
+  --chart-4: oklch(0.65 0.02 258.34); /* Lighter gray */
+  --chart-5: oklch(0.35 0.02 258.34); /* Darker blue tint */
+  --sidebar: oklch(0.18 0.02 258.34); /* Dark sidebar */
+  --sidebar-foreground: oklch(0.98 0.02 258.34); /* Light text */
+  --sidebar-primary: oklch(0.55 0.15 258.34); /* Lighter primary */
+  --sidebar-primary-foreground: oklch(0.98 0.02 258.34); /* Light text */
+  --sidebar-accent: oklch(0.45 0.05 65.69); /* Darker accent */
+  --sidebar-accent-foreground: oklch(0.98 0.02 258.34); /* Light text */
+  --sidebar-border: oklch(0.25 0.02 258.34); /* Dark border */
+  --sidebar-ring: oklch(0.55 0.08 258.34); /* Lighter ring */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  /* Added custom font family tokens for JMV typography */
+  --font-sans: var(--font-source-sans-3);
+  --font-heading: var(--font-inter);
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* Added heading styles using Inter font */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+  .container {
+    @apply mx-auto px-4;
+  }
+
+}
