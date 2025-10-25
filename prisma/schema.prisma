@@ -1,0 +1,229 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Actividades {
+  id             Int          @id @default(autoincrement())
+  id_publicacion Int
+  id_centro      Int
+
+  publicacion    Publicacion  @relation(fields: [id_publicacion], references: [id], onDelete: Cascade)
+  centro         Centro       @relation(fields: [id_centro], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdDate    DateTime     @default(now())
+  createdById    String?
+  modifiedDate   DateTime?
+  modifiedById   String?
+  deletedDate    DateTime?
+  deletedById    String?
+}
+
+model Biblioteca {
+  id           Int       @id @default(autoincrement())
+  ruta_doc     String?
+  titulo       String?
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Centro {
+  id           Int            @id @default(autoincrement())
+  nombre       String?
+  direccion    String?
+  estatusId    Int?
+  estatus      Estatus?       @relation(fields: [estatusId], references: [id], onDelete: NoAction)
+  publicaciones Publicacion[]
+  actividades   Actividades[]
+  usuarios      Usuarios[]
+  comunidades   Comunidad[]
+  vocales       Vocal[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Comunidad {
+  id           Int         @id @default(autoincrement())
+  nombre       String?
+  integrantes  Int
+  idEtapa      Int
+  centroId     Int
+  estatusId    Int
+  centro       Centro      @relation(fields: [centroId], references: [id], onDelete: Cascade)
+  estatus      Estatus     @relation(fields: [estatusId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  usuarios     Usuarios[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Estatus {
+  id           Int         @id @default(autoincrement())
+  nombre       String?
+  usuarios     Usuarios[]
+  centros      Centro[]
+  comunidades  Comunidad[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Publicacion {
+  id           Int           @id @default(autoincrement())
+  img          String?
+  descripcion  String?
+  fecha        DateTime
+  id_centro    Int
+  id_estado    Int
+  centro       Centro        @relation(fields: [id_centro], references: [id], onDelete: NoAction)
+  actividades  Actividades[]
+  recordatorios Recordatorio[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Recordatorio {
+  id           Int           @id @default(autoincrement())
+  fecha        DateTime
+  idPublicacion Int
+  isPublicacion Boolean      @default(false)
+  publicacion  Publicacion?  @relation(fields: [idPublicacion], references: [id], onDelete: Cascade)
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Tipo {
+  id           Int         @id @default(autoincrement())
+  nombre       String?
+  vocalias     Vocalia[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Valor {
+  id           Int          @id @default(autoincrement())
+  nombre       String       @db.VarChar(100)
+  vocalValores VocalValor[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Vocal {
+  id           Int           @id @default(autoincrement())
+  name         String?
+  img          String?
+  idCentro     Int
+  idVocalia    Int
+
+  centro       Centro        @relation(fields: [idCentro], references: [id], onDelete: Cascade)
+  vocalia      Vocalia       @relation(fields: [idVocalia], references: [id], onDelete: NoAction)
+  vocalValores VocalValor[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model Vocalia {
+  id           Int         @id @default(autoincrement())
+  nombre       String?
+  id_Tipovocalia Int
+  tipo         Tipo        @relation(fields: [id_Tipovocalia], references: [id], onDelete: NoAction)
+  usuarios     Usuarios[]
+  vocales      Vocal[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model VocalValor {
+  id        Int      @id @default(autoincrement())
+  vocalId   Int
+  valorId   Int
+  vocal     Vocal    @relation(fields: [vocalId], references: [id], onDelete: Cascade)
+  valor     Valor    @relation(fields: [valorId], references: [id], onDelete: Cascade)
+}
+
+model Usuarios {
+  id           Int        @id @default(autoincrement())
+  nombre       String?
+  apellido     String?
+  telefono     String?
+  idComunidad  Int
+  idCentro     Int
+  idVocalia    Int
+  idEstatus    Int
+
+  comunidad    Comunidad  @relation(fields: [idComunidad], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  centro       Centro     @relation(fields: [idCentro], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  vocalia      Vocalia    @relation(fields: [idVocalia], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  estatus      Estatus    @relation(fields: [idEstatus], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+model AppUser {
+  id          String   @id @default(uuid())
+  userName    String   @unique
+  email       String   @unique
+  password    String
+  firstName   String?
+  lastName    String?
+  isActive    Boolean  @default(true)
+  createdDate DateTime @default(now())
+}
