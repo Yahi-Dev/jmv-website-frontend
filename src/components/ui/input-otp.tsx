@@ -4,7 +4,7 @@ import * as React from "react"
 import { OTPInput, OTPInputContext } from "input-otp"
 import { MinusIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/src/lib/utils"
 
 function InputOTP({
   className,
@@ -58,8 +58,8 @@ function InputOTPSlot({
     >
       {char}
       {hasFakeCaret && (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="animate-caret-blink bg-foreground h-4 w-px duration-1000" />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-px h-4 duration-1000 animate-caret-blink bg-foreground" />
         </div>
       )}
     </div>
