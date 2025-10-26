@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "db:seed": "tsx src/seed/database_seeder.ts",
+    "db:reset": "prisma migrate reset && npm run db:seed"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
