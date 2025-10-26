@@ -1,5 +1,4 @@
 // prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,6 +8,81 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// === MODELOS DE BETTER AUTH ===
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+  
+  // Tus campos adicionales
+  userName      String    @unique
+  firstName     String?
+  lastName      String?
+  isActive      Boolean   @default(true)
+  createdDate   DateTime  @default(now())
+
+  sessions      Session[]
+  accounts      Account[]
+  verifications Verification[]
+
+  @@map("users") // Opcional: mapear a nombre de tabla diferente
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                   String   @id @default(uuid())
+  userId               String
+  accountId            String
+  providerId           String
+  accessToken          String?
+  refreshToken         String?
+  accessTokenExpiresAt DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                String?
+  idToken              String?
+  password             String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, providerId, accountId])
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  userId     String?
+  
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verifications")
+}
+
+// === TUS MODELOS EXISTENTES JMV ===
 model Actividades {
   id             Int          @id @default(autoincrement())
   id_publicacion Int
@@ -217,13 +291,4 @@ model Usuarios {
   deletedById  String?
 }
 
-model AppUser {
-  id          String   @id @default(uuid())
-  userName    String   @unique
-  email       String   @unique
-  password    String 
-  firstName   String?
-  lastName    String?
-  isActive    Boolean  @default(true)
-  createdDate DateTime @default(now())
-}
+// Elimina el modelo AppUser ya que ahora usamos User de Better Auth
