@@ -1,0 +1,221 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import type React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
+import { Card, CardContent } from "@/src/components/ui/card";
+import { Checkbox } from "@/src/components/ui/checkbox";
+import { Label } from "@/src/components/ui/label";
+import Link from "next/link";
+import { authClient } from "@/src/lib/auth-client";
+import { toast } from "sonner";
+import Image from "next/image";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+type SignInError = { status?: number; message?: string };
+type SignInResponse = { error?: SignInError | null };
+
+export function LoginInner() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("reset") === "success") {
+      toast.success("Contraseña restablecida exitosamente");
+    }
+  }, [searchParams]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setProcessing(true);
+    setError(null);
+
+    try {
+      const { error: signInError } = (await authClient.signIn.email({
+        email,
+        password,
+        rememberMe,
+        callbackURL: "/dashboard",
+      })) as SignInResponse;
+
+      if (signInError) {
+        setError(
+          signInError.status === 401
+            ? "Credenciales inválidas. Por favor, verifica tu email y contraseña."
+            : signInError.message ?? "Ocurrió un error al iniciar sesión"
+        );
+        setProcessing(false);
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch {
+      setError("Ocurrió un error inesperado");
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+      <div className="relative flex items-center justify-center min-h-screen p-6">
+        <Card className="w-full max-w-5xl overflow-hidden border-0 bg-white/95 shadow-[0_20px_60px_rgba(0,0,0,0.1)] backdrop-blur-xl">
+          <CardContent className="p-0">
+            <div className="grid lg:grid-cols-2">
+              {/* Columna Izquierda - Formulario */}
+             <div className="relative p-10 bg-gradient-to-br from-white via-card to-background lg:p-12">
+                <div className="mb-10">
+                  <h1 className="text-4xl font-bold tracking-tight text-gray-900">INICIAR SESIÓN</h1>
+                  <div className="mt-3 h-1.5 w-20 rounded-full bg-gradient-to-r from-primary to-secondary" />
+                  <p className="mt-4 text-muted-foreground">Bienvenido de nuevo. Por favor ingresa a tu cuenta.</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
+                        Correo Electrónico
+                      </Label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-primary">
+                          <Mail size={20} />
+                        </div>
+                        <Input
+                          id="email"
+                          type="email"
+                          required
+                          autoComplete="email"
+                          value={email}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+                          placeholder="usuario@jmv.org"
+                          className="h-12 pl-12 text-gray-900 transition-all duration-200 bg-white border-2 border-gray-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                          disabled={processing}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
+                          Contraseña
+                        </Label>
+                        <Link
+                          href="/forgot-password"
+                          className="text-sm font-medium transition-colors duration-200 text-primary hover:text-secondary hover:underline"
+                        >
+                          ¿Olvidaste tu contraseña?
+                        </Link>
+                      </div>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-primary">
+                          <Lock size={20} />
+                        </div>
+                        <Input
+                          id="password"
+                          type="password"
+                          required
+                          autoComplete="current-password"
+                          value={password}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                          placeholder="Ingresa tu contraseña"
+                          className="h-12 pl-12 text-gray-900 transition-all duration-200 bg-white border-2 border-gray-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                          disabled={processing}
+                        />
+                      </div>
+                    </div>
+
+                    {error && (
+                      <div className="p-4 text-sm text-red-700 border border-red-200 rounded-lg bg-red-50">
+                        {error}
+                      </div>
+                    )}
+
+                    <div className="flex items-center space-x-3">
+                      <Checkbox
+                        id="remember"
+                        checked={rememberMe}
+                        onCheckedChange={(v) => setRememberMe(v === true)}
+                        className="border-2 border-gray-300 data-[state=checked]:border-primary data-[state=checked]:bg-primary transition-all duration-200"
+                        disabled={processing}
+                      />
+                      <Label htmlFor="remember" className="text-sm font-medium text-gray-700 cursor-pointer">
+                        Recordarme por 30 días
+                      </Label>
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={processing}
+                      className="w-full h-12 font-bold tracking-wider text-white uppercase transition-all duration-200 shadow-lg bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:shadow-xl focus:ring-4 focus:ring-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5"
+                    >
+                      {processing ? (
+                        <ArrowRight className="w-5 h-5 mr-2 animate-pulse" />
+                      ) : (
+                        <ArrowRight className="w-5 h-5 mr-2 transition-transform duration-200 group-hover:translate-x-1" />
+                      )}
+                      Iniciar Sesión
+                    </Button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Columna Derecha - Información JMV */}
+              <div className="relative p-10 bg-gradient-to-br from-blue-50 to-blue-100/80 lg:p-12">
+                <div className="flex justify-center mb-8">
+                  <div className="p-6 bg-white shadow-lg rounded-2xl">
+                    <div className="relative w-24 h-24">
+                      <Image
+                        src="/logo/JMV-Logo.png"
+                        alt="JMV Logo"
+                        fill
+                        className="object-contain drop-shadow-[0_4px_20px_rgba(59,130,246,0.3)]"
+                        priority
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6 text-center">
+                  <div className="space-y-3">
+                    <h2 className="text-2xl font-bold text-gray-900">Juventud Mariana Vicenciana</h2>
+                    <p className="leading-relaxed text-gray-600">
+                      Formación, oración y servicio, al estilo de María y San Vicente de Paúl. 
+                      Únete a nuestra comunidad de jóvenes comprometidos con la fe y el servicio.
+                    </p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                      <Sparkles className="w-4 h-4 text-blue-500" />
+                      <span>Formación espiritual y humana</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                      <Sparkles className="w-4 h-4 text-blue-500" />
+                      <span>Servicio a los más necesitados</span>
+                    </div>
+                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
+                      <Sparkles className="w-4 h-4 text-blue-500" />
+                      <span>Comunidad de fe y apoyo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="absolute w-16 h-1 -translate-x-1/2 rounded-full bottom-6 left-1/2 bg-gradient-to-r from-blue-400 to-blue-500 opacity-60" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
