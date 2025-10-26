@@ -291,7 +291,7 @@ model Usuarios {
   deletedById  String?
 }
 
-model Testimonio {
+model Testimonios {
   id           Int       @id @default(autoincrement())
   nombre       String?
   mensaje      String?
@@ -306,6 +306,7 @@ model Testimonio {
   modifiedById String?
   modifiedByIp String?
 
+  deleted      Boolean   @default(false)
   deletedDate  DateTime?
   deletedById  String?
   deletedByIp  String?

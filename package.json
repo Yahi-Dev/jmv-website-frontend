@@ -8,7 +8,8 @@
     "lint": "next lint",
     "start": "next start",
     "db:seed": "tsx src/seed/database_seeder.ts",
-    "db:reset": "prisma migrate reset && npm run db:seed"
+    "db:reset": "prisma migrate reset && npm run db:seed",
+    "create:feature": "node ./src/scripts/create-feature.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
