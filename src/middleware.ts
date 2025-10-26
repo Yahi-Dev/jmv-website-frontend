@@ -1,104 +1,89 @@
-// src/middleware.ts
+// Alternativa: Middleware más conciso
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { loginRateLimit } from './lib/rate-limit'
+import { sendTooManyRequests } from './utils/httpResponse';
 
-// ✅ SOLO APIs que requieren rate limiting (no páginas)
-const protectedRoutes = [
-  '/api/auth/sign-in/email',
-  '/api/auth/forgot-password',
-  '/api/auth/reset-password'
-]
+const RATE_LIMITED_ENDPOINTS = {
+  '/api/auth/sign-in/email': ['POST'], // Incrementa intentos
+  '/api/auth/forgot-password': ['POST'], // Solo verifica bloqueo
+  '/api/auth/reset-password': ['POST'] // Solo verifica bloqueo
+} as const;
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
+  const { pathname } = request.nextUrl;
+  const method = request.method;
   
-  // Verificar si es una ruta protegida
-  const isProtectedRoute = protectedRoutes.some(route => 
-    pathname === route // ✅ EXACTA coincidencia, no startsWith
-  )
-
-  if (!isProtectedRoute) {
-    return NextResponse.next()
+  // Verificar si es un endpoint protegido
+  const endpointConfig = RATE_LIMITED_ENDPOINTS[pathname as keyof typeof RATE_LIMITED_ENDPOINTS];
+  if (!endpointConfig || !endpointConfig.includes(method as any)) {
+    return NextResponse.next();
   }
 
-  // Obtener IP real
-  const ip = getClientIP(request)
-  
-  if (!ip) {
-    return NextResponse.next()
-  }
+  const ip = getClientIP(request);
+  if (!ip) return NextResponse.next();
 
-  // ✅ SOLO para APIs de auth: incrementar en cada request
-  if (pathname === '/api/auth/sign-in/email' && request.method === 'POST') {
-    const rateLimitResult = await loginRateLimit.incrementAttempt(ip)
+  try {
+    let rateLimitResult;
+    
+    if (pathname === '/api/auth/sign-in/email' && method === 'POST') {
+      // ✅ Para login: incrementar intentos
+      rateLimitResult = await loginRateLimit.incrementAttempt(ip);
+    } else {
+      // ✅ Para otros endpoints: solo verificar estado
+      rateLimitResult = await loginRateLimit.getRemaining(ip);
+    }
 
     if (rateLimitResult.isBlocked) {
-      return new NextResponse(
-        JSON.stringify({
-          error: 'Too many requests',
-          message: `IP temporarily blocked. Try again in ${rateLimitResult.retryAfter} seconds.`,
-          retryAfter: rateLimitResult.retryAfter
-        }),
-        {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'X-RateLimit-Limit': '10',
-            'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
-            'Retry-After': rateLimitResult.retryAfter?.toString() || '3600'
-          }
-        }
-      )
+      // ✅ SOLO USAR sendTooManyRequests CUANDO HAY BLOQUEO
+      return sendTooManyRequests(
+        `IP temporalmente bloqueada. Intenta nuevamente en ${rateLimitResult.retryAfter} segundos.`,
+        rateLimitResult.retryAfter
+      );
     }
 
-    // Agregar headers informativos
-    const response = NextResponse.next()
-    response.headers.set('X-RateLimit-Limit', '10')
-    response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString())
-    response.headers.set('X-RateLimit-Reset', rateLimitResult.resetTime.toString())
-    return response
-  }
+    // ✅ Para flujo normal: NextResponse simple con headers informativos
+    const response = NextResponse.next();
+    if (pathname === '/api/auth/sign-in/email') {
+      response.headers.set('X-RateLimit-Limit', '10');
+      response.headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString());
+      response.headers.set('X-RateLimit-Reset', rateLimitResult.resetTime.toString());
+    }
+    
+    return response;
 
-  return NextResponse.next()
+  } catch (error) {
+    // En caso de error en rate limiting, permitir el acceso
+    console.error('Error en rate limiting:', error);
+    return NextResponse.next();
+  }
 }
 
+// getClientIP function remains the same...
 function getClientIP(request: NextRequest): string | null {
   try {
-    // Intentar obtener IP real considerando headers de proxy
-    const forwarded = request.headers.get('x-forwarded-for')
-    const realIP = request.headers.get('x-real-ip')
-    const cfConnectingIP = request.headers.get('cf-connecting-ip') // Cloudflare
+    const forwarded = request.headers.get('x-forwarded-for');
+    const realIP = request.headers.get('x-real-ip');
+    const cfConnectingIP = request.headers.get('cf-connecting-ip');
     
     if (forwarded) {
-      const ips = forwarded.split(',').map(ip => ip.trim())
-      return ips[0] || null
+      const ips = forwarded.split(',').map(ip => ip.trim());
+      return ips[0] || null;
     }
     
-    if (cfConnectingIP) {
-      return cfConnectingIP
-    }
+    if (cfConnectingIP) return cfConnectingIP;
+    if (realIP) return realIP;
     
-    if (realIP) {
-      return realIP
-    }
-    
-    // Para desarrollo local, usar una IP por defecto
-    if (process.env.NODE_ENV === 'development') {
-      return '127.0.0.1'
-    }
-    
-    return null
+    return process.env.NODE_ENV === 'development' ? '127.0.0.1' : null;
   } catch {
-    return null
+    return null;
   }
 }
 
 export const config = {
   matcher: [
     '/api/auth/sign-in/email',
-    '/api/auth/forgot-password',
+    '/api/auth/forgot-password', 
     '/api/auth/reset-password'
   ]
-}
+};

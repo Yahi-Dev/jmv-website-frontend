@@ -291,4 +291,24 @@ model Usuarios {
   deletedById  String?
 }
 
+model Testimonio {
+  id           Int       @id @default(autoincrement())
+  nombre       String?
+  mensaje      String?
+  reputacion   Int?
+  iglesia      String?
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  createdByIp  String?
+
+  modifiedDate DateTime?
+  modifiedById String?
+  modifiedByIp String?
+
+  deletedDate  DateTime?
+  deletedById  String?
+  deletedByIp  String?
+}
+
 // Elimina el modelo AppUser ya que ahora usamos User de Better Auth
