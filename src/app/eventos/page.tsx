@@ -5,7 +5,7 @@ import { Input } from "@/src/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Star, MapPin, Users, Filter, Search, Clock, ArrowRight, Sparkles, User } from "lucide-react"
 import Link from "next/link"
-import Navbar from "@/src/components/shared/Navbar"
+import Navbar from "@/src/components/Navbar"
 
 // Dummy events data
 const events = [

@@ -23,7 +23,7 @@ import {
   User,
 } from "lucide-react"
 import Link from "next/link"
-import Navbar from "@/src/components/shared/Navbar"
+import Navbar from "@/src/components/Navbar"
 
 // Local chapters data
 const chapters = [

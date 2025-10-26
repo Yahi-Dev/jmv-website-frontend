@@ -5,7 +5,7 @@ import { Separator } from "@/src/components/ui/separator"
 import { Star, Calendar, MapPin, Users, Mail, Phone, ArrowLeft, Share2, CheckCircle, Sparkles, User, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import Navbar from "@/src/components/shared/Navbar"
+import Navbar from "@/src/components/Navbar"
 
 // Dummy event data (in a real app, this would come from a database)
 const events = {

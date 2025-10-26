@@ -1,4 +1,4 @@
-import Navbar from "@/src/components/shared/Navbar"
+import Navbar from "@/src/components/Navbar"
 import { HeroSection } from "./HeroSection"
 import { ValuesSection } from "./ValuesSection"
 import { ActivitiesSection } from "./ActivitiesSection"

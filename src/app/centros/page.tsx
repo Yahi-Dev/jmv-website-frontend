@@ -1,4 +1,4 @@
-import Navbar from "@/src/components/shared/Navbar"
+import Navbar from "@/src/components/Navbar"
 import CentrosGrid from "./ui/CentroCard"
 
 export default function CentrosPage() {

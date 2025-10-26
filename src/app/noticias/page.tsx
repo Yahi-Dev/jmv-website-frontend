@@ -5,7 +5,7 @@ import { Input } from "@/src/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Star, Search, Filter, Calendar, User, Clock, ArrowRight, TrendingUp } from "lucide-react"
 import Link from "next/link"
-import Navbar from "@/src/components/shared/Navbar"
+import Navbar from "@/src/components/Navbar"
 
 // Dummy news data
 const news = [

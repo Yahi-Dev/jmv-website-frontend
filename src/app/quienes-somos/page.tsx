@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src
 import { Badge } from "@/src/components/ui/badge"
 import { Star, Heart, Users, BookOpen, Calendar, Award, Target, ArrowRight, MapPin, Phone, Mail, Church, User } from "lucide-react"
 import Link from "next/link"
-import Navbar from "@/src/components/shared/Navbar"
+import Navbar from "@/src/components/Navbar"
 
 export default function QuienesSomosPage() {
   return (
