@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type React from "react";
 import { Lock, CheckCircle, Loader2, Shield, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
@@ -10,14 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src
 import { Label } from "@/src/components/ui/label";
 import Link from "next/link";
 import { authClient } from "@/src/lib/auth-client";
-
-type ResetPasswordResponse = {
-  success?: boolean;
-  error?: { 
-    message?: string;
-    code?: string;
-  } | null;
-};
 
 // Función para evaluar la seguridad de la contraseña
 const evaluatePasswordStrength = (password: string) => {
@@ -56,17 +48,16 @@ const PasswordStrengthMeter = ({ password }: { password: string }) => {
     <div className="space-y-2">
       <div className="flex justify-between text-xs">
         <span className="text-gray-600">Seguridad de la contraseña:</span>
-        <span className={`font-semibold ${
-          strength.label === "Fuerte" ? "text-green-600" :
-          strength.label === "Buena" ? "text-yellow-600" :
-          strength.label === "Regular" ? "text-orange-600" :
-          strength.label === "Débil" ? "text-red-600" : "text-gray-600"
-        }`}>
+        <span className={`font-semibold ${strength.label === "Fuerte" ? "text-green-600" :
+            strength.label === "Buena" ? "text-yellow-600" :
+              strength.label === "Regular" ? "text-orange-600" :
+                strength.label === "Débil" ? "text-red-600" : "text-gray-600"
+          }`}>
           {strength.label}
         </span>
       </div>
       <div className="w-full h-2 overflow-hidden bg-gray-200 rounded-full">
-        <div 
+        <div
           className={`h-full transition-all duration-300 ${strength.color}`}
           style={{ width }}
         />
@@ -107,17 +98,6 @@ export default function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Efecto para redirigir automáticamente después del éxito
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => {
-        router.push("/login");
-      }, 3000); // Redirige después de 3 segundos
-
-      return () => clearTimeout(timer);
-    }
-  }, [success, router]);
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setProcessing(true);
@@ -136,16 +116,20 @@ export default function ResetPasswordForm() {
     }
 
     try {
-      const result = await authClient.resetPassword({
-        newPassword: password,
-        token,
-      }) as ResetPasswordResponse;
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, newPassword: password }),
+      });
 
-      if (result.success) {
+      const data = await res.json();
+      console.log("Reset result:", data);
+
+      if (data.success) {
         setSuccess(true);
-        // No redirigimos inmediatamente aquí, el useEffect se encargará
-      } else if (result.error) {
-        setError(result.error.message ?? "Ocurrió un error al restablecer la contraseña");
+        router.push("/login");
+      } else {
+        setError(data.message || "Ocurrió un error al restablecer la contraseña");
       }
     } catch (err: any) {
       console.error("Reset password error:", err);
@@ -170,8 +154,8 @@ export default function ResetPasswordForm() {
                     <p className="text-sm font-medium text-red-800">Token inválido o expirado</p>
                   </div>
                 </div>
-                <Link 
-                  href="/forgot-password" 
+                <Link
+                  href="/forgot-password"
                   className="inline-flex items-center text-sm font-medium transition-colors duration-200 text-primary hover:text-secondary hover:underline"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2 transition-transform duration-200 hover:-translate-x-1" />
@@ -202,7 +186,7 @@ export default function ResetPasswordForm() {
                     ¡Contraseña Actualizada!
                   </CardTitle>
                   <CardDescription className="mt-2 text-base text-gray-600">
-                    Tu contraseña ha sido restablecida exitosamente.
+                    Tu contraseña ha sido restablecida exitosamente. Serás redirigido al inicio de sesión...
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -214,21 +198,19 @@ export default function ResetPasswordForm() {
                       <Shield className="w-4 h-4 text-emerald-600" />
                     </div>
                     <p className="text-sm font-medium text-emerald-800">
-                      Serás redirigido automáticamente al inicio de sesión en 3 segundos...
+                      Serás redirigido automáticamente al inicio de sesión en 2 segundos...
                     </p>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <Button
-                    asChild
+                    onClick={() => router.push("/login")}
                     className="w-full h-12 font-bold tracking-wider text-white uppercase transition-all duration-200 shadow-lg bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:shadow-xl focus:ring-4 focus:ring-primary/30 transform hover:-translate-y-0.5"
                   >
-                    <Link href="/login">
-                      Ir al Inicio de Sesión Ahora
-                    </Link>
+                    Ir al Inicio de Sesión Ahora
                   </Button>
-                  
+
                   <p className="text-sm text-gray-500">
                     O espera a ser redirigido automáticamente...
                   </p>
@@ -352,8 +334,8 @@ export default function ResetPasswordForm() {
               </form>
 
               <div className="text-center">
-                <Link 
-                  href="/login" 
+                <Link
+                  href="/login"
                   className="inline-flex items-center text-sm font-medium transition-colors duration-200 text-primary hover:text-secondary hover:underline"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2 transition-transform duration-200 hover:-translate-x-1" />

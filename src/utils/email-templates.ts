@@ -10,6 +10,11 @@ const JMV_COLORS = {
   border: "#e0f2fe",       // Bordes azul muy claro (sky-100)
 };
 
+
+
+
+
+
 //Reset Password Email Template (HTML and Text)
 export function resetPasswordTemplate({
   url,
@@ -154,6 +159,13 @@ ${url}
 Si no solicitaste este cambio, ignora este mensaje.`;
 }
 
+
+
+
+
+
+
+
 // Password Updated Email Template (HTML and Text)
 export function passwordUpdatedTemplate({
   userName = "Miembro JMV",
@@ -190,7 +202,7 @@ export function passwordUpdatedTemplate({
                   <tr>
                     <td align="center" style="padding:32px 40px;">
                       <div style="display:inline-block;background:#fff;border-radius:16px;padding:16px;box-shadow:0 10px 25px rgba(59, 130, 246, 0.1);">
-                        <img src="${safeLogo}" alt="${appName} Logo" width="114" height="114" style="display:block;" />
+                        <img src="${safeLogo}" alt="${appName} Logo"  width="174" height="174" style="display:block;" />
                       </div>
 
                       <h1 style="margin:24px 0 8px;font-family:Segoe UI,Roboto,Arial,sans-serif;font-size:24px;color:${text};">
@@ -236,6 +248,12 @@ export function passwordUpdatedText({
 Si no realizaste este cambio, restablece tu contraseña de inmediato y contacta a nuestro equipo de soporte.`;
 }
 
+
+
+
+
+
+
 // Verification Email Template (HTML and Text)
 export function verificationEmailTemplate({
   userName = "Miembro JMV",
@@ -274,7 +292,7 @@ export function verificationEmailTemplate({
                   <tr>
                     <td align="center" style="padding:32px 40px;">
                       <div style="display:inline-block;background:#fff;border-radius:16px;padding:16px;box-shadow:0 10px 25px rgba(59, 130, 246, 0.1);">
-                        <img src="${safeLogo}" alt="${appName} Logo" width="114" height="114" style="display:block;" />
+                        <img src="${safeLogo}" alt="${appName} Logo" width="174" height="174" style="display:block;" />
                       </div>
 
                       <h1 style="margin:24px 0 8px;font-family:Segoe UI,Roboto,Arial,sans-serif;font-size:24px;color:${text};">
@@ -355,6 +373,11 @@ ${link}
 Si no solicitaste esta cuenta, ignora este mensaje.`;
 }
 
+
+
+
+
+
 // Welcome Email Template (HTML and Text)
 export function welcomeEmailTemplate({
   appUrl,
@@ -411,7 +434,7 @@ export function welcomeEmailTemplate({
                     <td align="center" class="px" style="padding: 32px 40px;">
                       <!-- Logo -->
                       <div style="display:inline-block; background:#fff; border-radius:16px; padding:16px; box-shadow:0 10px 25px rgba(59, 130, 246, 0.1);">
-                        <img src="${safeLogo}" alt="${appName} Logo" width="114" height="114" style="display:block; border:0; outline:none; text-decoration:none;" />
+                        <img src="${safeLogo}" alt="${appName} Logo" width="174" height="174" style="display:block; border:0; outline:none; text-decoration:none;" />
                       </div>
 
                       <!-- Heading -->
