@@ -1,10 +1,10 @@
-// Actualización en src/features/auth/components/login-inner.tsx
+// src/features/auth/components/login-inner.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import type React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Mail, Lock, ArrowRight, Sparkles, Eye, EyeOff, AlertTriangle } from "lucide-react";
+import { Mail, Lock, ArrowRight, Eye, EyeOff, AlertTriangle } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Card, CardContent } from "@/src/components/ui/card";
@@ -35,10 +35,13 @@ export function LoginInner() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Verificar rate limit al cargar el componente
+  // ✅ CORREGIDO: Verificar rate limit solo una vez al cargar
   useEffect(() => {
-    checkRateLimit();
-  }, [checkRateLimit]);
+    const initializeRateLimit = async () => {
+      await checkRateLimit();
+    };
+    initializeRateLimit();
+  }, []); // ✅ Solo al montar el componente
 
   useEffect(() => {
     if (searchParams.get("reset") === "success") {
@@ -49,7 +52,7 @@ export function LoginInner() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Verificar rate limit antes de enviar
+    // ✅ CORREGIDO: Solo verificar estado actual (no incrementar)
     const currentRateLimit = await checkRateLimit();
     if (currentRateLimit?.isBlocked) {
       setError(`Demasiados intentos fallidos. Intenta nuevamente en ${currentRateLimit.retryAfter} segundos.`);
@@ -68,10 +71,9 @@ export function LoginInner() {
       })) as SignInResponse;
 
       if (signInError) {
-        // Si es error de credenciales, verificar rate limit nuevamente
-        if (signInError.status === 401) {
-          await checkRateLimit();
-        }
+        // ✅ El middleware ya incrementó el contador automáticamente
+        // Solo actualizamos la UI
+        await checkRateLimit();
         
         setError(
           signInError.status === 401
@@ -82,7 +84,7 @@ export function LoginInner() {
         return;
       }
 
-      // Login exitoso - resetear rate limit
+      // ✅ LOGIN EXITOSO
       router.push("/");
     } catch {
       setError("Ocurrió un error inesperado");

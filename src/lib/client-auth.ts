@@ -26,3 +26,16 @@ export async function getClientUser() {
     isActive: (session.user as any).isActive ?? true,
   };
 }
+
+
+export async function signOut() {
+  try {
+    const { error } = await authClient.signOut();
+    if (error) throw error;
+    
+    window.location.href = "/";
+  } catch (error) {
+    console.error("Error during sign out:", error);
+    throw error;
+  }
+}

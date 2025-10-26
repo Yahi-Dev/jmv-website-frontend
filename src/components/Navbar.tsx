@@ -13,10 +13,15 @@ import {
   User,
   ArrowRight,
   Building,
+  LogOut,
 } from "lucide-react"
+import { getClientUser, signOut } from "@/src/lib/client-auth"
+import { useEffect, useState } from "react"
 
 export default function Navbar() {
   const pathname = usePathname()
+  const [user, setUser] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   const links = [
     { href: "/", label: "Inicio", icon: Home },
@@ -27,6 +32,32 @@ export default function Navbar() {
     { href: "/centros", label: "Centros", icon: Building },
     { href: "/unete", label: "Únete", icon: User },
   ]
+
+  // Verificar autenticación al cargar el componente
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const userData = await getClientUser()
+        setUser(userData)
+      } catch (error) {
+        console.error("Error checking auth:", error)
+        setUser(null)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    checkAuth()
+  }, [pathname]) // Revisar autenticación cuando cambia la ruta
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      window.location.href = "/"
+    } catch (error) {
+      console.error("Error during logout:", error)
+    }
+  }
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -65,23 +96,40 @@ export default function Navbar() {
 
         {/* Botones extra */}
         <div className="flex items-center space-x-4">
-          <Button asChild className="transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
-            <Link href="/unete" className="flex items-center gap-2">
-              Únete a JMV
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </Button>
-
-          <Button
-            asChild
-            variant="outline"
-            size="icon"
-            className="transition-all duration-200 bg-transparent border-2 rounded-full hover:border-primary hover:scale-105"
-          >
-            <Link href="/login">
+          {isLoading ? (
+            // Mostrar un placeholder mientras carga
+            <Button
+              variant="outline"
+              size="icon"
+              className="transition-all duration-200 bg-transparent border-2 rounded-full"
+              disabled
+            >
               <User className="w-5 h-5" />
-            </Link>
-          </Button>
+            </Button>
+          ) : user ? (
+            // Usuario autenticado - Mostrar botón de logout
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleLogout}
+              className="transition-all duration-200 bg-transparent border-2 rounded-full hover:border-destructive hover:scale-105"
+              title="Cerrar sesión"
+            >
+              <LogOut className="w-5 h-5" />
+            </Button>
+          ) : (
+            // Usuario no autenticado - Mostrar botón de login
+            <Button
+              asChild
+              variant="outline"
+              size="icon"
+              className="transition-all duration-200 bg-transparent border-2 rounded-full hover:border-primary hover:scale-105"
+            >
+              <Link href="/login">
+                <User className="w-5 h-5" />
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </nav>

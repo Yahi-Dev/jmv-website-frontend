@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // ✅ SOLO obtener estado, NO incrementar
     const rateLimitResult = await loginRateLimit.getRemaining(ip)
 
     return NextResponse.json(rateLimitResult)

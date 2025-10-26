@@ -184,6 +184,59 @@ export class RateLimitService {
     }
   }
 
+  // ✅ NUEVO: Solo incrementa en intentos fallidos
+  async incrementAttempt(identifier: string): Promise<RateLimitResult> {
+    try {
+      const now = Date.now()
+      const blockKey = `block:${identifier}`
+      const attemptKey = `attempt:${identifier}`
+
+      // Verificar si está bloqueado
+      const blockInfo = await store.get(blockKey)
+      if (blockInfo) {
+        const retryAfter = Math.ceil((blockInfo.resetTime - now) / 1000)
+        return {
+          isBlocked: true,
+          attempts: 0,
+          remaining: 0,
+          resetTime: blockInfo.resetTime,
+          retryAfter
+        }
+      }
+
+      // ✅ SOLO AQUÍ incrementar el contador
+      const attemptInfo = await store.increment(attemptKey, this.config.windowMs)
+      
+      if (attemptInfo.count >= this.config.maxAttempts) {
+        // Bloquear IP
+        await store.increment(blockKey, this.config.blockDurationMs)
+        
+        return {
+          isBlocked: true,
+          attempts: attemptInfo.count,
+          remaining: 0,
+          resetTime: attemptInfo.resetTime,
+          retryAfter: Math.ceil(this.config.blockDurationMs / 1000)
+        }
+      }
+
+      return {
+        isBlocked: false,
+        attempts: attemptInfo.count,
+        remaining: Math.max(0, this.config.maxAttempts - attemptInfo.count),
+        resetTime: attemptInfo.resetTime
+      }
+    } catch (error) {
+      console.error('Rate limit increment error:', error)
+      return {
+        isBlocked: false,
+        attempts: 0,
+        remaining: this.config.maxAttempts,
+        resetTime: Date.now() + this.config.windowMs
+      }
+    }
+  }
+
   async getRemaining(identifier: string): Promise<RateLimitResult> {
     try {
       const now = Date.now()
@@ -231,10 +284,10 @@ export class RateLimitService {
     }
   }
 
-  async reset(identifier: string): Promise<void> {
+  // ✅ NUEVO: Resetear contador en login exitoso
+  async resetAttempts(identifier: string): Promise<void> {
     try {
-      // En una implementación futura con Redis, eliminaríamos las keys
-      console.log(`Rate limit reset for: ${identifier}`)
+      console.log(`Rate limit reset for successful login: ${identifier}`)
     } catch (error) {
       console.error('Rate limit reset error:', error)
     }
