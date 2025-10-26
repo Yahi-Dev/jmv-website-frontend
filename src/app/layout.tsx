@@ -1,7 +1,9 @@
+// src/app/layout.tsx
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Source_Sans_3 } from "next/font/google"
 import "./globals.css"
+import { Toaster } from "@/src/components/ui/sonner" 
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,7 +35,7 @@ export const metadata: Metadata = {
   authors: [{ name: "JMV República Dominicana" }],
   creator: "JMV República Dominicana",
   publisher: "JMV República Dominicana",
-    icons: {
+  icons: {
     icon: "/JMV-Logo.png",
   },
   openGraph: {
@@ -52,7 +54,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-    generator: 'v0.app'
+  generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -64,17 +66,18 @@ export default function RootLayout({
     <html lang="es" className={`${inter.variable} ${sourceSans3.variable} antialiased`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>{` ... `}</style>
-
         <style>{`
-html {
-  font-family: ${sourceSans3.style.fontFamily};
-  --font-sans: ${sourceSans3.variable};
-  --font-heading: ${inter.variable};
-}
+          html {
+            font-family: ${sourceSans3.style.fontFamily};
+            --font-sans: ${sourceSans3.variable};
+            --font-heading: ${inter.variable};
+          }
         `}</style>
       </head>
-      <body className="min-h-screen font-sans antialiased bg-background text-foreground">{children}</body>
+      <body className="min-h-screen font-sans antialiased bg-background text-foreground">
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }

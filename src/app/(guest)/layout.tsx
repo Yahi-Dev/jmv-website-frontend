@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import type { ReactNode } from "react";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "JMV República Dominicana | Juventud Mariana Vicenciana",
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
   },
 }
 
-
 export default function AuthGroupLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+    </>
+  );
 }

@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 type PasswordResetResponse = {
   success?: boolean;
-  error?: { 
+  error?: {
     message?: string;
     code?: string;
   } | null;
@@ -28,32 +28,38 @@ export default function ForgotPasswordForm() {
     setProcessing(true);
 
     try {
+      console.log("Enviando solicitud para:", email); // Debug
       const result = await authClient.forgetPassword({
         email,
         redirectTo: "/reset-password",
       }) as PasswordResetResponse;
 
+      console.log("Respuesta de forgetPassword:", result); // Debug
+
       if (result.success) {
-        // Toast de éxito - siempre se muestra aunque el email no exista (por seguridad)
         toast.success("Si el correo existe, se ha enviado un enlace de restablecimiento.", {
           description: "Revisa tu bandeja de entrada y la carpeta de spam.",
           duration: 6000,
         });
         setEmail("");
       } else if (result.error) {
-        // Toast de error específico
         toast.error("Error al enviar el enlace", {
           description: result.error.message ?? "Ocurrió un error al solicitar el restablecimiento",
           duration: 5000,
         });
+      } else {
+        toast.success("Si el correo existe, se ha enviado un enlace de restablecimiento.", {
+          description: "Revisa tu bandeja de entrada y la carpeta de spam.",
+          duration: 6000,
+        });
+        setEmail("");
       }
     } catch (err: any) {
-      // Toast de error genérico
+      console.error("Password reset error:", err);
       toast.error("Error inesperado", {
         description: err?.message ?? "Ocurrió un error inesperado. Intenta nuevamente.",
         duration: 5000,
       });
-      console.error("Password reset error:", err);
     } finally {
       setProcessing(false);
     }
@@ -121,8 +127,8 @@ export default function ForgotPasswordForm() {
               </form>
 
               <div className="text-center">
-                <Link 
-                  href="/login" 
+                <Link
+                  href="/login"
                   className="inline-flex items-center text-sm font-medium transition-colors duration-200 text-primary hover:text-secondary hover:underline"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2 transition-transform duration-200 hover:-translate-x-1" />

@@ -1,7 +1,7 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import type React from "react";
 import { Lock, CheckCircle, Loader2, Shield, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
@@ -96,6 +96,7 @@ const PasswordStrengthMeter = ({ password }: { password: string }) => {
 
 export default function ResetPasswordForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const token = searchParams.get("token") || "";
 
   const [password, setPassword] = useState("");
@@ -105,6 +106,17 @@ export default function ResetPasswordForm() {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Efecto para redirigir automáticamente después del éxito
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        router.push("/login");
+      }, 3000); // Redirige después de 3 segundos
+
+      return () => clearTimeout(timer);
+    }
+  }, [success, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -131,6 +143,7 @@ export default function ResetPasswordForm() {
 
       if (result.success) {
         setSuccess(true);
+        // No redirigimos inmediatamente aquí, el useEffect se encargará
       } else if (result.error) {
         setError(result.error.message ?? "Ocurrió un error al restablecer la contraseña");
       }
@@ -201,19 +214,25 @@ export default function ResetPasswordForm() {
                       <Shield className="w-4 h-4 text-emerald-600" />
                     </div>
                     <p className="text-sm font-medium text-emerald-800">
-                      Ahora puedes iniciar sesión con tu nueva contraseña
+                      Serás redirigido automáticamente al inicio de sesión en 3 segundos...
                     </p>
                   </div>
                 </div>
 
-                <Button
-                  asChild
-                  className="w-full h-12 font-bold tracking-wider text-white uppercase transition-all duration-200 shadow-lg bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:shadow-xl focus:ring-4 focus:ring-primary/30 transform hover:-translate-y-0.5"
-                >
-                  <Link href="/login">
-                    Ir al Inicio de Sesión
-                  </Link>
-                </Button>
+                <div className="flex flex-col gap-3">
+                  <Button
+                    asChild
+                    className="w-full h-12 font-bold tracking-wider text-white uppercase transition-all duration-200 shadow-lg bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary hover:shadow-xl focus:ring-4 focus:ring-primary/30 transform hover:-translate-y-0.5"
+                  >
+                    <Link href="/login">
+                      Ir al Inicio de Sesión Ahora
+                    </Link>
+                  </Button>
+                  
+                  <p className="text-sm text-gray-500">
+                    O espera a ser redirigido automáticamente...
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>

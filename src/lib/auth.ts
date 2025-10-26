@@ -3,7 +3,12 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import prisma from "./prisma";
-import { resetPasswordTemplate, resetPasswordText } from "../utils/email-templates";
+import { 
+  resetPasswordTemplate, 
+  resetPasswordText,
+  passwordUpdatedTemplate,
+  passwordUpdatedText 
+} from "../utils/email-templates";
 import { sendEmail } from "./mailer";
 
 const logoUrl = process.env.NEXT_PUBLIC_APP_URL_LOGO; 
@@ -44,10 +49,9 @@ export const auth = betterAuth({
     allowSignUp: true,
 
     sendResetPassword: async ({ user, url }) => {
-      // Tu lógica de envío de email aquí
       const html = resetPasswordTemplate({
         url,
-        userName: user?.name || "Usuario JMV",
+        userName: (user as any)?.firstName || user?.name || "Usuario JMV",
         appName: "JMV República Dominicana",
         logoUrl: logoUrl,
         supportEmail: "soporte@jmv.org",
@@ -59,6 +63,30 @@ export const auth = betterAuth({
         html,
         text: resetPasswordText({ url, appName: "JMV República Dominicana" }),
       });
+    },
+
+    // AÑADE ESTA CONFIGURACIÓN PARA EL RESET DE PASSWORD
+    resetPassword: {
+      // Tiempo de expiración del token (opcional, por defecto es 1 hora)
+      expiresIn: 60 * 60, // 1 hora en segundos
+      
+      // Callback después de reset exitoso (opcional)
+      onSuccess: async (user: any) => {
+        // Enviar email de confirmación
+        const html = passwordUpdatedTemplate({
+          userName: user?.firstName || "Usuario JMV",
+          appName: "JMV República Dominicana",
+          logoUrl: logoUrl,
+          supportEmail: "soporte@jmv.org",
+        });
+
+        await sendEmail({
+          to: user.email,
+          subject: "Contraseña actualizada - JMV",
+          html,
+          text: passwordUpdatedText({ appName: "JMV República Dominicana" }),
+        });
+      },
     },
   },
 
