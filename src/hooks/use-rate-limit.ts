@@ -1,4 +1,4 @@
-// src/hooks/use-rate-limit.ts
+// src/hooks/use-rate-limit.ts - ACTUALIZAR
 import { useState, useCallback, useEffect } from 'react'
 
 interface RateLimitState {
@@ -29,7 +29,6 @@ export function useRateLimit() {
         setRateLimit(data)
         return data
       } else {
-        // Si hay error, asumir que no hay bloqueo para no interrumpir el flujo
         console.warn('Rate limit check failed, allowing request')
         return null
       }
@@ -41,6 +40,28 @@ export function useRateLimit() {
     }
   }, [])
 
+  // ✅ NUEVO: Función para resetear rate limit
+  const resetRateLimit = useCallback(async () => {
+    try {
+      const response = await fetch('/api/rate-limit/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (response.ok) {
+        // Actualizar el estado local después del reset
+        await checkRateLimit()
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error('Error resetting rate limit:', error)
+      return false
+    }
+  }, [checkRateLimit])
+
   // Verificar automáticamente al montar el componente
   useEffect(() => {
     checkRateLimit()
@@ -50,6 +71,7 @@ export function useRateLimit() {
     rateLimit,
     loading,
     checkRateLimit,
+    resetRateLimit, // ✅ NUEVO
     refresh: () => checkRateLimit()
   }
 }

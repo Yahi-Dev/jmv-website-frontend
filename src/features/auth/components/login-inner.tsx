@@ -1,4 +1,4 @@
-// src/features/auth/components/login-inner.tsx
+// src/features/auth/components/login-inner.tsx - ACTUALIZAR
 "use client";
 
 import { useEffect, useState } from "react";
@@ -26,7 +26,7 @@ type SignInResponse = { error?: SignInError | null };
 export function LoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { rateLimit, checkRateLimit } = useRateLimit();
+  const { rateLimit, checkRateLimit, resetRateLimit } = useRateLimit(); // ✅ AGREGAR resetRateLimit
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,13 +35,12 @@ export function LoginInner() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ CORREGIDO: Verificar rate limit solo una vez al cargar
   useEffect(() => {
     const initializeRateLimit = async () => {
       await checkRateLimit();
     };
     initializeRateLimit();
-  }, []); // ✅ Solo al montar el componente
+  }, []);
 
   useEffect(() => {
     if (searchParams.get("reset") === "success") {
@@ -52,7 +51,6 @@ export function LoginInner() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // ✅ CORREGIDO: Solo verificar estado actual (no incrementar)
     const currentRateLimit = await checkRateLimit();
     if (currentRateLimit?.isBlocked) {
       setError(`Demasiados intentos fallidos. Intenta nuevamente en ${currentRateLimit.retryAfter} segundos.`);
@@ -71,8 +69,6 @@ export function LoginInner() {
       })) as SignInResponse;
 
       if (signInError) {
-        // ✅ El middleware ya incrementó el contador automáticamente
-        // Solo actualizamos la UI
         await checkRateLimit();
         
         setError(
@@ -84,8 +80,12 @@ export function LoginInner() {
         return;
       }
 
-      // ✅ LOGIN EXITOSO
+      // ✅ LOGIN EXITOSO: Resetear el rate limit
+      await resetRateLimit();
+      
+      toast.success("¡Inicio de sesión exitoso!");
       router.push("/");
+      
     } catch {
       setError("Ocurrió un error inesperado");
       setProcessing(false);

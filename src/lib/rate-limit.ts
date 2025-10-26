@@ -14,11 +14,11 @@ class MemoryStore {
     if (!entry || now > entry.expiresAt) {
       // Nueva ventana de tiempo
       this.store.set(key, { count: 1, expiresAt: resetTime })
-      
+
       // Limpiar timer existente
       const existingTimer = this.timers.get(key)
       if (existingTimer) clearTimeout(existingTimer)
-      
+
       // Programar limpieza automática
       const timer = setTimeout(() => {
         this.store.delete(key)
@@ -43,6 +43,15 @@ class MemoryStore {
     }
 
     return { count: entry.count, resetTime: entry.expiresAt }
+  }
+
+  async delete(key: string): Promise<void> {
+    this.store.delete(key)
+    const timer = this.timers.get(key)
+    if (timer) {
+      clearTimeout(timer)
+      this.timers.delete(key)
+    }
   }
 }
 
@@ -71,7 +80,7 @@ if (redisUrl && redisToken) {
           const resetTime = now + windowMs
 
           const result = await redis.incr(keyWithPrefix)
-          
+
           if (result === 1) {
             // Primera vez - establecer expiración
             await redis.pexpire(keyWithPrefix, windowMs)
@@ -129,7 +138,7 @@ export interface RateLimitResult {
 }
 
 export class RateLimitService {
-  constructor(private config: RateLimitConfig) {}
+  constructor(private config: RateLimitConfig) { }
 
   async check(identifier: string): Promise<RateLimitResult> {
     try {
@@ -152,11 +161,11 @@ export class RateLimitService {
 
       // Verificar intentos actuales
       const attemptInfo = await store.increment(attemptKey, this.config.windowMs)
-      
+
       if (attemptInfo.count >= this.config.maxAttempts) {
         // Bloquear IP
         await store.increment(blockKey, this.config.blockDurationMs)
-        
+
         return {
           isBlocked: true,
           attempts: attemptInfo.count,
@@ -206,11 +215,11 @@ export class RateLimitService {
 
       // ✅ SOLO AQUÍ incrementar el contador
       const attemptInfo = await store.increment(attemptKey, this.config.windowMs)
-      
+
       if (attemptInfo.count >= this.config.maxAttempts) {
         // Bloquear IP
         await store.increment(blockKey, this.config.blockDurationMs)
-        
+
         return {
           isBlocked: true,
           attempts: attemptInfo.count,
@@ -284,12 +293,34 @@ export class RateLimitService {
     }
   }
 
-  // ✅ NUEVO: Resetear contador en login exitoso
-  async resetAttempts(identifier: string): Promise<void> {
+  async resetAttempts(identifier: string): Promise<boolean> {
     try {
-      console.log(`Rate limit reset for successful login: ${identifier}`)
+      const attemptKey = `attempt:${identifier}`;
+      const blockKey = `block:${identifier}`;
+
+      if (redisUrl && redisToken) {
+        // Para Redis: eliminar las keys
+        const redis = new Redis({
+          url: redisUrl,
+          token: redisToken,
+        });
+        await redis.del(`rate-limit:${attemptKey}`);
+        await redis.del(`rate-limit:${blockKey}`);
+      } else {
+        // Para Memory Store: eliminar del Map
+        const memoryStore = store as MemoryStore;
+        // Necesitamos acceder a los métodos internos del MemoryStore
+        (memoryStore as any).store?.delete(attemptKey);
+        (memoryStore as any).store?.delete(blockKey);
+        (memoryStore as any).timers?.delete(attemptKey);
+        (memoryStore as any).timers?.delete(blockKey);
+      }
+
+      console.log(`✅ Rate limit reset for IP: ${identifier}`);
+      return true;
     } catch (error) {
-      console.error('Rate limit reset error:', error)
+      console.error('Rate limit reset error:', error);
+      return false;
     }
   }
 }
