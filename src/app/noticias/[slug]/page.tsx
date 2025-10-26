@@ -5,7 +5,7 @@ import { Separator } from "@/src/components/ui/separator"
 import { Star, Calendar, User, ArrowLeft, Share2, Clock, ArrowRight, BookOpen } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import Navbar from "@/src/components/Navbar"
+import Navbar from "@/src/components/shared/Navbar"
 
 // Dummy news data (in a real app, this would come from a database)
 const newsArticles = {

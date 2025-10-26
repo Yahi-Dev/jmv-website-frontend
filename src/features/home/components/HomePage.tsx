@@ -1,8 +1,8 @@
-import Navbar from "@/src/components/Navbar"
+import Navbar from "@/src/components/shared/Navbar"
 import { HeroSection } from "./HeroSection"
 import { ValuesSection } from "./ValuesSection"
 import { ActivitiesSection } from "./ActivitiesSection"
-import { FooterSection } from "./FooterSection"
+import { FooterSection } from "../../../components/shared/FooterSection"
 import { PillarsSection } from "./PillarsSection"
 import { TestimonialsSection } from "./TestimonialsSection"
 

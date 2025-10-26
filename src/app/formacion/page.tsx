@@ -4,7 +4,7 @@ import { Badge } from "@/src/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Star, BookOpen, Users, Heart, Download, ExternalLink, FileText, Video, Headphones, ArrowRight, User } from "lucide-react"
 import Link from "next/link"
-import Navbar from "@/src/components/Navbar"
+import Navbar from "@/src/components/shared/Navbar"
 
 export default function FormacionPage() {
   return (

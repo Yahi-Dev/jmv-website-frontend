@@ -1,4 +1,4 @@
-import Navbar from "@/src/components/Navbar"
+import Navbar from "@/src/components/shared/Navbar"
 import ConsejoNacionalSection from "./ui/ConsejoCard"
 
 export default function ConsejoPage() {

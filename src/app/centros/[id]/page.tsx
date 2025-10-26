@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/src
 import { Badge } from "@/src/components/ui/badge"
 import { Button } from "@/src/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/src/components/ui/dialog"
-import Navbar from "@/src/components/Navbar"
+import Navbar from "@/src/components/shared/Navbar"
 import { CouncilGrid, MiembroConsejo } from "../../consejos/ui/Council"
 
 // ---------- Tipos básicos ----------
