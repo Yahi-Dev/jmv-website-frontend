@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/src/components/ui/card"
 import { Star, Edit, Trash2, Plus } from "lucide-react"
 import { Button } from "@/src/components/ui/button"
 import { useEffect, useState } from "react"
-import { getCurrentUser } from "@/src/lib/current-user"
+import { getClientUser } from "@/src/lib/client-auth" // Cambia esta importación
 
 interface Testimonial {
   id: number
@@ -43,7 +43,7 @@ export function TestimonialsSection() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const user = await getCurrentUser()
+        const user = await getClientUser() // Usa la función del cliente
         setIsLoggedIn(!!user)
       } catch (error) {
         console.error("Error checking auth:", error)
@@ -55,10 +55,6 @@ export function TestimonialsSection() {
   }, [])
 
   const handleEdit = (testimonial: Testimonial) => {
-    // Aquí puedes abrir un modal o formulario de edición
-    console.log("Editando testimonio:", testimonial)
-    
-    // Ejemplo de edición simple:
     const newQuote = prompt("Editar testimonio:", testimonial.quote)
     if (newQuote) {
       setTestimonials(prev => 
@@ -84,7 +80,7 @@ export function TestimonialsSection() {
     
     if (name && chapter && quote) {
       const newTestimonial: Testimonial = {
-        id: Date.now(), // ID temporal
+        id: Date.now(),
         name,
         chapter,
         quote,
@@ -136,7 +132,6 @@ export function TestimonialsSection() {
               className="relative transition-all duration-300 border-0 shadow-lg hover:shadow-xl hover:-translate-y-1 bg-gradient-to-br from-card to-background group"
             >
               <CardContent className="pt-8 pb-6">
-                {/* Botones de acción (solo para usuarios logueados) */}
                 {isLoggedIn && (
                   <div className="absolute flex gap-2 transition-opacity duration-200 opacity-0 top-4 right-4 group-hover:opacity-100">
                     <Button

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Mail, Lock, ArrowRight, Sparkles } from "lucide-react";
+import { Mail, Lock, ArrowRight, Sparkles, Eye, EyeOff } from "lucide-react"; // Agregar Eye y EyeOff
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Card, CardContent } from "@/src/components/ui/card";
@@ -29,6 +29,7 @@ export function LoginInner() {
   const [rememberMe, setRememberMe] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false); // Nuevo estado para mostrar contraseña
 
   useEffect(() => {
     if (searchParams.get("reset") === "success") {
@@ -46,7 +47,7 @@ export function LoginInner() {
         email,
         password,
         rememberMe,
-        callbackURL: "/dashboard",
+        callbackURL: "/",
       })) as SignInResponse;
 
       if (signInError) {
@@ -59,11 +60,15 @@ export function LoginInner() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push("/");
     } catch {
       setError("Ocurrió un error inesperado");
       setProcessing(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -73,7 +78,7 @@ export function LoginInner() {
           <CardContent className="p-0">
             <div className="grid lg:grid-cols-2">
               {/* Columna Izquierda - Formulario */}
-             <div className="relative p-10 bg-gradient-to-br from-white via-card to-background lg:p-12">
+              <div className="relative p-10 bg-gradient-to-br from-white via-card to-background lg:p-12">
                 <div className="mb-10">
                   <h1 className="text-4xl font-bold tracking-tight text-gray-900">INICIAR SESIÓN</h1>
                   <div className="mt-3 h-1.5 w-20 rounded-full bg-gradient-to-r from-primary to-secondary" />
@@ -122,15 +127,24 @@ export function LoginInner() {
                         </div>
                         <Input
                           id="password"
-                          type="password"
+                          type={showPassword ? "text" : "password"} // Cambiar tipo basado en showPassword
                           required
                           autoComplete="current-password"
                           value={password}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
                           placeholder="Ingresa tu contraseña"
-                          className="h-12 pl-12 text-gray-900 transition-all duration-200 bg-white border-2 border-gray-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                          className="h-12 pl-12 pr-12 text-gray-900 transition-all duration-200 bg-white border-2 border-gray-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
                           disabled={processing}
                         />
+                        {/* Botón para mostrar/ocultar contraseña */}
+                        <button
+                          type="button"
+                          onClick={togglePasswordVisibility}
+                          className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-colors duration-200 hover:text-gray-600"
+                          disabled={processing}
+                        >
+                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
                       </div>
                     </div>
 
@@ -171,41 +185,29 @@ export function LoginInner() {
 
               {/* Columna Derecha - Información JMV */}
               <div className="relative p-10 bg-gradient-to-br from-blue-50 to-blue-100/80 lg:p-12">
-                <div className="flex justify-center mb-8">
-                  <div className="p-6 bg-white shadow-lg rounded-2xl">
-                    <div className="relative w-24 h-24">
-                      <Image
-                        src="/logo/JMV-Logo.png"
-                        alt="JMV Logo"
-                        fill
-                        className="object-contain drop-shadow-[0_4px_20px_rgba(59,130,246,0.3)]"
-                        priority
-                      />
+                <div className="flex flex-col items-center justify-center h-full">
+                  {/* Logo más grande y centrado */}
+                  <div className="flex justify-center mb-8">
+                    <div className="p-8 transition-all duration-300 transform bg-white shadow-2xl rounded-3xl">
+                      <div className="relative w-50 h-50"> {/* Tamaño aumentado de 24 a 40 */}
+                        <Image
+                          src="/logo/JMV-Logo.png"
+                          alt="JMV Logo"
+                          fill
+                          className="object-contain drop-shadow-[0_8px_30px_rgba(59,130,246,0.4)]"
+                          priority
+                          sizes="170px"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="space-y-6 text-center">
-                  <div className="space-y-3">
-                    <h2 className="text-2xl font-bold text-gray-900">Juventud Mariana Vicenciana</h2>
-                    <p className="leading-relaxed text-gray-600">
-                      Formación, oración y servicio, al estilo de María y San Vicente de Paúl. 
-                      Únete a nuestra comunidad de jóvenes comprometidos con la fe y el servicio.
-                    </p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <Sparkles className="w-4 h-4 text-blue-500" />
-                      <span>Formación espiritual y humana</span>
-                    </div>
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <Sparkles className="w-4 h-4 text-blue-500" />
-                      <span>Servicio a los más necesitados</span>
-                    </div>
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600">
-                      <Sparkles className="w-4 h-4 text-blue-500" />
-                      <span>Comunidad de fe y apoyo</span>
+                  <div className="space-y-6 text-center">
+                    <div className="space-y-3">
+                      <h2 className="text-3xl font-bold text-gray-900">Juventud Mariana Vicenciana</h2>
+                      <p className="max-w-md text-lg text-gray-600">
+                        Formando jóvenes comprometidos con los valores vicencianos
+                      </p>
                     </div>
                   </div>
                 </div>

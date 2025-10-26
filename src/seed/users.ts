@@ -1,6 +1,6 @@
 // src/seed/users.ts
+import { auth } from "@/src/lib/auth";
 import { PrismaClient } from "@prisma/client";
-import { hashSync } from "bcrypt";
 
 export async function seedUsers(prisma: PrismaClient) {
   const testEmail = "yahinnieltheking01@gmail.com";
@@ -9,77 +9,77 @@ export async function seedUsers(prisma: PrismaClient) {
   console.log("👤 Creando usuario de prueba para JMV...");
 
   try {
-    // 1) Crear usuario directamente en la tabla User
-    const testUser = await prisma.user.upsert({
-      where: { email: testEmail },
-      update: {},
-      create: {
+    // 1) Crear usuario usando la API de Better Auth (esto usará scrypt automáticamente)
+    const userRes = await auth.api.signUpEmail({
+      body: {
         email: testEmail,
+        password: testPassword,
         name: "Test User JMV",
         userName: "testuser",
         firstName: "Test",
-        lastName: "User", 
-        isActive: true,
+        lastName: "User",
       },
-    });
-
-    console.log("✅ Usuario creado:", testUser.id);
-
-    // 2) Crear account para este usuario (necesario para Better Auth)
-    const userAccount = await prisma.account.upsert({
-      where: {
-        userId_providerId_accountId: {
-          userId: testUser.id,
-          providerId: "credential",
-          accountId: testUser.id,
+    }).catch(async (error) => {
+      console.log("⚠️ Usuario ya existe, intentando eliminar y recrear...");
+      
+      // Eliminar usuario existente problemático
+      await prisma.account.deleteMany({
+        where: { 
+          user: { email: testEmail },
+          providerId: "credential" 
         }
-      },
-      update: {},
-      create: {
-        userId: testUser.id,
-        accountId: testUser.id,
-        providerId: "credential",
-        password: hashSync(testPassword, 12),
-      },
+      });
+      await prisma.user.deleteMany({
+        where: { email: testEmail }
+      });
+
+      // Crear nuevo usuario
+      const newUser = await auth.api.signUpEmail({
+        body: {
+          email: testEmail,
+          password: testPassword,
+          name: "Test User JMV",
+          userName: "testuser",
+          firstName: "Test",
+          lastName: "User",
+        },
+      });
+      return newUser;
     });
 
-    console.log("✅ Account creado para usuario");
+    console.log("✅ Usuario creado con Better Auth:", userRes.user.id);
 
-    // 3) Crear la estructura de datos JMV
+    // 2) Crear estructura JMV
     console.log("🏗️ Creando estructura de datos JMV...");
 
-    // Crear estatus por defecto
     const estatusActivo = await prisma.estatus.upsert({
       where: { id: 1 },
       update: {},
       create: {
         nombre: 'Activo',
-        createdById: testUser.id,
+        createdById: userRes.user.id,
       },
     });
 
-    // Crear tipo de vocalía
     const tipoVocalia = await prisma.tipo.upsert({
       where: { id: 1 },
       update: {},
       create: {
         nombre: 'General',
-        createdById: testUser.id,
+        createdById: userRes.user.id,
       },
     });
 
-    // Crear vocalía
     const vocaliaGeneral = await prisma.vocalia.upsert({
       where: { id: 1 },
       update: {},
       create: {
         nombre: 'General',
         id_Tipovocalia: tipoVocalia.id,
-        createdById: testUser.id,
+        createdById: userRes.user.id,
       },
     });
 
-    // Crear centro
     const centroPrincipal = await prisma.centro.upsert({
       where: { id: 1 },
       update: {},
@@ -87,11 +87,10 @@ export async function seedUsers(prisma: PrismaClient) {
         nombre: 'Centro Principal JMV',
         direccion: 'Santo Domingo, República Dominicana',
         estatusId: estatusActivo.id,
-        createdById: testUser.id,
+        createdById: userRes.user.id,
       },
     });
 
-    // Crear comunidad
     const comunidadPrincipal = await prisma.comunidad.upsert({
       where: { id: 1 },
       update: {},
@@ -101,17 +100,17 @@ export async function seedUsers(prisma: PrismaClient) {
         idEtapa: 1,
         centroId: centroPrincipal.id,
         estatusId: estatusActivo.id,
-        createdById: testUser.id,
+        createdById: userRes.user.id,
       },
     });
 
-    // 4) Crear registro en la tabla Usuarios
-    const usuarioJMV = await prisma.usuarios.upsert({
+    // 3) Crear usuario en tabla Usuarios
+    await prisma.usuarios.upsert({
       where: { id: 1 },
       update: {
-        createdById: testUser.id,
+        createdById: userRes.user.id,
         modifiedDate: new Date(),
-        modifiedById: testUser.id,
+        modifiedById: userRes.user.id,
       },
       create: {
         nombre: 'Test',
@@ -121,26 +120,15 @@ export async function seedUsers(prisma: PrismaClient) {
         idCentro: centroPrincipal.id,
         idVocalia: vocaliaGeneral.id,
         idEstatus: estatusActivo.id,
-        createdById: testUser.id,
+        createdById: userRes.user.id,
       },
     });
 
-    console.log("✅ Usuario JMV creado en tabla usuarios:", usuarioJMV.id);
-
-    console.log("\n🎉 SEED COMPLETADO EXITOSAMENTE");
-    console.log("=================================");
-    console.log("📋 CREDENCIALES DE PRUEBA:");
-    console.log("   Email: " + testEmail);
-    console.log("   Contraseña: " + testPassword);
-    console.log("   Username: testuser");
-    console.log("\n🏠 Estructura creada:");
-    console.log("   - Centro: Centro Principal JMV");
-    console.log("   - Comunidad: Comunidad Principal");
-    console.log("   - Vocalía: General");
-    console.log("   - Estatus: Activo");
+    console.log("🎉 SEED COMPLETADO EXITOSAMENTE");
+    console.log("📋 CREDENCIALES: test@jmv.com / password123");
 
   } catch (error) {
-    console.error("❌ Error en seed de usuarios:", error);
+    console.error("❌ Error en seed:", error);
     throw error;
   }
 }

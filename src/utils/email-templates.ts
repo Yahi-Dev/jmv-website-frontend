@@ -1,13 +1,13 @@
 // Colores basados en tu HomePage JMV
 const JMV_COLORS = {
-  primary: "#3b82f6",      // Azul principal (como en tus botones)
-  secondary: "#8b5cf6",    // Morado secundario (gradiente)
-  accent: "#06b6d4",       // Azul turquesa para acentos
+  primary: "#2563eb",      // Azul más vibrante y encendido
+  secondary: "#1d4ed8",    // Azul oscuro para contraste
+  accent: "#0ea5e9",       // Azul cielo brillante
   text: "#111827",         // Texto principal (gray-900)
   muted: "#6b7280",        // Texto secundario (gray-500)
-  bg: "#f8fafc",           // Fondo (slate-50)
+  bg: "#f0f9ff",           // Fondo azul claro (sky-50)
   card: "#ffffff",         // Fondo de tarjetas
-  border: "#e5e7eb",       // Bordes (gray-200)
+  border: "#e0f2fe",       // Bordes azul muy claro (sky-100)
 };
 
 //Reset Password Email Template (HTML and Text)
@@ -45,7 +45,7 @@ export function resetPasswordTemplate({
       }
     </style>
   </head>
-  <body style="margin:0; padding:0; background:${bg};">
+  <body style="margin:0; padding:0;">
     <!-- Preheader (oculto) -->
     <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:transparent; visibility:hidden;">
       ${preheader} — Si no solicitaste este cambio, ignora este mensaje.
@@ -66,7 +66,7 @@ export function resetPasswordTemplate({
                     <td align="center" class="px" style="padding: 32px 40px;">
                       <!-- Logo -->
                       <div style="display:inline-block; background:#fff; border-radius:16px; padding:16px; box-shadow:0 10px 25px rgba(59, 130, 246, 0.1);">
-                        <img src="${safeLogo}" alt="${appName} Logo" width="114" height="114" style="display:block; border:0; outline:none; text-decoration:none;" />
+                        <img src="${safeLogo}" alt="${appName} Logo" width="174" height="174" style="display:block; border:0; outline:none; text-decoration:none;" />
                       </div>
 
                       <!-- Heading -->
