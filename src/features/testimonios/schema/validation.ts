@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const testimonioSchema = z.object({
   nombre: z.string()
-    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .min(7, "El nombre debe tener al menos 7 caracteres")
     .max(50, "El nombre no puede exceder 50 caracteres")
     .regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, "El nombre solo puede contener letras y espacios"),
 

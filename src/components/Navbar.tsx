@@ -109,10 +109,10 @@ export default function Navbar() {
           ) : user ? (
             // Usuario autenticado - Mostrar botón de logout
             <Button
-              variant="outline"
+              variant="destructive"
               size="icon"
               onClick={handleLogout}
-              className="transition-all duration-200 bg-transparent border-2 rounded-full hover:border-destructive hover:scale-105"
+              className="text-red-600 transition-all duration-200 bg-transparent border-2 rounded-full hover:border-destructive hover:scale-105 hover:text-white"
               title="Cerrar sesión"
             >
               <LogOut className="w-5 h-5" />

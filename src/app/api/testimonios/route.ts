@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     const cacheKey = `${CACHE_KEY}-page-${page}-limit-${limit}-search-${search}`
     const data = await getOrSetCache(cacheKey, async () => {
       return testimonios
-    }, 1800) // 30 minutos de cache
+    },)
 
     return sendSuccess({
       Data: data ?? [],
@@ -90,19 +90,7 @@ export async function POST(req: NextRequest) {
         formErrors: errorDetails.formErrors
       });
     }
-
-    // Verificar si el testimonio ya existe
-    const exists = await prisma.testimonios.findFirst({ 
-      where: { 
-        nombre: parsed.data.nombre 
-      } 
-    });
     
-    if (exists) {
-      // ✅ USANDO sendBadRequest PARA CONFLICTO DE DATOS
-      return sendBadRequest('El nombre de testimonio ya existe');
-    }
-
     // Obtener sesión del usuario
     const session = await auth.api.getSession({ 
       headers: Object.fromEntries(req.headers) 

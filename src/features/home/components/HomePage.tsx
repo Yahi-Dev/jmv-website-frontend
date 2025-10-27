@@ -4,7 +4,7 @@ import { ValuesSection } from "./ValuesSection"
 import { ActivitiesSection } from "./ActivitiesSection"
 import { FooterSection } from "../../../components/shared/FooterSection"
 import { PillarsSection } from "./PillarsSection"
-import { TestimonialsSection } from "./TestimonialsSection"
+import { TestimonialsSection } from "../../testimonios/components/TestimonialsSection"
 
 export function HomePage() {
   return (

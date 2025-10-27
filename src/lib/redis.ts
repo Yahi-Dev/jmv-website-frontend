@@ -10,7 +10,7 @@ export default redis;
 export async function getOrSetCache<T>(
         key: string,
         fetcher: () => Promise<T>,
-        ttlSeconds = 300
+        ttlSeconds = 240
     ): Promise<T> {
         try {
             const cached = await redis.get(key);

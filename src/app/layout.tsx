@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   creator: "JMV República Dominicana",
   publisher: "JMV República Dominicana",
   icons: {
-    icon: "/JMV-Logo.png",
+    icon: "/logo/JMV-Logo.png",
   },
   openGraph: {
     title: "JMV República Dominicana | Juventud Mariana Vicenciana",
