@@ -168,12 +168,12 @@ export function useCreateTestimonio() {
 
 
 
-export function useUpdateTestimonio(id: number) {
+export function useUpdateTestimonio() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const update = async (data: TestimonioUpdateData): Promise<TestimonioResponse | null> => {
+  const update = async (id: number, data: TestimonioUpdateData): Promise<TestimonioResponse | null> => { 
     setIsLoading(true);
     setError(null);
 
@@ -205,7 +205,6 @@ export function useUpdateTestimonio(id: number) {
 
   return { update, isLoading, error, clearError };
 };
-
 
 
 

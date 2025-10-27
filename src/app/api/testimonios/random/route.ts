@@ -1,10 +1,7 @@
 // app/api/testimonios/random/route.ts
 import { NextRequest } from 'next/server';
 import prisma from '@/src/lib/prisma';
-import { getOrSetCache } from '@/src/lib/redis';
 import { sendSuccess, sendBadRequest, sendServerError } from '@/src/utils/httpResponse';
-
-const RANDOM_CACHE_KEY = "testimonios-random";
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,57 +12,61 @@ export async function GET(req: NextRequest) {
       return sendBadRequest('El parámetro count debe ser entre 1 y 100');
     }
 
-    const cacheKey = `${RANDOM_CACHE_KEY}-${count}`;
+    console.log(`🔍 Obteniendo ${count} testimonios aleatorios...`);
     
-    const data = await getOrSetCache(cacheKey, async () => {
-      // Obtener todos los testimonios no eliminados
-      const totalTestimonios = await prisma.testimonios.count({
-        where: { deleted: false }
-      });
+    // Obtener todos los testimonios no eliminados
+    const totalTestimonios = await prisma.testimonios.count({
+      where: { deleted: false }
+    });
 
-      if (totalTestimonios === 0) {
-        return [];
-      }
+    if (totalTestimonios === 0) {
+      return sendSuccess({
+        Data: [],
+        Total: 0
+      }, "No hay testimonios disponibles");
+    }
 
-      // Si hay menos testimonios que el count solicitado, devolver todos
-      const takeCount = Math.min(count, totalTestimonios);
+    // Si hay menos testimonios que el count solicitado, devolver todos
+    const takeCount = Math.min(count, totalTestimonios);
 
-      // Obtener IDs aleatorios
-      const randomIds = await prisma.$queryRaw<{id: number}[]>`
-        SELECT id FROM "Testimonios" 
-        WHERE deleted = false 
-        ORDER BY RANDOM() 
-        LIMIT ${takeCount}
-      `;
+    // Obtener IDs aleatorios
+    const randomIds = await prisma.$queryRaw<{id: number}[]>`
+      SELECT id FROM "Testimonios" 
+      WHERE deleted = false 
+      ORDER BY RANDOM() 
+      LIMIT ${takeCount}
+    `;
 
-      if (randomIds.length === 0) {
-        return [];
-      }
+    if (randomIds.length === 0) {
+      return sendSuccess({
+        Data: [],
+        Total: 0
+      }, "No se encontraron testimonios aleatorios");
+    }
 
-      // Obtener los testimonios completos
-      const testimonios = await prisma.testimonios.findMany({
-        where: {
-          id: { in: randomIds.map(r => r.id) },
-          deleted: false
-        },
-        select: {
-          id: true,
-          nombre: true,
-          mensaje: true,
-          reputacion: true,
-          iglesia: true,
-          createdDate: true,
-        },
-        orderBy: { createdDate: "desc" }
-      });
+    // Obtener los testimonios completos
+    const testimonios = await prisma.testimonios.findMany({
+      where: {
+        id: { in: randomIds.map(r => r.id) },
+        deleted: false
+      },
+      select: {
+        id: true,
+        nombre: true,
+        mensaje: true,
+        reputacion: true,
+        iglesia: true,
+        createdDate: true,
+      },
+      orderBy: { createdDate: "desc" }
+    });
 
-      return testimonios;
-    }, 900); // 15 minutos de cache para variar los testimonios
+    console.log(`✅ ${testimonios.length} testimonios aleatorios obtenidos`);
 
     return sendSuccess({
-      Data: data,
-      Total: data.length
-    }, `${data.length} testimonios aleatorios obtenidos exitosamente`);
+      Data: testimonios,
+      Total: testimonios.length
+    }, `${testimonios.length} testimonios aleatorios obtenidos exitosamente`);
 
   } catch (error) {
     console.error("Error fetching random testimonios:", error);

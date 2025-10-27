@@ -21,10 +21,9 @@ export function TestimonialsSection() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedTestimonio, setSelectedTestimonio] = useState<TestimonioType | null>(null)
 
-  // ✅ CAMBIO: Usar useLatestTestimonios en lugar de useRandomTestimonios
   const { testimonios, isLoading, fetchLatest } = useLatestTestimonios(3)
   const { create, isLoading: isCreating } = useCreateTestimonio()
-  const { update, isLoading: isUpdating } = useUpdateTestimonio(selectedTestimonio?.id || 0)
+  const { update, isLoading: isUpdating } = useUpdateTestimonio()
   const { remove, isLoading: isDeleting } = useDeleteTestimonio()
 
   useEffect(() => {
@@ -41,20 +40,21 @@ export function TestimonialsSection() {
 
   const handleCreate = async (data: any) => {
     await create(data)
-    await fetchLatest() // Refrescar los testimonios más recientes
+    await fetchLatest()
   }
 
   const handleEdit = async (data: any) => {
     if (selectedTestimonio?.id) {
-      await update(data)
-      await fetchLatest() // Refrescar los testimonios más recientes
+      await update(selectedTestimonio.id, data)
+      await fetchLatest() 
     }
   }
+
 
   const handleDelete = async () => {
     if (selectedTestimonio?.id) {
       await remove(selectedTestimonio.id)
-      await fetchLatest() // Refrescar los testimonios más recientes
+      await fetchLatest() 
     }
   }
 
@@ -211,9 +211,10 @@ function TestimonioCard({
           />
         </div>
 
-        <blockquote className="mb-6 text-base italic leading-relaxed text-center text-foreground/90">
+        <blockquote className="mb-6 overflow-hidden text-base italic leading-relaxed text-center break-words whitespace-pre-line text-foreground/90">
           "{testimonio.mensaje}"
         </blockquote>
+
 
         <div className="text-center">
           <div className="text-lg font-bold text-foreground">{testimonio.nombre}</div>

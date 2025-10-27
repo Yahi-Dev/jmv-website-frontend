@@ -1,7 +1,7 @@
 // src/features/testimonios/components/testimonio-form-dialog.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { TestimonioCreateData, testimonioCreateSchema, TestimonioUpdateData } from "../schema/validation"
@@ -37,6 +37,10 @@ interface TestimonioFormDialogProps {
   mode: "create" | "edit"
 }
 
+// Constantes para los límites de caracteres
+const MAX_MESSAGE_LENGTH = 200
+const MIN_MESSAGE_LENGTH = 10
+
 export function TestimonioFormDialog({
   open,
   onOpenChange,
@@ -45,6 +49,8 @@ export function TestimonioFormDialog({
   initialData,
   mode
 }: TestimonioFormDialogProps) {
+  const [charCount, setCharCount] = useState(0)
+
   const form = useForm<TestimonioCreateData>({
     resolver: zodResolver(testimonioCreateSchema),
     defaultValues: {
@@ -55,13 +61,40 @@ export function TestimonioFormDialog({
     }
   })
 
+  // Actualizar el contador cuando cambia el mensaje
+  const messageValue = form.watch("mensaje")
+  useEffect(() => {
+    setCharCount(messageValue?.length || 0)
+  }, [messageValue])
+
+  // Resetear el contador cuando se abre/cierra el dialog
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        nombre: initialData.nombre || "",
+        mensaje: initialData.mensaje || "",
+        reputacion: initialData.reputacion || 5,
+        iglesia: initialData.iglesia || "",
+      })
+    }
+  }, [open, initialData, form])
+
   const handleSubmit = async (data: TestimonioCreateData) => {
     try {
       await onSubmit(data)
       form.reset()
+      setCharCount(0)
       onOpenChange(false)
     } catch (error) {
       // El error ya se maneja en el hook
+    }
+  }
+
+  // Función para manejar el cambio del textarea y limitar caracteres
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>, onChange: (value: string) => void) => {
+    const value = e.target.value
+    if (value.length <= MAX_MESSAGE_LENGTH) {
+      onChange(value)
     }
   }
 
@@ -101,15 +134,43 @@ export function TestimonioFormDialog({
               name="mensaje"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Testimonio *</FormLabel>
+                  <FormLabel className="flex items-center justify-between">
+                    <span>Testimonio *</span>
+                    <span className={`text-sm font-normal ${
+                      charCount > MAX_MESSAGE_LENGTH ? 'text-destructive' : 
+                      charCount >= MIN_MESSAGE_LENGTH ? 'text-green-600' : 'text-muted-foreground'
+                    }`}>
+                      {charCount}/{MAX_MESSAGE_LENGTH}
+                    </span>
+                  </FormLabel>
                   <FormControl>
-                    <Textarea 
-                      placeholder="Comparte tu experiencia en JMV..." 
-                      className="min-h-[100px]"
-                      {...field} 
-                    />
+                    <div className="relative">
+                      <Textarea
+                        placeholder="Comparte tu experiencia en JMV..."
+                        className="min-h-[100px] pr-12 break-words break-all whitespace-pre-wrap"
+                        {...field}
+                        onChange={(e) => handleMessageChange(e, field.onChange)}
+                        value={field.value || ""}
+                      />
+                      {charCount > MAX_MESSAGE_LENGTH && (
+                        <div className="absolute right-3 top-3">
+                          <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />
+                        </div>
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {charCount < MIN_MESSAGE_LENGTH && (
+                      <span>Mínimo {MIN_MESSAGE_LENGTH} caracteres</span>
+                    )}
+                    {charCount >= MIN_MESSAGE_LENGTH && charCount <= MAX_MESSAGE_LENGTH && (
+                      <span className="text-green-600">✓ Longitud adecuada</span>
+                    )}
+                    {charCount > MAX_MESSAGE_LENGTH && (
+                      <span className="text-destructive">✗ Límite excedido</span>
+                    )}
+                  </div>
                 </FormItem>
               )}
             />
@@ -155,12 +216,18 @@ export function TestimonioFormDialog({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  onOpenChange(false)
+                  setCharCount(0)
+                }}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                disabled={isLoading || charCount < MIN_MESSAGE_LENGTH || charCount > MAX_MESSAGE_LENGTH}
+              >
                 {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                 {mode === "create" ? "Crear Testimonio" : "Guardar Cambios"}
               </Button>

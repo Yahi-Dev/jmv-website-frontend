@@ -1,18 +1,9 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/src/lib/prisma';
-import redis, { getOrSetCache } from '@/src/lib/redis';
 import { sendBadRequest, sendCreated, sendNotFound, sendServerError, sendSuccess } from '@/src/utils/httpResponse';
 import { Prisma } from '@prisma/client';
 import { testimonioCreateSchema, testimonioUpdateSchema } from '@/src/features/testimonios/schema/validation';
 import { auth } from '@/src/lib/auth';
-
-
-
-
-const CACHE_KEY = "testimonios-cache";
-
-
-
 
 export async function GET(req: NextRequest) {
   try {
@@ -55,13 +46,10 @@ export async function GET(req: NextRequest) {
       prisma.testimonios.count({ where })
     ])
 
-    const cacheKey = `${CACHE_KEY}-page-${page}-limit-${limit}-search-${search}`
-    const data = await getOrSetCache(cacheKey, async () => {
-      return testimonios
-    },)
+    console.log('📦 Datos obtenidos directamente de BD:', testimonios.length);
 
     return sendSuccess({
-      Data: data ?? [],
+      Data: testimonios,
       Total: total,
       Page: page
     }, "Testimonios obtenidos exitosamente")
@@ -117,16 +105,6 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    // Invalidar cache si Redis está configurado
-    if (redis) {
-      try {
-        await redis.del(CACHE_KEY);
-        console.log('✅ Cache invalidado para testimonios');
-      } catch (cacheError) {
-        console.warn('⚠️ Error al invalidar cache:', cacheError);
-      }
-    }
-
     // ✅ USANDO sendCreated PARA RECURSO CREADO EXITOSAMENTE
     return sendCreated({
       Data: created
@@ -167,13 +145,6 @@ export async function PUT(request: NextRequest) {
       return sendNotFound('Testimonio no encontrado');
     }
 
-    if (parsed.data.nombre && parsed.data.nombre !== existing.nombre) {
-      const nameExists = await prisma.testimonios.findFirst({
-        where: { nombre: parsed.data.nombre, id: { not: id } }
-      });
-      if (nameExists) return sendBadRequest('El nombre ya está en uso');
-    }
-
     const session = await auth.api.getSession({ 
       headers: Object.fromEntries(request.headers) 
     });
@@ -186,12 +157,6 @@ export async function PUT(request: NextRequest) {
         modifiedById: session?.user?.email ?? "sistema@jmv.org",
       }
     });
-
-    try {
-      await redis.del(CACHE_KEY);
-    } catch (cacheError) {
-      console.warn('Cache error:', cacheError);
-    }
 
     return sendSuccess({
       Data: updated
@@ -255,18 +220,6 @@ export async function DELETE(request: NextRequest) {
         deletedById: session?.user?.email ?? "sistema@jmv.org",
       } 
     });
-
-    if (redis) {
-      try {
-        const keys = await redis.keys(`${CACHE_KEY}*`);
-        if (keys.length > 0) {
-          await redis.del(...keys);
-        }
-        console.log(`✅ Cache invalidado después de eliminar testimonio ID: ${id}`);
-      } catch (cacheError) {
-        console.warn('⚠️ Error al invalidar cache:', cacheError);
-      }
-    }
 
     return sendSuccess({
       Data: {

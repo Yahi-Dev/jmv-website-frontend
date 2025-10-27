@@ -72,6 +72,7 @@ export async function createTestimonio(
 
 
 export async function getTestimonioById(id: number): Promise<TestimonioResponse> {
+  console.log("Obteniendo testimonio con ID:", id);
   if (!Number.isInteger(id) || id <= 0) {
     throw new Error("ID inválido");
   }
