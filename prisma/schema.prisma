@@ -315,10 +315,12 @@ model Testimonios {
   deletedByIp  String?
 }
 
-model Videos {
+model Formacion {
   id           Int       @id @default(autoincrement())
   ruta_video   String?
   titulo       String?
+  detalles     String?
+  modulo       ModulosFormacion?
 
 
   createdDate  DateTime  @default(now())
@@ -329,7 +331,7 @@ model Videos {
   deletedById  String?
 }
 
-enum EstatusUsuario {
+enum ModulosFormacion {
   Voluntario
   Catequesis
   Oraciones

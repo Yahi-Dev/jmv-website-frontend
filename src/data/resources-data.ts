@@ -55,91 +55,6 @@ export const RESOURCES_DATA: Resource[] = [
     }
   },
   {
-    id: "biblioteca-digital",
-    title: "Biblioteca Digital Vicenciana",
-    description: "Textos clásicos de espiritualidad vicenciana",
-    icon: BookOpen,
-    actions: {
-      primary: {
-        label: "Acceder",
-        icon: ExternalLink,
-        variant: "outline"
-      },
-      secondary: {
-        icon: Download,
-        variant: "outline"
-      }
-    }
-  },
-  {
-    id: "dinamicas-grupales",
-    title: "Banco de Dinámicas Grupales",
-    description: "Actividades para encuentros formativos y retiros",
-    icon: Users,
-    actions: {
-      primary: {
-        label: "Descargar PDF",
-        icon: Download,
-        variant: "outline"
-      },
-      secondary: {
-        icon: ExternalLink,
-        variant: "outline"
-      }
-    }
-  },
-  {
-    id: "oraciones-jmv",
-    title: "Liturgia de las Horas JMV",
-    description: "Colección de oraciones y reflexiones para cada tiempo",
-    icon: Heart,
-    actions: {
-      primary: {
-        label: "Descargar PDF",
-        icon: Download,
-        variant: "outline"
-      },
-      secondary: {
-        icon: ExternalLink,
-        variant: "outline"
-      }
-    }
-  },
-  {
-    id: "planificador-pastoral",
-    title: "Planificador Pastoral Anual",
-    description: "Calendario y herramientas para planificación pastoral",
-    icon: Calendar,
-    actions: {
-      primary: {
-        label: "Descargar",
-        icon: Download,
-        variant: "outline"
-      },
-      secondary: {
-        icon: ExternalLink,
-        variant: "outline"
-      }
-    }
-  },
-  {
-    id: "mapa-misiones",
-    title: "Mapa de Misiones JMV",
-    description: "Geolocalización de comunidades y proyectos misioneros",
-    icon: MapPin,
-    actions: {
-      primary: {
-        label: "Explorar",
-        icon: ExternalLink,
-        variant: "outline"
-      },
-      secondary: {
-        icon: Download,
-        variant: "outline"
-      }
-    }
-  },
-  {
     id: "curso-online",
     title: "Curso Online: Carisma Vicenciano",
     description: "Formación interactiva con certificación internacional",
@@ -169,23 +84,6 @@ export const RESOURCES_DATA: Resource[] = [
       },
       secondary: {
         icon: Download,
-        variant: "outline"
-      }
-    }
-  },
-  {
-    id: "app-movil",
-    title: "App JMV Móvil",
-    description: "Aplicación con recursos espirituales y comunitarios",
-    icon: Download,
-    actions: {
-      primary: {
-        label: "Descargar App",
-        icon: Download,
-        variant: "outline"
-      },
-      secondary: {
-        icon: ExternalLink,
         variant: "outline"
       }
     }

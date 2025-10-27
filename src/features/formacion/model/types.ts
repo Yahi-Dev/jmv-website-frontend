@@ -30,3 +30,15 @@ export interface Resource {
     };
   };
 }
+
+
+
+
+export interface Formacion{
+  id: number;
+  ruta_video?: string;
+  titulo?: string;
+  detalles?: string;
+  modulo?: 'Voluntario' | 'Catequesis' | 'Oraciones' | 'Podcast' | 'Mision' | 'Guia';
+  createdDate: Date;
+}

@@ -29,8 +29,7 @@ export function ModulesSection() {
       // Suponiendo que activeTabData tiene un array de items/modules
       modules: activeTabData.modules?.filter(module =>
         module.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        module.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        module.content?.toLowerCase().includes(searchTerm.toLowerCase())
+        module.description?.toLowerCase().includes(searchTerm.toLowerCase())
       ) || [],
       // Si tienes otras estructuras de datos, agrega más filtros aquí
     };
