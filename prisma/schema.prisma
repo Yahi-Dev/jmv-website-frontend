@@ -82,6 +82,9 @@ model Verification {
   @@map("verifications")
 }
 
+
+
+
 // === TUS MODELOS EXISTENTES JMV ===
 model Actividades {
   id             Int          @id @default(autoincrement())
@@ -312,4 +315,25 @@ model Testimonios {
   deletedByIp  String?
 }
 
-// Elimina el modelo AppUser ya que ahora usamos User de Better Auth
+model Videos {
+  id           Int       @id @default(autoincrement())
+  ruta_video   String?
+  titulo       String?
+
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deletedDate  DateTime?
+  deletedById  String?
+}
+
+enum EstatusUsuario {
+  Voluntario
+  Catequesis
+  Oraciones
+  Podcast
+  Mision
+  Guia
+}

@@ -2,9 +2,9 @@ import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
-import { Star, BookOpen, Users, Heart, Download, ExternalLink, FileText, Video, Headphones, ArrowRight, User } from "lucide-react"
-import Link from "next/link"
+import { BookOpen, Users, Heart, Download, ExternalLink, FileText, Video, Headphones } from "lucide-react"
 import Navbar from "@/src/components/Navbar"
+import { FooterSection } from "@/src/components/shared/FooterSection"
 
 export default function FormacionPage() {
   return (
@@ -422,99 +422,8 @@ export default function FormacionPage() {
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-16 bg-primary text-primary-foreground">
-        <div className="container text-center">
-          <h2 className="mb-4 text-3xl font-bold">¿Listo para comenzar tu formación?</h2>
-          <p className="mb-8 text-xl text-primary-foreground/80">
-            Inicia tu camino de crecimiento espiritual y liderazgo cristiano
-          </p>
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <Button size="lg" variant="secondary" asChild>
-              <Link href="/unete">Inscríbete ahora</Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              asChild
-              className="bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
-            >
-              <Link href="/eventos">Ver próximos talleres</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="py-12 bg-foreground text-background">
-        <div className="container">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div>
-              <div className="flex items-center mb-4 space-x-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-background">
-                  <Star className="w-4 h-4 text-foreground" />
-                </div>
-                <span className="text-lg font-semibold font-heading">JMV RD</span>
-              </div>
-              <p className="text-sm text-background/80">Juventud Mariana Vicenciana República Dominicana</p>
-            </div>
-
-            <div>
-              <h3 className="mb-4 font-semibold">Enlaces</h3>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/quienes-somos" className="hover:underline">
-                    Quiénes Somos
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/formacion" className="hover:underline">
-                    Formación
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/eventos" className="hover:underline">
-                    Eventos
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/noticias" className="hover:underline">
-                    Noticias
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="mb-4 font-semibold">Contacto</h3>
-              <ul className="space-y-2 text-sm text-background/80">
-                <li>Santo Domingo, RD</li>
-                <li>info@jmvrd.org</li>
-                <li>+1 (809) 123-4567</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="mb-4 font-semibold">Síguenos</h3>
-              <div className="flex space-x-4">
-                <Link href="#" className="transition-colors hover:text-secondary">
-                  Instagram
-                </Link>
-                <Link href="#" className="transition-colors hover:text-secondary">
-                  Facebook
-                </Link>
-                <Link href="#" className="transition-colors hover:text-secondary">
-                  YouTube
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-8 mt-8 text-sm text-center border-t border-background/20 text-background/80">
-            <p>&copy; 2024 JMV República Dominicana. Todos los derechos reservados.</p>
-          </div>
-        </div>
-      </footer>
+      <FooterSection />
     </div>
   )
 }
