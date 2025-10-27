@@ -22,8 +22,6 @@ export async function GET(
         example: '/api/testimonios/123'
       });
     }
-
-    console.log(`🔍 Buscando testimonio ID: ${id} en base de datos...`);
     
     const testimonio = await prisma.testimonios.findUnique({
       where: { id },
@@ -56,8 +54,6 @@ export async function GET(
         suggestion: "Los testimonios eliminados no están disponibles"
       });
     }
-
-    console.log(`✅ Testimonio ID ${id} encontrado: ${testimonio.nombre}`);
 
     // Preparar datos para respuesta
     const data = {

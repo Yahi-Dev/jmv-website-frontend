@@ -11,8 +11,6 @@ export async function GET(req: NextRequest) {
     if (count <= 0 || count > 100) {
       return sendBadRequest('El parámetro count debe ser entre 1 y 100');
     }
-
-    console.log(`🔍 Obteniendo ${count} testimonios aleatorios...`);
     
     // Obtener todos los testimonios no eliminados
     const totalTestimonios = await prisma.testimonios.count({
@@ -60,8 +58,6 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { createdDate: "desc" }
     });
-
-    console.log(`✅ ${testimonios.length} testimonios aleatorios obtenidos`);
 
     return sendSuccess({
       Data: testimonios,

@@ -46,8 +46,6 @@ export async function GET(req: NextRequest) {
       prisma.testimonios.count({ where })
     ])
 
-    console.log('📦 Datos obtenidos directamente de BD:', testimonios.length);
-
     return sendSuccess({
       Data: testimonios,
       Total: total,
@@ -135,8 +133,6 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json();
     const parsed = testimonioUpdateSchema.safeParse(body);
-
-    console.log("Parsed data for update:", parsed);
 
     if (!parsed.success) {
       return sendBadRequest('Datos inválidos', parsed.error.flatten());

@@ -11,8 +11,6 @@ export async function GET(req: NextRequest) {
     if (count <= 0 || count > 100) {
       return sendBadRequest('El parámetro count debe ser entre 1 y 100');
     }
-
-    console.log(`🔍 Obteniendo los últimos ${count} testimonios...`);
     
     // Obtener los últimos testimonios ordenados por fecha de creación descendente
     const testimonios = await prisma.testimonios.findMany({
@@ -32,8 +30,6 @@ export async function GET(req: NextRequest) {
       },
       take: count // Limitar a la cantidad solicitada
     });
-
-    console.log(`✅ ${testimonios.length} testimonios más recientes obtenidos`);
 
     return sendSuccess({
       Data: testimonios,

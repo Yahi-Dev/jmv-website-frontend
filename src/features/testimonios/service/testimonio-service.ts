@@ -72,7 +72,6 @@ export async function createTestimonio(
 
 
 export async function getTestimonioById(id: number): Promise<TestimonioResponse> {
-  console.log("Obteniendo testimonio con ID:", id);
   if (!Number.isInteger(id) || id <= 0) {
     throw new Error("ID inválido");
   }
@@ -84,7 +83,6 @@ export async function getTestimonioById(id: number): Promise<TestimonioResponse>
 
   const result = await response.json().catch(() => ({} as any));
 
-  console.log("Respuesta de la API:", result); // ← AÑADE ESTE LOG
 
   if (!response.ok) {
     const msg = result?.message || (response.status === 404
@@ -112,7 +110,6 @@ export async function updateTestimonio(
   data: TestimonioUpdateData & { isActive?: boolean }
 ): Promise<TestimonioResponse> {
   try {
-    console.log("Actualizando testimonio con ID:", id, "Datos:", data);
     
     const response = await fetch(`/api/testimonios?id=${id}`, {
       method: "PUT",

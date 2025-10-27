@@ -75,7 +75,6 @@ export const useTestimonioById = (id: number) => {
           const categoryData = Array.isArray(response.data)
             ? response.data[0]
             : response.data;
-            console.log("Testimonio data:", categoryData);
           setTestimonio(categoryData);
         } else {
           setError(response.message || "Testimonio no encontrado");
