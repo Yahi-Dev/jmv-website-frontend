@@ -136,6 +136,8 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const parsed = testimonioUpdateSchema.safeParse(body);
 
+    console.log("Parsed data for update:", parsed);
+
     if (!parsed.success) {
       return sendBadRequest('Datos inválidos', parsed.error.flatten());
     }

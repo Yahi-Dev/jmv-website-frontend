@@ -9,8 +9,7 @@ export const testimonioSchema = z.object({
 
   mensaje: z.string()
     .min(10, "El mensaje debe tener al menos 10 caracteres")
-    .max(200, "El mensaje no puede exceder 200 caracteres")
-    .trim(),
+    .max(200, "El mensaje no puede exceder 200 caracteres"),
 
   reputacion: z.number()
     .int("La reputación debe ser un número entero")

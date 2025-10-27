@@ -112,10 +112,13 @@ export async function updateTestimonio(
   data: TestimonioUpdateData & { isActive?: boolean }
 ): Promise<TestimonioResponse> {
   try {
+    console.log("Actualizando testimonio con ID:", id, "Datos:", data);
+    
     const response = await fetch(`/api/testimonios?id=${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data), 
+      credentials: "include", 
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {
@@ -139,7 +142,6 @@ export async function updateTestimonio(
     throw error;
   }
 }
-
 
 
 

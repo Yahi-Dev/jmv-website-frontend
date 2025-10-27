@@ -293,10 +293,10 @@ model Usuarios {
 
 model Testimonios {
   id           Int       @id @default(autoincrement())
-  nombre       String?
-  mensaje      String?
+  nombre       String?   @db.VarChar(50)    // Especificar longitud máxima
+  mensaje      String?   @db.VarChar(250)   // Especificar longitud máxima de 250 caracteres
   reputacion   Int?
-  iglesia      String?
+  iglesia      String?   @db.VarChar(200)   // Especificar longitud máxima de 200 caracteres
 
   createdDate  DateTime  @default(now())
   createdById  String?
