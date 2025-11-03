@@ -101,7 +101,7 @@ export function ModulesSection() {
           {/* Contenido de los tabs */}
           {MODULES_TABS.map((tab) => (
             <TabsContent key={tab.value} value={tab.value} className="mt-8">
-              <TabContent 
+              <TabContent
                 tab={tab.value === activeTab ? filteredContent : tab}
                 searchTerm={tab.value === activeTab ? searchTerm : ""}
               />
