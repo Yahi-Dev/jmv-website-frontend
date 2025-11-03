@@ -327,6 +327,7 @@ model Formacion {
   createdById  String?
   modifiedDate DateTime?
   modifiedById String?
+  deleted      Boolean   @default(false)
   deletedDate  DateTime?
   deletedById  String?
 }
