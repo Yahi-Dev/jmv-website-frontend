@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Badge } from "@/src/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { MapPin, Tag, Users, Calendar } from "lucide-react"
-import { CouncilGrid, MiembroConsejo } from "@/src/app/(authenticated)/consejos/ui/Council"
+import { CouncilGrid, MiembroConsejo } from "@/src/app/consejos/ui/Council"
 
 type ComunidadFull = {
   id: string

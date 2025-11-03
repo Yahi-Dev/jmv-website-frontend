@@ -171,6 +171,7 @@ model Estatus {
 model Publicacion {
   id           Int           @id @default(autoincrement())
   img          String?
+  titulo       String?
   descripcion  String?
   fecha        DateTime
   id_centro    Int
