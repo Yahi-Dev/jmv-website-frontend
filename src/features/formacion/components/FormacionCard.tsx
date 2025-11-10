@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
-import { Download, ExternalLink } from "lucide-react"
+import { Download, ExternalLink, Edit, Trash2 } from "lucide-react"
 import { FormacionType } from "../model/types"
 import { Badge } from "@/src/components/ui/badge"
 import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion"
@@ -37,19 +37,46 @@ export function FormacionCard({
     <Card className="flex flex-col h-full transition-shadow duration-200 border border-gray-200 shadow-sm hover:shadow-md">
       <CardHeader className="flex-shrink-0 pb-3">
         <div className="flex items-center justify-between mb-3">
-          {formacion.modulo && (
-            <Badge 
-              variant="secondary" 
-              className="font-medium text-gray-700 bg-gray-100 border-0 hover:bg-gray-200"
-            >
-              {formacion.modulo}
-            </Badge>
-          )}
-          {formacion.createdDate && (
-            <span className="text-xs font-medium text-gray-500">
-              {new Date(formacion.createdDate).toLocaleDateString('es-ES')}
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {formacion.modulo && (
+              <Badge 
+                variant="secondary" 
+                className="font-medium text-gray-700 bg-gray-100 border-0 hover:bg-gray-200"
+              >
+                {formacion.modulo}
+              </Badge>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {formacion.createdDate && (
+              <span className="text-xs font-medium text-gray-500">
+                {new Date(formacion.createdDate).toLocaleDateString('es-ES')}
+              </span>
+            )}
+            
+            {/* Botones de acción para usuarios logueados */}
+            {isLoggedIn && (
+              <div className="flex gap-1 ml-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onEdit}
+                  className="w-6 h-6 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                >
+                  <Edit className="w-3 h-3" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onDelete}
+                  className="w-6 h-6 text-red-600 hover:text-red-800 hover:bg-red-50"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
         
         <CardTitle className="text-lg font-semibold leading-tight text-gray-900 line-clamp-2">
