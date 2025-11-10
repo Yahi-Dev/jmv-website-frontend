@@ -11,7 +11,7 @@ export default function FormacionPage() {
       <Navbar />
       <HeroSection />
       <ModulesSection />
-      <FormacionSection />
+      {/* <FormacionSection /> */}
       <ResourcesSection />
       <FooterSection />
     </div>

@@ -1,16 +1,25 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo,useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs";
 import { Input } from "@/src/components/ui/input";
-import { Search, X } from "lucide-react";
+import { Button } from "@/src/components/ui/button";
+import { Search, X, Plus } from "lucide-react";
 import { MODULES_TABS } from "@/src/data/formacion-modulos-data";
 import { TabContent } from "./TabContent";
 import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion";
+import { getClientUser } from "@/src/lib/client-auth";
+import { FormacionFormDialog } from "./formacion-form-dialog";
+import { useCreateFormacion, useGetAllFormaciones } from "../hook/use-formacion";
 
 export function ModulesSection() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState(MODULES_TABS[0].value);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+
+  const { create, isLoading: isCreating } = useCreateFormacion();
+  const { fetchAll } = useGetAllFormaciones();
 
   // Encontrar el tab activo actual
   const activeTabData = useMemo(() => {
@@ -23,16 +32,12 @@ export function ModulesSection() {
       return activeTabData;
     }
 
-    // Aquí necesitas adaptar la lógica según la estructura de tu TabContent
-    // Esto es un ejemplo - debes ajustarlo a tu estructura real de datos
     const filteredTab = {
       ...activeTabData,
-      // Suponiendo que activeTabData tiene un array de items/modules
       modules: activeTabData.modules?.filter(module =>
         module.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         module.description?.toLowerCase().includes(searchTerm.toLowerCase())
       ) || [],
-      // Si tienes otras estructuras de datos, agrega más filtros aquí
     };
 
     return filteredTab;
@@ -44,9 +49,25 @@ export function ModulesSection() {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value as ModulosFormacion);
-    // Opcional: limpiar búsqueda al cambiar de tab
-    // setSearchTerm("");
   };
+
+  const handleCreate = async (data: any) => {
+    await create(data);
+    await fetchAll();
+    setCreateDialogOpen(false);
+  };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await getClientUser();
+        setIsLoggedIn(!!user);
+      } catch (error) {
+        console.error("Error checking auth:", error);
+      }
+    };
+    checkAuth();
+  }, []);
 
   return (
     <section className="py-16 lg:py-24">
@@ -77,8 +98,8 @@ export function ModulesSection() {
             ))}
           </TabsList>
 
-          {/* Buscador */}
-          <div className="flex justify-end mt-4">
+          {/* Buscador y Botón de Agregar */}
+          <div className="flex flex-col gap-4 mt-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="relative w-full max-w-sm">
               <Search className="absolute w-4 h-4 transform -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
               <Input
@@ -97,6 +118,16 @@ export function ModulesSection() {
                 </button>
               )}
             </div>
+
+            {isLoggedIn && (
+              <Button 
+                onClick={() => setCreateDialogOpen(true)} 
+                className="text-white bg-primary hover:bg-primary/90 shrink-0"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Agregar Formación
+              </Button>
+            )}
           </div>
 
           {/* Contenido de los tabs */}
@@ -109,6 +140,15 @@ export function ModulesSection() {
             </TabsContent>
           ))}
         </Tabs>
+
+        {/* Dialog para crear formación */}
+        <FormacionFormDialog
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}
+          onSubmit={handleCreate}
+          isLoading={isCreating}
+          mode="create"
+        />
       </div>
     </section>
   );

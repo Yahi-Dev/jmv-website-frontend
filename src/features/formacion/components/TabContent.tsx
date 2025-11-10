@@ -1,4 +1,3 @@
-// TabContent.tsx
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
@@ -6,6 +5,10 @@ import { ModuleCard } from "./ModuleCard";
 import { Button } from "@/src/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ModuleTab } from "../model/types";
+import { useGetAllFormaciones } from "../hook/use-formacion";
+import { getClientUser } from "@/src/lib/client-auth";
+import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion";
+import { FormacionCard } from "./FormacionCard";
 
 export interface TabContentProps {
   readonly tab: ModuleTab;
@@ -14,10 +17,18 @@ export interface TabContentProps {
 
 const CARDS_PER_PAGE = 4;
 
+// Tipo para el contenido combinado
+type CombinedContent = 
+  | { type: 'module'; data: any } // Módulos predefinidos
+  | { type: 'formacion'; data: any }; // Formaciones de BD
+
 export function TabContent({ tab, searchTerm }: TabContentProps) {
   const [currentPage, setCurrentPage] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const { formaciones: formacionesBD, fetchAll } = useGetAllFormaciones();
 
-  // Filtrar módulos basado en el término de búsqueda
+  // Filtrar módulos predefinidos basado en el término de búsqueda
   const filteredModules = useMemo(() => {
     if (!searchTerm.trim()) {
       return tab.modules || [];
@@ -31,17 +42,64 @@ export function TabContent({ tab, searchTerm }: TabContentProps) {
     );
   }, [tab.modules, searchTerm]);
 
+  // Filtrar formaciones de BD por módulo y búsqueda
+  const filteredFormaciones = useMemo(() => {
+    const formacionesDelModulo = formacionesBD.filter(formacion => 
+      formacion.modulo === tab.value
+    );
+
+    if (!searchTerm.trim()) {
+      return formacionesDelModulo;
+    }
+
+    return formacionesDelModulo.filter(formacion =>
+      formacion.titulo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      formacion.descripcion?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [formacionesBD, tab.value, searchTerm]);
+
+  // Combinar ambos tipos de contenido
+  const allContent: CombinedContent[] = useMemo(() => {
+    const modules = filteredModules.map(module => ({
+      type: 'module' as const,
+      data: module
+    }));
+
+    const formaciones = filteredFormaciones.map(formacion => ({
+      type: 'formacion' as const,
+      data: formacion
+    }));
+
+    return [...modules, ...formaciones];
+  }, [filteredModules, filteredFormaciones]);
+
   // Calcular páginas
-  const totalPages = Math.ceil(filteredModules.length / CARDS_PER_PAGE);
-  const currentModules = useMemo(() => {
+  const totalPages = Math.ceil(allContent.length / CARDS_PER_PAGE);
+  const currentContent = useMemo(() => {
     const startIndex = currentPage * CARDS_PER_PAGE;
-    return filteredModules.slice(startIndex, startIndex + CARDS_PER_PAGE);
-  }, [filteredModules, currentPage]);
+    return allContent.slice(startIndex, startIndex + CARDS_PER_PAGE);
+  }, [allContent, currentPage]);
 
   // Resetear página cuando cambia el tab o la búsqueda
   useEffect(() => {
     setCurrentPage(0);
   }, [tab.value, searchTerm]);
+
+  // Cargar formaciones y verificar autenticación
+  useEffect(() => {
+    const loadData = async () => {
+      await fetchAll();
+      
+      try {
+        const user = await getClientUser();
+        setIsLoggedIn(!!user);
+      } catch (error) {
+        console.error("Error checking auth:", error);
+      }
+    };
+    
+    loadData();
+  }, [fetchAll]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
@@ -59,11 +117,23 @@ export function TabContent({ tab, searchTerm }: TabContentProps) {
     setCurrentPage(pageIndex);
   };
 
-  if (!filteredModules.length) {
+  const getModuleColor = (modulo: ModulosFormacion) => {
+    const colors = {
+      [ModulosFormacion.Voluntario]: "bg-blue-100 text-blue-800",
+      [ModulosFormacion.Catequesis]: "bg-green-100 text-green-800",
+      [ModulosFormacion.Oraciones]: "bg-purple-100 text-purple-800",
+      [ModulosFormacion.Podcast]: "bg-orange-100 text-orange-800",
+      [ModulosFormacion.Mision]: "bg-red-100 text-red-800",
+      [ModulosFormacion.Guia]: "bg-indigo-100 text-indigo-800",
+    };
+    return colors[modulo] || "bg-gray-100 text-gray-800";
+  };
+
+  if (!allContent.length) {
     return (
       <div className="py-12 text-center">
         <p className="text-muted-foreground">
-          No se encontraron módulos que coincidan con "{searchTerm}"
+          No se encontraron módulos que coincidan con &quot;{searchTerm}&quot;
         </p>
       </div>
     );
@@ -71,11 +141,26 @@ export function TabContent({ tab, searchTerm }: TabContentProps) {
 
   return (
     <div className="space-y-6">
-      {/* Grid de módulos */}
+      {/* Grid de contenido */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {currentModules.map((module) => (
-          <ModuleCard key={module.id} module={module} />
-        ))}
+        {currentContent.map((content, index) => {
+          if (content.type === 'formacion') {
+            return (
+              <FormacionCard
+                key={`formacion-${content.data.id}`}
+                formacion={content.data}
+                isLoggedIn={isLoggedIn}
+                onEdit={() => {}} // Estas funciones se manejarán en el FormacionCard
+                onDelete={() => {}}
+                getModuleColor={getModuleColor}
+              />
+            );
+          } else {
+            return (
+              <ModuleCard key={`module-${content.data.id}`} module={content.data} />
+            );
+          }
+        })}
       </div>
 
       {/* Paginación */}
@@ -84,7 +169,7 @@ export function TabContent({ tab, searchTerm }: TabContentProps) {
           {/* Información de página */}
           <div className="text-sm text-muted-foreground">
             Página {currentPage + 1} de {totalPages} •
-            Mostrando {currentModules.length} de {filteredModules.length} módulos
+            Mostrando {currentContent.length} de {allContent.length} elementos
           </div>
 
           {/* Controles de navegación */}
