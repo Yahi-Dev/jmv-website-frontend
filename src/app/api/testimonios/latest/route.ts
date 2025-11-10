@@ -6,7 +6,7 @@ import { sendSuccess, sendBadRequest, sendServerError } from '@/src/utils/httpRe
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const count = parseInt(searchParams.get("count") || "3");
+    const count = Number.parseInt(searchParams.get("count") || "3");
 
     if (count <= 0 || count > 100) {
       return sendBadRequest('El parámetro count debe ser entre 1 y 100');

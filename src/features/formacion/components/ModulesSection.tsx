@@ -6,6 +6,7 @@ import { Input } from "@/src/components/ui/input";
 import { Search, X } from "lucide-react";
 import { MODULES_TABS } from "@/src/data/formacion-modulos-data";
 import { TabContent } from "./TabContent";
+import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion";
 
 export function ModulesSection() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -42,7 +43,7 @@ export function ModulesSection() {
   };
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value);
+    setActiveTab(value as ModulosFormacion);
     // Opcional: limpiar búsqueda al cambiar de tab
     // setSearchTerm("");
   };
@@ -102,7 +103,7 @@ export function ModulesSection() {
           {MODULES_TABS.map((tab) => (
             <TabsContent key={tab.value} value={tab.value} className="mt-8">
               <TabContent
-                tab={tab.value === activeTab ? filteredContent : tab}
+                tab={tab.value === activeTab ? (filteredContent || tab) : tab}
                 searchTerm={tab.value === activeTab ? searchTerm : ""}
               />
             </TabsContent>

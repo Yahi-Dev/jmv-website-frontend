@@ -1,16 +1,14 @@
-// TabContentCarousel.tsx - Versión alternativa con carrusel visual
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ModuleCard } from "./ModuleCard";
 import { Button } from "@/src/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { ModuleTab } from "../model/types";
 import { TabContentProps } from "./TabContent";
 
 const CARDS_PER_PAGE = 4;
 
-export function TabContentCarousel({ tab, searchTerm }: TabContentProps) {
+export function TabContentCarousel({ tab, searchTerm }: Readonly<TabContentProps>) {
   const [currentPage, setCurrentPage] = useState(0);
 
   const filteredModules = useMemo(() => {
@@ -32,7 +30,8 @@ export function TabContentCarousel({ tab, searchTerm }: TabContentProps) {
     return filteredModules.slice(startIndex, startIndex + CARDS_PER_PAGE);
   }, [filteredModules, currentPage]);
 
-  useState(() => {
+  // Resetear página cuando cambia el tab o la búsqueda
+  useEffect(() => {
     setCurrentPage(0);
   }, [tab.value, searchTerm]);
 
@@ -52,7 +51,7 @@ export function TabContentCarousel({ tab, searchTerm }: TabContentProps) {
     return (
       <div className="py-12 text-center">
         <p className="text-muted-foreground">
-          No se encontraron módulos que coincidan con "{searchTerm}"
+          No se encontraron módulos que coincidan con &quot;{searchTerm}&quot;
         </p>
       </div>
     );
@@ -95,7 +94,7 @@ export function TabContentCarousel({ tab, searchTerm }: TabContentProps) {
           <div className="flex items-center justify-center gap-2 mt-6">
             {Array.from({ length: totalPages }, (_, index) => (
               <button
-                key={index}
+                key={`page-indicator-${index}`}
                 onClick={() => setCurrentPage(index)}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   currentPage === index 

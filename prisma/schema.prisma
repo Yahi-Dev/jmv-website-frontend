@@ -318,11 +318,12 @@ model Testimonios {
 
 model Formacion {
   id           Int       @id @default(autoincrement())
-  ruta_video   String?
-  titulo       String?
-  detalles     String?
+  titulo      String?
+  descripcion String?
   modulo       ModulosFormacion?
-
+  enlace      String?
+  ruta        String?
+  
 
   createdDate  DateTime  @default(now())
   createdById  String?

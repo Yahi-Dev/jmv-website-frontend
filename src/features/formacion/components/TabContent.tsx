@@ -83,7 +83,7 @@ export function TabContent({ tab, searchTerm }: TabContentProps) {
         <div className="flex flex-col items-center justify-between gap-4 pt-4 border-t sm:flex-row">
           {/* Información de página */}
           <div className="text-sm text-muted-foreground">
-            Página {currentPage + 1} de {totalPages} • 
+            Página {currentPage + 1} de {totalPages} •
             Mostrando {currentModules.length} de {filteredModules.length} módulos
           </div>
 
@@ -108,11 +108,10 @@ export function TabContent({ tab, searchTerm }: TabContentProps) {
                   variant={currentPage === index ? "default" : "outline"}
                   size="icon"
                   onClick={() => goToPage(index)}
-                  className={`h-8 w-8 text-xs ${
-                    currentPage === index 
-                      ? "bg-primary text-primary-foreground" 
+                  className={`h-8 w-8 text-xs ${currentPage === index
+                      ? "bg-primary text-primary-foreground"
                       : "hover:bg-muted"
-                  }`}
+                    }`}
                 >
                   {index + 1}
                 </Button>

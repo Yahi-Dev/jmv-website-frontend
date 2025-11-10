@@ -1,27 +1,27 @@
-// src/features/formacion/schema/formacion-schema.ts
+import { ModulosFormacion } from '@/src/lib/enum/ModulosFormacion';
 import { z } from 'zod';
 
 export const formacionSchema = z.object({
-  ruta_video: z.string()
-    .min(1, { message: 'Debe elegir algún archivo' }),
-
   titulo: z.string()
-    .min(5, "El título debe tener al menos 5 caracteres")
-    .max(50, "El título no puede exceder 50 caracteres"),
+    .min(3, "El título debe tener al menos 3 caracteres")
+    .max(200, "El título no puede exceder 200 caracteres"),
 
-  detalles: z.string()
-    .min(2, "Los detalles deben tener al menos 2 caracteres")
-    .max(100, "Los detalles no pueden exceder 100 caracteres")
-    .optional()
-    .nullable(),
+  descripcion: z.string()
+    .min(10, "La descripción debe tener al menos 10 caracteres")
+    .max(5000, "La descripción no puede exceder 5000 caracteres"),
 
-  modulo: z.enum(['Voluntario', 'Catequesis', 'Oraciones', 'Podcast', 'Mision', 'Guia'])
+  modulo: z.nativeEnum(ModulosFormacion, {
+    errorMap: () => ({ message: "Selecciona un módulo válido" })
+  }),
+
+  enlace: z.string().url("Debe ser una URL válida").optional().or(z.literal('')),
+  ruta: z.string().optional(),
 });
 
 export const formacionCreateSchema = formacionSchema;
 
 export const formacionUpdateSchema = formacionSchema.partial().extend({
-  id: z.number().int().positive("El ID debe ser un número positivo").optional()
+  id: z.number().int().positive("El ID debe ser un número positivo")
 });
 
 export const formacionQuerySchema = z.object({

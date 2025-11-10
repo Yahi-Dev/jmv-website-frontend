@@ -1,3 +1,5 @@
+import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion";
+
 export interface Module {
   id: string;
   title: string;
@@ -5,10 +7,11 @@ export interface Module {
   level: string;
   duration: string;
   items: string[];
+  modulo: ModulosFormacion; 
 }
 
 export interface ModuleTab {
-  value: string;
+  value: ModulosFormacion;
   label: string;
   modules: Module[];
 }
@@ -31,14 +34,40 @@ export interface Resource {
   };
 }
 
-
-
-
-export interface Formacion{
+export interface Formacion {
   id: number;
   ruta_video?: string;
   titulo?: string;
   detalles?: string;
-  modulo?: 'Voluntario' | 'Catequesis' | 'Oraciones' | 'Podcast' | 'Mision' | 'Guia';
+  modulo: ModulosFormacion; 
   createdDate: Date;
+}
+
+export interface FormacionType {
+  id: number;
+  titulo?: string;
+  descripcion?: string;
+  modulo?: ModulosFormacion;
+  enlace?: string;
+  ruta?: string;
+  createdDate: Date;
+  createdById?: string;
+  modifiedDate?: Date;
+  modifiedById?: string;
+  deleted?: boolean;
+  deletedDate?: Date;
+  deletedById?: string;
+}
+
+export interface FormacionResponse {
+  success: boolean;
+  message: string;
+  data?: FormacionType | FormacionType[];
+}
+
+export interface UploadResponse {
+  success: boolean;
+  message: string;
+  filePath?: string;
+  fileName?: string;
 }

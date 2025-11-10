@@ -5,8 +5,6 @@ import { Prisma } from '@prisma/client';
 import { formacionCreateSchema, formacionUpdateSchema } from '@/src/features/formacion/schema/validation';
 import { auth } from '@/src/lib/auth';
 
-
-
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -20,29 +18,19 @@ export async function GET(req: NextRequest) {
       ...(search
         ? {
             OR: [
-              { titulo: { contains: search } },
-              { detalles: { contains: search } },
+              { titulo: { contains: search, mode: 'insensitive' } },
+              { descripcion: { contains: search, mode: 'insensitive' } },
             ],
           }
         : {}),
     }
 
-    // Ejecutar en paralelo para mejor performance
     const [formaciones, total] = await Promise.all([
       prisma.formacion.findMany({
         where,
         orderBy: { createdDate: "desc" },
         skip,
         take: limit,
-        select: {
-          id: true,
-          ruta_video: true,
-          titulo: true,
-          detalles: true,
-          modulo: true,
-          createdDate: true,
-          // Solo campos necesarios
-        }
       }),
       prisma.formacion.count({ where })
     ])
@@ -59,9 +47,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-
-
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -71,14 +56,12 @@ export async function POST(req: NextRequest) {
       const errorDetails = parsed.error.flatten();
       console.error("Validation error:", errorDetails);
       
-      // ✅ USANDO sendBadRequest CON LOS ERRORES DE VALIDACIÓN
       return sendBadRequest('Datos inválidos. Por favor verifica los datos ingresados', {
         fieldErrors: errorDetails.fieldErrors,
         formErrors: errorDetails.formErrors
       });
     }
     
-    // Obtener sesión del usuario
     const session = await auth.api.getSession({ 
       headers: Object.fromEntries(req.headers) 
     });
@@ -86,42 +69,34 @@ export async function POST(req: NextRequest) {
     const user = {
       name: session?.user?.name ?? "Sistema",
       email: session?.user?.email ?? "sistema@jmv.org",
-      avatar: session?.user?.image ?? "",
     };
 
     const data = parsed.data;
     
-    // Crear el testimonio
     const created = await prisma.formacion.create({
       data: {
         titulo: data.titulo,
-        ruta_video: data.ruta_video,
-        detalles: data.detalles ?? "",
+        descripcion: data.descripcion,
         modulo: data.modulo,
-
+        enlace: data.enlace,
+        ruta: data.ruta,
         createdDate: new Date(),
         createdById: user.email,
       }
     });
 
-    // ✅ USANDO sendCreated PARA RECURSO CREADO EXITOSAMENTE
     return sendCreated({
       Data: created
-    }, "Testimonio creado exitosamente");
+    }, "Formación creada exitosamente");
 
   } catch (error) {
     console.error("Server error:", error);
-    
-    // ✅ USANDO sendServerError PARA ERRORES INTERNOS
     return sendServerError(
-      "Error interno del servidor al crear el testimonio", 
+      "Error interno del servidor al crear la formación", 
       error instanceof Error ? error : new Error("Error desconocido")
     );
   }
 }
-
-
-
 
 export async function PUT(request: NextRequest) {
   try {
@@ -133,22 +108,22 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    const parsed = testimonioUpdateSchema.safeParse(body);
+    const parsed = formacionUpdateSchema.safeParse(body);
 
     if (!parsed.success) {
       return sendBadRequest('Datos inválidos', parsed.error.flatten());
     }
 
-    const existing = await prisma.testimonios.findUnique({ where: { id } });
+    const existing = await prisma.formacion.findUnique({ where: { id } });
     if (!existing) {
-      return sendNotFound('Testimonio no encontrado');
+      return sendNotFound('Formación no encontrada');
     }
 
     const session = await auth.api.getSession({ 
       headers: Object.fromEntries(request.headers) 
     });
 
-    const updated = await prisma.testimonios.update({
+    const updated = await prisma.formacion.update({
       where: { id },
       data: {
         ...parsed.data,
@@ -159,16 +134,13 @@ export async function PUT(request: NextRequest) {
 
     return sendSuccess({
       Data: updated
-    }, "Testimonio actualizado exitosamente");
+    }, "Formación actualizada exitosamente");
 
   } catch (error) {
     console.error("Update error:", error);
-    return sendServerError("Error al actualizar testimonio", error);
+    return sendServerError("Error al actualizar formación", error);
   }
 }
-
-
-
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -180,38 +152,23 @@ export async function DELETE(request: NextRequest) {
       return sendBadRequest('ID inválido. Debe proporcionar un ID numérico válido');
     }
 
-    const testimonio = await prisma.testimonios.findUnique({ 
+    const formacion = await prisma.formacion.findUnique({ 
       where: { id },
-      select: {
-        id: true,
-        nombre: true,
-        mensaje: true,
-        iglesia: true,
-        reputacion: true,
-        deleted: true 
-      }
     });
 
-    if (!testimonio) {
-      return sendNotFound(`No se encontró el testimonio con ID ${id}`);
+    if (!formacion) {
+      return sendNotFound(`No se encontró la formación con ID ${id}`);
     }
 
-    if (testimonio.deleted) {
-      return sendBadRequest('El testimonio ya fue eliminado anteriormente', {
-        testimonio: {
-          id: testimonio.id,
-          nombre: testimonio.nombre,
-          eliminadoAnteriormente: true
-        },
-        suggestion: "No es necesario eliminar el testimonio nuevamente"
-      });
+    if (formacion.deleted) {
+      return sendBadRequest('La formación ya fue eliminada anteriormente');
     }
 
     const session = await auth.api.getSession({ 
       headers: Object.fromEntries(request.headers) 
     });
 
-    await prisma.testimonios.update({ 
+    await prisma.formacion.update({ 
       where: { id }, 
       data: { 
         deleted: true,
@@ -222,34 +179,15 @@ export async function DELETE(request: NextRequest) {
 
     return sendSuccess({
       Data: {
-        id: testimonio.id,
-        nombre: testimonio.nombre,
-        mensaje: "Testimonio eliminado correctamente",
+        id: formacion.id,
+        titulo: formacion.titulo,
+        mensaje: "Formación eliminada correctamente",
         eliminadoEl: new Date().toISOString()
       }
-    }, `Testimonio "${testimonio.nombre}" eliminado correctamente`);
+    }, `Formación "${formacion.titulo}" eliminada correctamente`);
 
   } catch (error) {
-    console.error('Error deleting testimonio:', error);
-    
-    if (error instanceof Error) {
-      if (error.message.includes('Record to update not found')) {
-        return sendNotFound('El testimonio no existe o ya fue eliminado');
-      }
-      
-      if (error.message.includes('Foreign key constraint')) {
-        return sendBadRequest(
-          'No se puede eliminar el testimonio debido a referencias existentes',
-          {
-            suggestion: "Contacta al administrador del sistema"
-          }
-        );
-      }
-    }
-
-    return sendServerError(
-      "Error interno del servidor al eliminar el testimonio", 
-      error
-    );
+    console.error('Error deleting formación:', error);
+    return sendServerError("Error interno del servidor al eliminar la formación", error);
   }
 }

@@ -1,8 +1,51 @@
 import { ModuleTab } from "../features/formacion/model/types";
+import { ModulosFormacion } from "../lib/enum/ModulosFormacion";
 
 export const MODULES_TABS: ModuleTab[] = [
   {
-    value: "catequesis",
+    value: ModulosFormacion.Voluntario,
+    label: "Voluntario",
+    modules: [
+      {
+        id: "voluntario-1",
+        title: "Formación Básica para Voluntarios",
+        description: "Introducción al servicio voluntario desde la espiritualidad vicenciana",
+        level: "Nivel Básico",
+        duration: "8 semanas",
+        modulo: ModulosFormacion.Voluntario,
+        items: [
+          "Espiritualidad del servicio",
+          "Valores vicencianos",
+          "Habilidades de comunicación",
+          "Trabajo en equipo",
+          "Ética del voluntariado",
+          "Acompañamiento espiritual",
+          "Primeros auxilios básicos",
+          "Proyectos de voluntariado"
+        ]
+      },
+      {
+        id: "voluntario-2",
+        title: "Voluntariado Especializado",
+        description: "Formación para servicios específicos de voluntariado",
+        level: "Nivel Intermedio",
+        duration: "10 semanas",
+        modulo: ModulosFormacion.Voluntario,
+        items: [
+          "Trabajo con personas en situación de calle",
+          "Atención a adultos mayores",
+          "Apoyo a niños y jóvenes",
+          "Gestión de emergencias",
+          "Coordinación de equipos",
+          "Planificación de actividades",
+          "Evaluación de proyectos",
+          "Sostenibilidad del voluntariado"
+        ]
+      }
+    ]
+  },
+  {
+    value: ModulosFormacion.Catequesis,
     label: "Catequesis",
     modules: [
       {
@@ -11,6 +54,7 @@ export const MODULES_TABS: ModuleTab[] = [
         description: "Introducción a los principios básicos de la fe católica y el carisma vicenciano",
         level: "Nivel Básico",
         duration: "12 semanas",
+        modulo: ModulosFormacion.Catequesis,
         items: [
           "Historia de la salvación",
           "Los sacramentos de iniciación",
@@ -28,6 +72,7 @@ export const MODULES_TABS: ModuleTab[] = [
         description: "Desarrollo de la vida espiritual y comprensión del llamado vocacional",
         level: "Nivel Intermedio",
         duration: "16 semanas",
+        modulo: ModulosFormacion.Catequesis,
         items: [
           "Oración contemplativa y meditación",
           "Discernimiento vocacional",
@@ -38,142 +83,95 @@ export const MODULES_TABS: ModuleTab[] = [
           "Dirección espiritual",
           "Ejercicios de vida devocional"
         ]
+      }
+    ]
+  },
+  {
+    value: ModulosFormacion.Oraciones,
+    label: "Oraciones",
+    modules: [
+      {
+        id: "oraciones-1",
+        title: "Escuela de Oración",
+        description: "Aprende diferentes métodos y formas de oración cristiana",
+        level: "Todos los niveles",
+        duration: "6 semanas",
+        modulo: ModulosFormacion.Oraciones,
+        items: [
+          "Oración vocal y litúrgica",
+          "Meditación y contemplación",
+          "Lectio Divina",
+          "Oración de quietud",
+          "Oración con la Palabra de Dios",
+          "Oración mariana",
+          "Oración comunitaria",
+          "Discernimiento espiritual"
+        ]
       },
       {
-        id: "catequesis-3",
-        title: "Mística Vicenciana",
-        description: "Profundización en la experiencia espiritual del carisma vicenciano",
-        level: "Nivel Avanzado",
-        duration: "14 semanas",
+        id: "oraciones-2",
+        title: "Oraciones Vicencianas",
+        description: "Oraciones propias de la espiritualidad vicenciana",
+        level: "Nivel Intermedio",
+        duration: "4 semanas",
+        modulo: ModulosFormacion.Oraciones,
         items: [
-          "La encarnación como modelo de servicio",
-          "Espiritualidad de la compasión",
-          "Contemplación en la acción",
-          "Santidad en lo ordinario",
-          "Escuela de la caridad",
-          "Mística mariana vicenciana",
-          "Los cinco valores JMV",
-          "Testimonios de santos vicencianos"
+          "Oración de San Vicente de Paúl",
+          "Oración de Santa Luisa de Marillac",
+          "Oración del Misionero",
+          "Oración por los pobres",
+          "Oración de la Medalla Milagrosa",
+          "Oraciones comunitarias JMV",
+          "Oración por las vocaciones",
+          "Oración de envío misionero"
         ]
       }
     ]
   },
   {
-    value: "liderazgo",
-    label: "Liderazgo",
+    value: ModulosFormacion.Podcast,
+    label: "Podcast",
     modules: [
       {
-        id: "liderazgo-1",
-        title: "Liderazgo Cristiano",
-        description: "Desarrollo de habilidades de liderazgo basadas en valores cristianos",
-        level: "Habilidades Básicas",
-        duration: "10 semanas",
-        items: [
-          "Comunicación efectiva y asertiva",
-          "Trabajo en equipo colaborativo",
-          "Resolución de conflictos desde el evangelio",
-          "Planificación pastoral estratégica",
-          "Liderazgo servicial según Jesús",
-          "Motivación y animación de grupos",
-          "Toma de decisiones en comunidad",
-          "Delegación y coordinación"
-        ]
-      },
-      {
-        id: "liderazgo-2",
-        title: "Gestión de Proyectos Pastorales",
-        description: "Herramientas prácticas para la gestión de proyectos sociales y pastorales",
-        level: "Gestión Práctica",
+        id: "podcast-1",
+        title: "Producción de Contenido Espiritual",
+        description: "Aprende a crear podcasts con contenido formativo y espiritual",
+        level: "Nivel Básico",
         duration: "8 semanas",
+        modulo: ModulosFormacion.Podcast,
         items: [
-          "Diagnóstico comunitario participativo",
-          "Diseño de proyectos sociales",
-          "Gestión de recursos limitados",
-          "Evaluación de impacto pastoral",
-          "Elaboración de presupuestos",
-          "Coordinación con instituciones",
-          "Sostenibilidad de proyectos",
-          "Informes y rendición de cuentas"
+          "Guionización de contenidos",
+          "Técnicas de locución",
+          "Edición de audio básica",
+          "Plataformas de distribución",
+          "Contenido para redes sociales",
+          "Entrevistas espirituales",
+          "Planificación de temporadas",
+          "Métrica y evaluación"
         ]
       },
       {
-        id: "liderazgo-3",
-        title: "Formación de Formadores",
-        description: "Preparación para acompañar procesos formativos de nuevos miembros",
-        level: "Nivel de Formador",
-        duration: "12 semanas",
-        items: [
-          "Pedagogía vicenciana",
-          "Dinámicas de grupo formativas",
-          "Acompañamiento personalizado",
-          "Evaluación de procesos formativos",
-          "Planificación de encuentros",
-          "Manejo de grupos juveniles",
-          "Transmisión del carisma",
-          "Prevención de burnout en el servicio"
-        ]
-      }
-    ]
-  },
-  {
-    value: "doctrina",
-    label: "Doctrina Social",
-    modules: [
-      {
-        id: "doctrina-1",
-        title: "Doctrina Social de la Iglesia",
-        description: "Principios fundamentales de la enseñanza social católica",
-        level: "Fundamentos",
-        duration: "14 semanas",
-        items: [
-          "Dignidad de la persona humana",
-          "Bien común y solidaridad",
-          "Justicia social y distributiva",
-          "Opción preferencial por los pobres",
-          "Destino universal de los bienes",
-          "Subsidiaridad y participación",
-          "Los derechos humanos desde la fe",
-          "Paz y reconciliación social"
-        ]
-      },
-      {
-        id: "doctrina-2",
-        title: "Compromiso Social Cristiano",
-        description: "Aplicación práctica de la doctrina social en el contexto dominicano",
-        level: "Aplicación Práctica",
-        duration: "12 semanas",
-        items: [
-          "Análisis de la realidad social dominicana",
-          "Promoción humana integral",
-          "Advocacy y incidencia política",
-          "Construcción de paz comunitaria",
-          "Economía de comunión",
-          "Ecología integral",
-          "Migración y derechos humanos",
-          "Empoderamiento comunitario"
-        ]
-      },
-      {
-        id: "doctrina-3",
-        title: "Ética Social y Profesional",
-        description: "Principios éticos para el ejercicio profesional desde la fe",
-        level: "Ética Aplicada",
+        id: "podcast-2",
+        title: "Podcasting Avanzado",
+        description: "Técnicas avanzadas para producción de podcasts de calidad",
+        level: "Nivel Avanzado",
         duration: "10 semanas",
+        modulo: ModulosFormacion.Podcast,
         items: [
-          "Ética en los negocios y economía",
-          "Compromiso social empresarial",
-          "Profesionales al servicio del Reino",
-          "Conflictos éticos en el trabajo",
-          "Testimonio cristiano en ambientes seculares",
-          "Responsabilidad social corporativa",
-          "Emprendimiento con sentido social",
-          "Excelencia profesional como servicio"
+          "Sonido profesional en estudio",
+          "Edición avanzada con software",
+          "Estrategias de marketing digital",
+          "Monetización de contenidos",
+          "Producción en vivo",
+          "Colaboraciones y redes",
+          "Análisis de audiencia",
+          "Sostenibilidad del proyecto"
         ]
       }
     ]
   },
   {
-    value: "mision",
+    value: ModulosFormacion.Mision,
     label: "Misión",
     modules: [
       {
@@ -182,6 +180,7 @@ export const MODULES_TABS: ModuleTab[] = [
         description: "Preparación integral para la experiencia misionera",
         level: "Preparación",
         duration: "6 semanas",
+        modulo: ModulosFormacion.Mision,
         items: [
           "Espiritualidad misionera vicenciana",
           "Metodología de evangelización",
@@ -199,6 +198,7 @@ export const MODULES_TABS: ModuleTab[] = [
         description: "Experiencia práctica de servicio misionero en comunidades rurales",
         level: "Experiencia Práctica",
         duration: "2 semanas",
+        modulo: ModulosFormacion.Mision,
         items: [
           "Convivencia comunitaria",
           "Actividades pastorales y catequéticas",
@@ -209,136 +209,47 @@ export const MODULES_TABS: ModuleTab[] = [
           "Celebraciones litúrgicas comunitarias",
           "Evaluación y proyección post-misión"
         ]
-      },
-      {
-        id: "mision-3",
-        title: "Misión Permanente",
-        description: "Estrategias para mantener el espíritu misionero en la vida cotidiana",
-        level: "Misión Continua",
-        duration: "8 semanas",
-        items: [
-          "Misión en el entorno familiar",
-          "Evangelización en el trabajo/estudio",
-          "Compromiso parroquial permanente",
-          "Voluntariado organizado",
-          "Redes de solidaridad",
-          "Sensibilización social",
-          "Acción política desde la fe",
-          "Cultura del encuentro y diálogo"
-        ]
       }
     ]
   },
   {
-    value: "carisma",
-    label: "Carisma Vicenciano",
+    value: ModulosFormacion.Guia,
+    label: "Guía",
     modules: [
       {
-        id: "carisma-1",
-        title: "Identidad JMV",
-        description: "Fundamentos históricos y espirituales de la Juventud Mariana Vicenciana",
-        level: "Identidad",
-        duration: "10 semanas",
-        items: [
-          "Historia y fundación de JMV",
-          "Espiritualidad mariana vicenciana",
-          "Los cinco pilares de JMV",
-          "Votos y compromisos asociativos",
-          "Estructura organizativa mundial",
-          "Testimonios de jóvenes JMV",
-          "Proyecto de vida JMV",
-          "Integración en la Familia Vicenciana"
-        ]
-      },
-      {
-        id: "carisma-2",
-        title: "Familia Vicenciana",
-        description: "Conocimiento y integración en la gran familia fundada por San Vicente",
-        level: "Familia",
-        duration: "8 semanas",
-        items: [
-          "Historia de la Familia Vicenciana",
-          "Congregación de la Misión (Paúles)",
-          "Hijas de la Caridad",
-          "Asociación de la Medalla Milagrosa",
-          "Sociedad de San Vicente de Paúl",
-          "Voluntariado internacional",
-          "Carisma compartido",
-          "Colaboración inter-congregacional"
-        ]
-      },
-      {
-        id: "carisma-3",
-        title: "Actualización del Carisma",
-        description: "Aplicación del carisma vicenciano a los desafíos contemporáneos",
-        level: "Actualización",
+        id: "guia-1",
+        title: "Guía Espiritual Básica",
+        description: "Formación para el acompañamiento espiritual básico",
+        level: "Nivel Básico",
         duration: "12 semanas",
+        modulo: ModulosFormacion.Guia,
         items: [
-          "Carisma y modernidad",
-          "Nuevas pobrezas y exclusiones",
-          "Tecnología al servicio de la caridad",
-          "Ecología desde la espiritualidad vicenciana",
-          "Diálogo interreligioso e intercultural",
-          "Juventud y compromiso social",
-          "Redes sociales y evangelización",
-          "Profecía vicenciana hoy"
-        ]
-      }
-    ]
-  },
-  {
-    value: "sacramentos",
-    label: "Vida Sacramental",
-    modules: [
-      {
-        id: "sacramentos-1",
-        title: "Iniciación Cristiana",
-        description: "Profundización en los sacramentos de iniciación cristiana",
-        level: "Iniciación",
-        duration: "9 semanas",
-        items: [
-          "Bautismo: nueva vida en Cristo",
-          "Confirmación: dones del Espíritu Santo",
-          "Eucaristía: fuente y cumbre",
-          "Mística del cuerpo y la sangre",
-          "Preparación para la primera comunión",
-          "Renovación de promesas bautismales",
-          "Eucaristía y compromiso social",
-          "Vida sacramental continua"
+          "Fundamentos de la dirección espiritual",
+          "Escucha activa y empática",
+          "Discernimiento espiritual básico",
+          "Acompañamiento en la oración",
+          "Ética del acompañamiento",
+          "Límites y referimientos",
+          "Confidencialidad y discreción",
+          "Crecimiento en la vida virtuosa"
         ]
       },
       {
-        id: "sacramentos-2",
-        title: "Sanación y Reconciliación",
-        description: "Sacramentos de curación y su importancia en la vida espiritual",
-        level: "Sanación",
-        duration: "7 semanas",
+        id: "guia-2",
+        title: "Acompañamiento Avanzado",
+        description: "Formación para acompañamiento espiritual especializado",
+        level: "Nivel Avanzado",
+        duration: "16 semanas",
+        modulo: ModulosFormacion.Guia,
         items: [
-          "Sacramento de la Reconciliación",
-          "Dirección espiritual y confesión",
-          "Unción de los enfermos",
-          "Sanación interior y liberación",
-          "Perdón y reconciliación comunitaria",
+          "Acompañamiento en crisis espirituales",
+          "Dirección espiritual avanzada",
+          "Acompañamiento vocacional",
+          "Espiritualidad del perdón y reconciliación",
           "Acompañamiento en el sufrimiento",
-          "Ministerio de consolación",
-          "Espiritualidad de la cruz"
-        ]
-      },
-      {
-        id: "sacramentos-3",
-        title: "Servicio y Misión",
-        description: "Sacramentos al servicio de la comunión y la misión",
-        level: "Servicio",
-        duration: "8 semanas",
-        items: [
-          "Matrimonio: vocación al amor",
-          "Orden sacerdotal: servicio ministerial",
-          "Vocaciones en la Iglesia",
-          "Espiritualidad laical",
-          "Ministerios laicales",
-          "Matrimonio y familia cristiana",
-          "Celibato por el Reino",
-          "Complementariedad de vocaciones"
+          "Formación de nuevos guías",
+          "Supervisión de casos",
+          "Espiritualidad para el burnout"
         ]
       }
     ]

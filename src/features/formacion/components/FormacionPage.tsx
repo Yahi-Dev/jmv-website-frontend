@@ -1,6 +1,9 @@
 import Navbar from "@/src/components/Navbar"
 import { FooterSection } from "@/src/components/shared/FooterSection"
-import { HeroSection, ModulesSection, ResourcesSection } from "@/src/features/formacion"
+import { FormacionSection } from "@/src/features/formacion"
+import { HeroSection } from "./HeroSection"
+import { ModulesSection } from "./ModulesSection"
+import { ResourcesSection } from "./ResourcesSection"
 
 export default function FormacionPage() {
   return (
@@ -8,6 +11,7 @@ export default function FormacionPage() {
       <Navbar />
       <HeroSection />
       <ModulesSection />
+      <FormacionSection />
       <ResourcesSection />
       <FooterSection />
     </div>

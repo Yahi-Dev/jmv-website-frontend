@@ -15,6 +15,9 @@ export function ModuleCard({ module }: ModuleCardProps) {
         <div className="flex items-center gap-2 mb-2">
           <Badge variant="secondary">{module.level}</Badge>
           <Badge variant="outline">{module.duration}</Badge>
+          <Badge variant="default" className="text-blue-800 bg-blue-100">
+            {module.modulo}
+          </Badge>
         </div>
         <CardTitle>{module.title}</CardTitle>
         <CardDescription>{module.description}</CardDescription>
