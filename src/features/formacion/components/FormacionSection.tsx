@@ -14,12 +14,6 @@ import { useCreateFormacion, useDeleteFormacion, useGetAllFormaciones, useUpdate
 import { Badge } from "@/src/components/ui/badge"
 import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion"
 
-interface FormacionSectionProps {
-  readonly formaciones: FormacionType[]
-  readonly isLoading: boolean
-  readonly fetchAll: () => Promise<FormacionType[] | null>
-}
-
 export function FormacionSection() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -42,6 +36,9 @@ export function FormacionSection() {
       }
     }
     checkAuth()
+  }, [])
+
+  useEffect(() => {
     fetchAll()
   }, [fetchAll])
 

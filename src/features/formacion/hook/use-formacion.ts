@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { FormacionType } from "../model/types";
@@ -12,7 +12,8 @@ export function useGetAllFormaciones() {
   const [error, setError] = useState<string | null>(null);
   const [formaciones, setFormaciones] = useState<FormacionType[]>([]);
 
-  const fetchAll = async (params?: {
+  // Usar useCallback para memoizar la función y evitar bucles infinitos
+  const fetchAll = useCallback(async (params?: {
     isActive?: boolean;
     search?: string;
   }): Promise<FormacionType[] | null> => {
@@ -44,7 +45,7 @@ export function useGetAllFormaciones() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []); // Dependencias vacías ya que getAllFormaciones es importada
 
   return {
     fetchAll,

@@ -9,7 +9,7 @@ export async function GET(
   try {
     const id = Number(context.params.id);
 
-    if (isNaN(id) || !Number.isInteger(id) || id <= 0) {
+    if (Number.isNaN(id) || !Number.isInteger(id) || id <= 0) {
       return sendBadRequest('ID de formación inválido', {
         idProvided: context.params.id,
         expected: 'Número entero positivo',
