@@ -1,6 +1,5 @@
 import Navbar from "@/src/components/Navbar"
 import { FooterSection } from "@/src/components/shared/FooterSection"
-import { FormacionSection } from "@/src/features/formacion"
 import { HeroSection } from "./HeroSection"
 import { ModulesSection } from "./ModulesSection"
 import { ResourcesSection } from "./ResourcesSection"

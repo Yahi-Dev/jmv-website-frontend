@@ -1,16 +1,22 @@
 "use client";
 
-import { useState, useMemo,useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
 import { Search, X, Plus } from "lucide-react";
-import { MODULES_TABS } from "@/src/data/formacion-modulos-data";
 import { TabContent } from "./TabContent";
 import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion";
 import { getClientUser } from "@/src/lib/client-auth";
 import { FormacionFormDialog } from "./formacion-form-dialog";
 import { useCreateFormacion, useGetAllFormaciones } from "../hook/use-formacion";
+
+// Crear tabs dinámicos basados en el enum ModulosFormacion
+const MODULES_TABS = Object.values(ModulosFormacion).map(modulo => ({
+  value: modulo,
+  label: modulo,
+  modules: [] as [] 
+}));
 
 export function ModulesSection() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,23 +31,6 @@ export function ModulesSection() {
   const activeTabData = useMemo(() => {
     return MODULES_TABS.find(tab => tab.value === activeTab);
   }, [activeTab]);
-
-  // Filtrar contenido basado en el tab activo y término de búsqueda
-  const filteredContent = useMemo(() => {
-    if (!searchTerm.trim() || !activeTabData) {
-      return activeTabData;
-    }
-
-    const filteredTab = {
-      ...activeTabData,
-      modules: activeTabData.modules?.filter(module =>
-        module.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        module.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      ) || [],
-    };
-
-    return filteredTab;
-  }, [searchTerm, activeTabData]);
 
   const handleClearSearch = () => {
     setSearchTerm("");
@@ -134,7 +123,7 @@ export function ModulesSection() {
           {MODULES_TABS.map((tab) => (
             <TabsContent key={tab.value} value={tab.value} className="mt-8">
               <TabContent
-                tab={tab.value === activeTab ? (filteredContent || tab) : tab}
+                tab={tab}
                 searchTerm={tab.value === activeTab ? searchTerm : ""}
               />
             </TabsContent>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useCallback, forwardRef } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
@@ -23,7 +24,6 @@ import {
 } from "lucide-react";
 import { Toggle } from "@/src/components/ui/toggle";
 import { cn } from "@/src/lib/utils";
-import { forwardRef, useCallback } from "react";
 
 interface MinimalTiptapProps {
   content?: string;
@@ -35,6 +35,13 @@ interface MinimalTiptapProps {
 
 const MinimalTiptap = forwardRef<HTMLDivElement, MinimalTiptapProps>(
   ({ content = "", onChange, placeholder, editable = true, className }, ref) => {
+    // 🔒 Previene SSR
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    // 🧠 Inicializa el editor solo en cliente
     const editor = useEditor({
       extensions: [StarterKit, Underline],
       content,
@@ -47,26 +54,24 @@ const MinimalTiptap = forwardRef<HTMLDivElement, MinimalTiptapProps>(
           class: "prose prose-sm sm:prose-base focus:outline-none max-w-none",
         },
       },
+      // 👇 Evita render inmediato en SSR
+      immediatelyRender: false,
     });
 
     const setLink = useCallback(() => {
       if (!editor) return;
-
       const previousUrl = editor.getAttributes("link").href;
       const url = window.prompt("URL", previousUrl);
-
       if (url === null) return;
       if (url === "") {
         editor.chain().focus().extendMarkRange("link").unsetLink().run();
         return;
       }
-
       editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
     }, [editor]);
 
-    if (!editor) {
-      return null;
-    }
+    // 🚫 No renderizar hasta que esté montado y editor listo
+    if (!mounted || !editor) return null;
 
     return (
       <div
@@ -221,5 +226,4 @@ const MinimalTiptap = forwardRef<HTMLDivElement, MinimalTiptapProps>(
 );
 
 MinimalTiptap.displayName = "MinimalTiptap";
-
 export { MinimalTiptap };

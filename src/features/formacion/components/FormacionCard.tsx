@@ -26,7 +26,6 @@ export function FormacionCard({
     if (formacion.enlace) {
       window.open(formacion.enlace, '_blank')
     } else if (formacion.ruta) {
-      // Para archivos locales, crear enlace de descarga
       const link = document.createElement('a')
       link.href = formacion.ruta
       link.download = formacion.titulo || 'documento'
@@ -35,51 +34,56 @@ export function FormacionCard({
   }
 
   return (
-    <Card className="relative transition-all duration-300 border-0 shadow-lg hover:shadow-xl hover:-translate-y-1 bg-gradient-to-br from-card to-background group">
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-2 mb-3">
+    <Card className="flex flex-col h-full transition-shadow duration-200 border border-gray-200 shadow-sm hover:shadow-md">
+      <CardHeader className="flex-shrink-0 pb-3">
+        <div className="flex items-center justify-between mb-3">
           {formacion.modulo && (
-            <Badge variant="secondary" className={getModuleColor(formacion.modulo)}>
+            <Badge 
+              variant="secondary" 
+              className="font-medium text-gray-700 bg-gray-100 border-0 hover:bg-gray-200"
+            >
               {formacion.modulo}
             </Badge>
           )}
-          <Badge variant="outline" className="text-green-800 bg-green-100">
-            Dinámico
-          </Badge>
+          {formacion.createdDate && (
+            <span className="text-xs font-medium text-gray-500">
+              {new Date(formacion.createdDate).toLocaleDateString('es-ES')}
+            </span>
+          )}
         </div>
-
-        <CardTitle className="text-lg line-clamp-2">{formacion.titulo}</CardTitle>
+        
+        <CardTitle className="text-lg font-semibold leading-tight text-gray-900 line-clamp-2">
+          {formacion.titulo}
+        </CardTitle>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="flex flex-col flex-grow">
         {formacion.descripcion && (
           <div 
-            className="mb-4 text-sm prose-sm prose text-muted-foreground line-clamp-3 max-w-none"
+            className="flex-grow mb-4 text-sm leading-relaxed text-gray-600 line-clamp-4"
             dangerouslySetInnerHTML={{ __html: formacion.descripcion }}
           />
         )}
-
-        <Button 
-          onClick={handleDownload} 
-          variant="outline" 
-          className="w-full bg-transparent"
-          disabled={!formacion.enlace && !formacion.ruta}
-        >
-          {formacion.enlace ? (
-            <>
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Ver Recurso
-            </>
-          ) : (
-            <>
-              <Download className="w-4 h-4 mr-2" />
-              Descargar
-            </>
-          )}
-        </Button>
-
-        <div className="mt-3 text-xs text-muted-foreground">
-          {formacion.createdDate && new Date(formacion.createdDate).toLocaleDateString('es-ES')}
+        
+        <div className="mt-auto">
+          <Button 
+            onClick={handleDownload} 
+            variant="outline" 
+            className="w-full text-gray-700 transition-colors duration-200 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-900"
+            disabled={!formacion.enlace && !formacion.ruta}
+          >
+            {formacion.enlace ? (
+              <>
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Ver Recurso
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4 mr-2" />
+                Descargar
+              </>
+            )}
+          </Button>
         </div>
       </CardContent>
     </Card>
