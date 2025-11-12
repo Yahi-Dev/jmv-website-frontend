@@ -119,7 +119,6 @@ export function useDeleteFormacion() {
 }
 
 export function useCreateFormacion() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -134,8 +133,7 @@ export function useCreateFormacion() {
         toast.success("Formación creada exitosamente", {
           description: "La formación ha sido registrada correctamente."
         });
-        router.refresh();
-        return response;
+        return response.data;
       } else {
         throw new Error(response.message || "Error al crear la formación");
       }

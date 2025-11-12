@@ -10,6 +10,7 @@ import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion";
 import { getClientUser } from "@/src/lib/client-auth";
 import { FormacionFormDialog } from "./formacion-form-dialog";
 import { useCreateFormacion, useGetAllFormaciones } from "../hook/use-formacion";
+import { FormacionCreateData } from "../schema/validation";
 
 // Crear tabs dinámicos basados en el enum ModulosFormacion
 const MODULES_TABS = Object.values(ModulosFormacion).map(modulo => ({
@@ -25,7 +26,7 @@ export function ModulesSection() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const { create, isLoading: isCreating } = useCreateFormacion();
-  const { fetchAll } = useGetAllFormaciones();
+  const { formaciones, fetchAll } = useGetAllFormaciones();
 
   // Encontrar el tab activo actual
   const activeTabData = useMemo(() => {
@@ -40,12 +41,13 @@ export function ModulesSection() {
     setActiveTab(value as ModulosFormacion);
   };
 
-  const handleCreate = async (data: any) => {
-    await create(data);
-    await fetchAll();
-    setCreateDialogOpen(false);
+  const handleCreate = async (data: FormacionCreateData) => {
+    const newFormacion = await create(data);
+    if (newFormacion) {
+      fetchAll();
+    }
   };
-
+    
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -134,10 +136,13 @@ export function ModulesSection() {
         <FormacionFormDialog
           open={createDialogOpen}
           onOpenChange={setCreateDialogOpen}
-          onSubmit={handleCreate}
+          onSubmit={async (data) => {
+            await handleCreate(data as FormacionCreateData);
+          }}
           isLoading={isCreating}
           mode="create"
         />
+        
       </div>
     </section>
   );

@@ -67,6 +67,7 @@ export function FormacionFormDialog({
   const [file, setFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
 
+  // Usar el tipo correcto según el modo
   const form = useForm<FormacionCreateData>({
     resolver: zodResolver(formacionCreateSchema),
     defaultValues: {
@@ -88,6 +89,17 @@ export function FormacionFormDialog({
         ruta: initialData.ruta || "",
       })
       setUploadType(initialData.enlace ? "link" : "file")
+    } else {
+      // Resetear el formulario cuando no hay initialData (modo create)
+      form.reset({
+        titulo: "",
+        descripcion: "",
+        modulo: ModulosFormacion.Voluntario,
+        enlace: "",
+        ruta: "",
+      })
+      setUploadType("link")
+      setFile(null)
     }
   }, [open, initialData, form])
 
@@ -131,7 +143,7 @@ export function FormacionFormDialog({
         finalData.ruta = "" // Limpiar ruta si se usa enlace
       }
 
-      await onSubmit(finalData)
+      await onSubmit(finalData as FormacionCreateData | FormacionUpdateData)
       form.reset()
       setFile(null)
       setUploadType("link")
