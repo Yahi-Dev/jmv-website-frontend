@@ -8,7 +8,6 @@ import {
   Crown,
   Users,
   Calendar as CalIcon,
-  Linkedin,
   Mail,
   Phone,
   UserRound,

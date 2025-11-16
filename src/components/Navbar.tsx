@@ -11,9 +11,9 @@ import {
   Calendar,
   Newspaper,
   User,
-  ArrowRight,
   Building,
   LogOut,
+  UsersRound,
 } from "lucide-react"
 import { getClientUser, signOut } from "@/src/lib/client-auth"
 import { useEffect, useState } from "react"
@@ -30,6 +30,7 @@ export default function Navbar() {
     { href: "/eventos", label: "Eventos", icon: Calendar },
     { href: "/noticias", label: "Noticias", icon: Newspaper },
     { href: "/centros", label: "Centros", icon: Building },
+    { href: "/consejos", label: "Consejo Nacional", icon: UsersRound },
     { href: "/unete", label: "Únete", icon: User },
   ]
 

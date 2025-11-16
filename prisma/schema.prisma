@@ -28,6 +28,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   verifications Verification[]
+  miembrosConsejo MiembroConsejo[]
 
   @@map("users") // Opcional: mapear a nombre de tabla diferente
 }
@@ -332,6 +333,79 @@ model Formacion {
   deleted      Boolean   @default(false)
   deletedDate  DateTime?
   deletedById  String?
+}
+
+model ConsejoNacional {
+  id           Int        @id @default(autoincrement())
+  periodo      String     // "2024-2026"
+  fechaInicio  DateTime
+  fechaFin     DateTime?
+  sede         String?    // Ciudad/Región sede
+  lema         String?
+  actaUrl      String?
+  fotoUrl      String?
+  isActual     Boolean    @default(false)
+  
+  miembros     MiembroConsejo[]
+  
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deleted      Boolean   @default(false)
+  deletedDate  DateTime?
+  deletedById  String?
+
+  @@map("consejos_nacionales")
+}
+
+model MiembroConsejo {
+  id           Int         @id @default(autoincrement())
+  consejoId    Int
+  userId       String?     // Referencia al usuario si existe en el sistema
+  nombre       String
+  cargo        CargoConsejo
+  ciudad       String?
+  fotoUrl      String?
+  bioCorta     String?
+  bioExtendida String?     @db.Text
+  telefono     String?
+  email        String?
+  estado       EstadoMiembro @default(Titular)
+  
+  // Trayectoria (podría ser una relación separada si es compleja)
+  trayectoria  Json?       // { anio: number, rol: string, lugar?: string }[]
+  
+  consejo      ConsejoNacional @relation(fields: [consejoId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deleted      Boolean   @default(false)
+  deletedDate  DateTime?
+  deletedById  String?
+
+  @@map("miembros_consejo")
+}
+
+enum CargoConsejo {
+  CoordinaraNacional
+  SecretariaNacional
+  VocalDePrejuveniles
+  TesoreraNacional
+  VocalDeLiturgiaYmariana
+  VocalDeFormacion
+  VocalDeExpansion
+  VocalDeComunicacionYEnlaceNacional
+  AsesoraNacional
+  VocalDeMisionYCaridad
+}
+
+enum EstadoMiembro {
+  Titular
+  Suplente
 }
 
 enum ModulosFormacion {

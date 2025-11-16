@@ -10,7 +10,7 @@ import { Badge } from "@/src/components/ui/badge"
 import { Button } from "@/src/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/src/components/ui/dialog"
 import Navbar from "@/src/components/Navbar"
-import { CouncilGrid, MiembroConsejo } from "../../consejos/ui/Council"
+import { CouncilGrid, MiembroConsejo } from "../../../features/consejos/components/Council"
 
 // ---------- Tipos básicos ----------
 type CentroEstado = "Activo" | "Inactivo" | "En formación" | "Suspendido"

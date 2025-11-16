@@ -1,5 +1,5 @@
 import Navbar from "@/src/components/Navbar"
-import ConsejoNacionalSection from "./ui/ConsejoCard"
+import ConsejoNacionalSection from "../../features/consejos/components/ConsejoCard"
 
 export default function ConsejoPage() {
   return (
