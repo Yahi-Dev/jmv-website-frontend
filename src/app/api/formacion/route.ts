@@ -4,6 +4,7 @@ import { sendBadRequest, sendCreated, sendNotFound, sendServerError, sendSuccess
 import { Prisma } from '@prisma/client';
 import { formacionCreateSchema, formacionUpdateSchema } from '@/src/features/formacion/schema/validation';
 import { auth } from '@/src/lib/auth';
+import { z } from 'zod';
 
 export async function GET(req: NextRequest) {
   try {
@@ -101,20 +102,36 @@ export async function POST(req: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const id = Number(searchParams.get('id'));
+    const idParam = searchParams.get('id');
     
-    if (!Number.isInteger(id) || id <= 0) {
-      return sendBadRequest('ID inválido');
+    // Validar el ID del parámetro de consulta
+    if (!idParam) {
+      return sendBadRequest('ID es requerido en los parámetros de consulta');
     }
-
+    
+    const idValidation = z.string().regex(/^\d+$/).safeParse(idParam);
+    if (!idValidation.success) {
+      return sendBadRequest('ID inválido. Debe ser un número válido');
+    }
+    
+    const id = Number(idParam);
+    
     const body = await request.json();
+    
+    // Validar el body sin incluir el ID
     const parsed = formacionUpdateSchema.safeParse(body);
 
     if (!parsed.success) {
-      return sendBadRequest('Datos inválidos', parsed.error.flatten());
+      return sendBadRequest('Datos inválidos', {
+        formErrors: parsed.error.flatten().formErrors,
+        fieldErrors: parsed.error.flatten().fieldErrors
+      });
     }
 
-    const existing = await prisma.formacion.findUnique({ where: { id } });
+    const existing = await prisma.formacion.findUnique({ 
+      where: { id, deleted: false } 
+    });
+    
     if (!existing) {
       return sendNotFound('Formación no encontrada');
     }

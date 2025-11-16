@@ -97,12 +97,24 @@ export async function updateFormacion(
 
     if (!response.ok) {
       const errorText = await response.text();
+      let errorMessage = "Error al actualizar la formación";
+      
       try {
         const errorData = JSON.parse(errorText);
-        throw new Error(errorData.message || "Error al actualizar la formación");
+        errorMessage = errorData.message || errorMessage;
+        
+        // Si hay errores de validación específicos, mostrarlos
+        if (errorData.data?.fieldErrors) {
+          const fieldErrors = Object.entries(errorData.data.fieldErrors)
+            .map(([field, errors]) => `${field}: ${(errors as string[]).join(', ')}`)
+            .join('; ');
+          errorMessage = `Errores de validación: ${fieldErrors}`;
+        }
       } catch {
-        throw new Error(errorText || "Error al actualizar la formación");
+        errorMessage = errorText || errorMessage;
       }
+      
+      throw new Error(errorMessage);
     }
 
     const result = await response.json();

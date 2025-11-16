@@ -20,8 +20,10 @@ export const formacionSchema = z.object({
 
 export const formacionCreateSchema = formacionSchema;
 
-export const formacionUpdateSchema = formacionSchema.partial().extend({
-  id: z.number().int().positive("El ID debe ser un número positivo")
+export const formacionUpdateSchema = formacionSchema.partial();
+
+export const formacionIdParamsSchema = z.object({
+  id: z.string().regex(/^\d+$/, "El ID debe ser un número válido")
 });
 
 export const formacionQuerySchema = z.object({
@@ -32,4 +34,5 @@ export const formacionQuerySchema = z.object({
 
 export type FormacionCreateData = z.infer<typeof formacionCreateSchema>;
 export type FormacionUpdateData = z.infer<typeof formacionUpdateSchema>;
+export type FormacionIdParams = z.infer<typeof formacionIdParamsSchema>;
 export type FormacionQueryData = z.infer<typeof formacionQuerySchema>;
