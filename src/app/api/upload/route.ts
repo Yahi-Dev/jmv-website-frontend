@@ -69,11 +69,13 @@ export async function POST(request: NextRequest) {
     const publicPath = `/${modulo}/${safeTitulo}/${fileName}`;
 
     return sendCreated({
-      filePath: publicPath,
-      fileName: fileName,
-      originalName: file.name,
-      size: file.size,
-      type: file.type
+      Data: {
+        filePath: publicPath,
+        fileName: fileName,
+        originalName: file.name,
+        size: file.size,
+        type: file.type
+      }
     }, 'Archivo subido exitosamente');
 
   } catch (error) {

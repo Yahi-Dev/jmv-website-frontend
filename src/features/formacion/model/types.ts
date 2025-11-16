@@ -68,6 +68,11 @@ export interface FormacionResponse {
 export interface UploadResponse {
   success: boolean;
   message: string;
-  filePath?: string;
-  fileName?: string;
+  data?: {
+    filePath?: string;
+    fileName?: string;
+    originalName?: string;
+    size?: number;
+    type?: string;
+  };
 }

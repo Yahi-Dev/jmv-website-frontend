@@ -34,6 +34,7 @@ import { FormacionType } from "../model/types"
 import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion"
 import { MinimalTiptap } from "@/src/components/ui/io/minimal-tiptap"
 import { uploadDocument } from "../service/formacion-service"
+import { toast } from "sonner"
 
 interface FormacionFormDialogProps {
   readonly open: boolean
@@ -133,8 +134,8 @@ export function FormacionFormDialog({
       if (uploadType === "file" && file) {
         setIsUploading(true)
         const uploadResult = await uploadDocument(file, data.titulo)
-        if (uploadResult.success && uploadResult.filePath) {
-          finalData.ruta = uploadResult.filePath
+        if (uploadResult.success && uploadResult.data?.filePath) {
+          finalData.ruta = uploadResult.data.filePath
           finalData.enlace = "" // Limpiar enlace si se subió archivo
         } else {
           throw new Error(uploadResult.message || "Error al subir archivo")
@@ -150,7 +151,10 @@ export function FormacionFormDialog({
       onOpenChange(false)
     } catch (error) {
       console.error("Error submitting form:", error)
-      // El error ya se maneja en el hook
+      // Mostrar el error al usuario
+      toast.error("Error al enviar el formulario", {
+        description: error instanceof Error ? error.message : "Error desconocido"
+      })
     } finally {
       setIsUploading(false)
     }
@@ -160,14 +164,14 @@ export function FormacionFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? "Agregar Formación" : "Editar Formación"}
           </DialogTitle>
           <DialogDescription>
-            {mode === "create" 
-              ? "Crea un nuevo contenido de formación para JMV" 
+            {mode === "create"
+              ? "Crea un nuevo contenido de formación para JMV"
               : "Actualiza la información de la formación"
             }
           </DialogDescription>
@@ -195,8 +199,8 @@ export function FormacionFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Módulo *</FormLabel>
-                  <Select 
-                    onValueChange={field.onChange} 
+                  <Select
+                    onValueChange={field.onChange}
                     defaultValue={field.value as string}
                     value={field.value as string}
                   >
@@ -230,6 +234,8 @@ export function FormacionFormDialog({
                       onChange={field.onChange}
                       placeholder="Escribe la descripción de la formación..."
                       className="min-h-[200px]"
+                      maxLength={250}
+                      showCharacterCount={true}
                     />
                   </FormControl>
                   <FormMessage />
@@ -269,9 +275,9 @@ export function FormacionFormDialog({
                   <FormItem>
                     <FormLabel>Enlace URL</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="https://ejemplo.com/recurso" 
-                        {...field} 
+                      <Input
+                        placeholder="https://ejemplo.com/recurso"
+                        {...field}
                         value={field.value || ""}
                       />
                     </FormControl>
@@ -320,8 +326,8 @@ export function FormacionFormDialog({
               >
                 Cancelar
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isSubmitting || (uploadType === "file" && !file)}
               >
                 {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}

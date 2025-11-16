@@ -164,7 +164,24 @@ export async function uploadDocument(file: File, titulo: string): Promise<Upload
       throw new Error(errorData.message || 'Error al subir archivo');
     }
 
-    return await response.json();
+    const result = await response.json();
+    
+    // Asegurarnos de que la respuesta tenga la estructura correcta
+    if (result.success && result.data) {
+      return {
+        success: true,
+        message: result.message || 'Archivo subido exitosamente',
+        data: {
+          filePath: result.data.filePath,
+          fileName: result.data.fileName,
+          originalName: result.data.originalName,
+          size: result.data.size,
+          type: result.data.type
+        }
+      };
+    } else {
+      throw new Error(result.message || 'Error en la respuesta del servidor');
+    }
   } catch (error) {
     console.error('Error al subir documento:', error);
     throw error;
