@@ -70,7 +70,7 @@ export function MiembroFormDialog({
     resolver: zodResolver(mode === "create" ? miembroCreateSchema : miembroUpdateSchema),
     defaultValues: {
       nombre: "",
-      cargo: CargoConsejo.Vocal,
+      cargo: CargoConsejo.CoordinadorNacional,
       ciudad: "",
       fotoUrl: "",
       estado: EstadoMiembro.Titular,
@@ -101,7 +101,7 @@ export function MiembroFormDialog({
     } else if (open && mode === "create") {
       form.reset({
         nombre: "",
-        cargo: CargoConsejo.Vocal,
+        cargo: CargoConsejo.CoordinadorNacional,
         ciudad: "",
         fotoUrl: "",
         estado: EstadoMiembro.Titular,

@@ -1,12 +1,14 @@
 // src/features/consejos/components/ConsejoNacionalSection.tsx
 "use client"
 
-import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
-import { useConsejoActual, useConsejosHistoricos } from "../hook/use-consejos"
 import { Button } from "@/src/components/ui/button"
+import { useConsejoActual, useConsejosHistoricos } from "../hook/use-consejos"
+import { ConsejoSkeleton } from "./ConsejoSkeleton"
+import { ConsejoCard } from "./ConsejoCard"
+import { HistorialConsejos } from "./HistorialConsejos"
 import Link from "next/link"
-import { FileText } from "lucide-react"
+import { FileText, Users } from "lucide-react"
 
 export function ConsejoNacionalSection() {
   const { consejo, loading: loadingActual, error: errorActual } = useConsejoActual()
@@ -86,6 +88,14 @@ export function ConsejoNacionalSection() {
                     <ConsejoCard key={miembro.id} miembro={miembro} />
                   ))}
                 </div>
+
+                {consejo.miembros.length === 0 && (
+                  <div className="py-12 text-center">
+                    <p className="text-muted-foreground">
+                      No hay miembros registrados en el consejo actual.
+                    </p>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="py-12 text-center">

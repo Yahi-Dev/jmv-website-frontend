@@ -1,4 +1,6 @@
 // src/features/consejos/hook/use-consejo-form.ts
+"use client"
+
 import { useState } from "react"
 import { toast } from "sonner"
 import { useConsejoActual, useConsejosHistoricos } from "./use-consejos"

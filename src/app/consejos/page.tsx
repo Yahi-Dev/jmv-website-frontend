@@ -1,5 +1,6 @@
+// src/app/consejos/page.tsx
 import Navbar from "@/src/components/Navbar"
-import ConsejoNacionalSection from "../../features/consejos/components/ConsejoCard"
+import { ConsejoNacionalSection } from "@/src/features/consejos"
 
 export default function ConsejoPage() {
   return (

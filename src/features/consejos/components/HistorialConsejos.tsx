@@ -9,7 +9,7 @@ import { Button } from "@/src/components/ui/button"
 import { Search, Filter, MapPin, FileText, Crown } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { ConsejoNacional } from "../model/types"
+import { CargoConsejo, ConsejoNacional } from "../model/types"
 import { ConsejoCard } from "./ConsejoCard"
 
 interface HistorialConsejosProps {
@@ -131,12 +131,12 @@ export function HistorialConsejos({ consejos, loading = false }: HistorialConsej
                       </Button>
                     )}
                   </div>
-                  {consejo.miembros.some(m => m.cargo === "CoordinaraNacional") && (
+                  {consejo.miembros.some(m => m.cargo === CargoConsejo.CoordinadorNacional) && (
                     <div className="text-sm text-muted-foreground">
                       <Crown className="inline w-4 h-4 mr-1" />
                       Coordinación:{" "}
                       {consejo.miembros
-                        .filter(m => m.cargo === "CoordinaraNacional")
+                        .filter(m => m.cargo === CargoConsejo.CoordinadorNacional)
                         .map(m => m.nombre)
                         .join(", ")}
                     </div>

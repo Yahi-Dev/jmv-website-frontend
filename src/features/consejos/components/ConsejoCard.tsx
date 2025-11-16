@@ -9,47 +9,44 @@ import { MapPin, Mail, Phone, Calendar as CalIcon, UserRound } from "lucide-reac
 import { MiembroConsejo, CargoConsejo, EstadoMiembro } from "../model/types"
 import { ConsejeroDialog } from "./ConsejeroDialog"
 
-// Mapeo de íconos para los cargos
+// Mapeo de íconos para los nuevos cargos
 const ROLE_ICON: Record<CargoConsejo, string> = {
-  [CargoConsejo.CoordinaraNacional]: "👑",
-  [CargoConsejo.SecretariaNacional]: "📝",
-  [CargoConsejo.TesoreraNacional]: "💰",
-  [CargoConsejo.VocalDePrejuveniles]: "👦",
-  [CargoConsejo.VocalDeLiturgiaYmariana]: "🙏",
+  [CargoConsejo.CoordinadorNacional]: "👑",
+  [CargoConsejo.SecretarioNacional]: "📝",
+  [CargoConsejo.TesoreroNacional]: "💰",
   [CargoConsejo.VocalDeFormacion]: "📚",
+  [CargoConsejo.VocalDeMisionYCaridad]: "❤️",
+  [CargoConsejo.VocalLiturgiaYMariana]: "🙏",
   [CargoConsejo.VocalDeExpansion]: "🌍",
-  [CargoConsejo.VocalDeComunicacionYEnlaceNacional]: "📡",
-  [CargoConsejo.AsesoraNacional]: "💡",
-  [CargoConsejo.VocalDeMisionYCaridad]: "❤️"
+  [CargoConsejo.VocalDePrejuveniles]: "👦",
+  [CargoConsejo.VocalDeCulturaYRecreacion]: "🎭"
 }
 
-// Mapeo de nombres legibles para los cargos
+// Mapeo de nombres legibles para los nuevos cargos
 const CARGO_LABELS: Record<CargoConsejo, string> = {
-  [CargoConsejo.CoordinaraNacional]: "Coordinador/a Nacional",
-  [CargoConsejo.SecretariaNacional]: "Secretario/a Nacional",
-  [CargoConsejo.TesoreraNacional]: "Tesorero/a Nacional",
-  [CargoConsejo.VocalDePrejuveniles]: "Vocal de Prejuveniles",
-  [CargoConsejo.VocalDeLiturgiaYmariana]: "Vocal de Liturgia y Mariana",
+  [CargoConsejo.CoordinadorNacional]: "Coordinador/a Nacional",
+  [CargoConsejo.SecretarioNacional]: "Secretario/a Nacional",
+  [CargoConsejo.TesoreroNacional]: "Tesorero/a Nacional",
   [CargoConsejo.VocalDeFormacion]: "Vocal de Formación",
+  [CargoConsejo.VocalDeMisionYCaridad]: "Vocal de Misión y Caridad",
+  [CargoConsejo.VocalLiturgiaYMariana]: "Vocal de Liturgia y Mariana",
   [CargoConsejo.VocalDeExpansion]: "Vocal de Expansión",
-  [CargoConsejo.VocalDeComunicacionYEnlaceNacional]: "Vocal de Comunicación y Enlace Nacional",
-  [CargoConsejo.AsesoraNacional]: "Asesor/a Nacional",
-  [CargoConsejo.VocalDeMisionYCaridad]: "Vocal de Misión y Caridad"
+  [CargoConsejo.VocalDePrejuveniles]: "Vocal de Pre-juveniles",
+  [CargoConsejo.VocalDeCulturaYRecreacion]: "Vocal de Cultura y Recreación"
 }
 
 // Colores para los badges de cargo
 function cargoBadgeVariant(cargo: CargoConsejo): string {
   const variants: Record<CargoConsejo, string> = {
-    [CargoConsejo.CoordinaraNacional]: "bg-primary/10 text-primary border-primary/20",
-    [CargoConsejo.SecretariaNacional]: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300",
-    [CargoConsejo.TesoreraNacional]: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300",
-    [CargoConsejo.VocalDePrejuveniles]: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300",
-    [CargoConsejo.VocalDeLiturgiaYmariana]: "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300",
-    [CargoConsejo.VocalDeFormacion]: "bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-900/30 dark:text-fuchsia-300",
+    [CargoConsejo.CoordinadorNacional]: "bg-primary/10 text-primary border-primary/20",
+    [CargoConsejo.SecretarioNacional]: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300",
+    [CargoConsejo.TesoreroNacional]: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300",
+    [CargoConsejo.VocalDeFormacion]: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300",
+    [CargoConsejo.VocalDeMisionYCaridad]: "bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-300",
+    [CargoConsejo.VocalLiturgiaYMariana]: "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300",
     [CargoConsejo.VocalDeExpansion]: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300",
-    [CargoConsejo.VocalDeComunicacionYEnlaceNacional]: "bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300",
-    [CargoConsejo.AsesoraNacional]: "bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-900/30 dark:text-teal-300",
-    [CargoConsejo.VocalDeMisionYCaridad]: "bg-rose-100 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-300"
+    [CargoConsejo.VocalDePrejuveniles]: "bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-900/30 dark:text-cyan-300",
+    [CargoConsejo.VocalDeCulturaYRecreacion]: "bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-900/30 dark:text-fuchsia-300"
   }
   return variants[cargo]
 }

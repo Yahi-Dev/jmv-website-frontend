@@ -391,16 +391,15 @@ model MiembroConsejo {
 }
 
 enum CargoConsejo {
-  CoordinaraNacional
-  SecretariaNacional
-  VocalDePrejuveniles
-  TesoreraNacional
-  VocalDeLiturgiaYmariana
+  CoordinadorNacional
+  SecretarioNacional
+  TesoreroNacional
   VocalDeFormacion
-  VocalDeExpansion
-  VocalDeComunicacionYEnlaceNacional
-  AsesoraNacional
   VocalDeMisionYCaridad
+  VocalLiturgiaYMariana
+  VocalDeExpansion
+  VocalDePrejuveniles
+  VocalDeCulturaYRecreacion
 }
 
 enum EstadoMiembro {

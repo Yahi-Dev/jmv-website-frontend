@@ -1,15 +1,14 @@
 // src/features/consejos/model/types.ts
 export enum CargoConsejo {
-  CoordinaraNacional = "CoordinaraNacional",
-  SecretariaNacional = "SecretariaNacional", 
-  VocalDePrejuveniles = "VocalDePrejuveniles",
-  TesoreraNacional = "TesoreraNacional",
-  VocalDeLiturgiaYmariana = "VocalDeLiturgiaYmariana",
+  CoordinadorNacional = "CoordinadorNacional",
+  SecretarioNacional = "SecretarioNacional", 
+  TesoreroNacional = "TesoreroNacional",
   VocalDeFormacion = "VocalDeFormacion",
+  VocalDeMisionYCaridad = "VocalDeMisionYCaridad",
+  VocalLiturgiaYMariana = "VocalLiturgiaYMariana",
   VocalDeExpansion = "VocalDeExpansion",
-  VocalDeComunicacionYEnlaceNacional = "VocalDeComunicacionYEnlaceNacional",
-  AsesoraNacional = "AsesoraNacional",
-  VocalDeMisionYCaridad = "VocalDeMisionYCaridad"
+  VocalDePrejuveniles = "VocalDePrejuveniles",
+  VocalDeCulturaYRecreacion = "VocalDeCulturaYRecreacion"
 }
 
 export enum EstadoMiembro {
@@ -37,7 +36,6 @@ export interface MiembroConsejo {
   bioExtendida?: string
   telefono?: string
   email?: string
-  linkedin?: string
   trayectoria?: TrayectoriaItem[]
   
   user?: {
@@ -95,7 +93,6 @@ export interface MiembroFormData {
   bioExtendida?: string
   telefono?: string
   email?: string
-  linkedin?: string
   trayectoria?: TrayectoriaItem[]
 }
 

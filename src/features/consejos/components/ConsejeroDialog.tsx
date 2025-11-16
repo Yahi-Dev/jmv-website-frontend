@@ -9,18 +9,17 @@ import { Badge } from "@/src/components/ui/badge"
 import { MapPin, Mail, Phone, Linkedin, Calendar as CalIcon } from "lucide-react"
 import { MiembroConsejo, CargoConsejo } from "../model/types"
 
-// Mapeo de nombres legibles para los cargos (repetido por si acaso)
+// Mapeo de nombres legibles para los nuevos cargos
 const CARGO_LABELS: Record<CargoConsejo, string> = {
-  [CargoConsejo.CoordinaraNacional]: "Coordinador/a Nacional",
-  [CargoConsejo.SecretariaNacional]: "Secretario/a Nacional",
-  [CargoConsejo.TesoreraNacional]: "Tesorero/a Nacional",
-  [CargoConsejo.VocalDePrejuveniles]: "Vocal de Prejuveniles",
-  [CargoConsejo.VocalDeLiturgiaYmariana]: "Vocal de Liturgia y Mariana",
+  [CargoConsejo.CoordinadorNacional]: "Coordinador/a Nacional",
+  [CargoConsejo.SecretarioNacional]: "Secretario/a Nacional",
+  [CargoConsejo.TesoreroNacional]: "Tesorero/a Nacional",
   [CargoConsejo.VocalDeFormacion]: "Vocal de Formación",
+  [CargoConsejo.VocalDeMisionYCaridad]: "Vocal de Misión y Caridad",
+  [CargoConsejo.VocalLiturgiaYMariana]: "Vocal de Liturgia y Mariana",
   [CargoConsejo.VocalDeExpansion]: "Vocal de Expansión",
-  [CargoConsejo.VocalDeComunicacionYEnlaceNacional]: "Vocal de Comunicación y Enlace Nacional",
-  [CargoConsejo.AsesoraNacional]: "Asesor/a Nacional",
-  [CargoConsejo.VocalDeMisionYCaridad]: "Vocal de Misión y Caridad"
+  [CargoConsejo.VocalDePrejuveniles]: "Vocal de Pre-juveniles",
+  [CargoConsejo.VocalDeCulturaYRecreacion]: "Vocal de Cultura y Recreación"
 }
 
 // Función para enmascarar información de contacto
@@ -107,7 +106,7 @@ export function ConsejeroDialog({ open, onOpenChange, miembro }: ConsejeroDialog
             </div>
 
             {/* Información de contacto */}
-            {(phone || email || miembro.linkedin) && (
+            {(phone || email) && (
               <>
                 <Separator />
                 <div className="space-y-2">
@@ -124,17 +123,6 @@ export function ConsejeroDialog({ open, onOpenChange, miembro }: ConsejeroDialog
                         <Mail className="w-4 h-4" />
                         {email}
                       </span>
-                    )}
-                    {miembro.linkedin && (
-                      <Link 
-                        href={miembro.linkedin} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 hover:text-primary transition-colors"
-                      >
-                        <Linkedin className="w-4 h-4" />
-                        LinkedIn
-                      </Link>
                     )}
                   </div>
                 </div>

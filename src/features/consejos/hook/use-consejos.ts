@@ -1,4 +1,6 @@
 // src/features/consejos/hook/use-consejos.ts
+"use client"
+
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { ConsejoNacional } from '../model/types'
