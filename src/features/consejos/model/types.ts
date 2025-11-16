@@ -1,36 +1,21 @@
 // src/features/consejos/model/types.ts
-
-// enum CargoConsejo {
-//   CoordinaraNacional
-//   SecretariaNacional
-//   VocalDePrejuveniles
-//   TesoreraNacional
-//   VocalDeLiturgiaYmariana
-//   VocalDeFormacion
-//   VocalDeExpansion
-//   VocalDeComunicacionYEnlaceNacional
-//   AsesoraNacional
-//   VocalDeMisionYCaridad
-// }
-
 export enum CargoConsejo {
-    CoordinadorNacional = "Coordinador/a Nacional",
-    SecretariaNacional = "Secretario/a Nacional",
-    TesoreraNacional = "Tesorero/a Nacional",
-    VocalDePrejuveniles = "Vocal De Prejuveniles",
-    VocalDeLiturgiaYmariana = "Vocal De Liturgia y Mariana",
-    VocalDeFormacion = "Vocal De Formacion",
-    VocalDeExpansion = "Vocal De Expansion",
-    VocalDeComunicacionYEnlaceNacional = "Vocal De Comunicacion y Enlace Nacional",
-    AsesoraNacional = "Asesor/a Nacional",
-    VocalDeMisionYCaridad = "Vocal De Mision y Caridad"
+  CoordinaraNacional = "CoordinaraNacional",
+  SecretariaNacional = "SecretariaNacional", 
+  VocalDePrejuveniles = "VocalDePrejuveniles",
+  TesoreraNacional = "TesoreraNacional",
+  VocalDeLiturgiaYmariana = "VocalDeLiturgiaYmariana",
+  VocalDeFormacion = "VocalDeFormacion",
+  VocalDeExpansion = "VocalDeExpansion",
+  VocalDeComunicacionYEnlaceNacional = "VocalDeComunicacionYEnlaceNacional",
+  AsesoraNacional = "AsesoraNacional",
+  VocalDeMisionYCaridad = "VocalDeMisionYCaridad"
 }
 
 export enum EstadoMiembro {
   Titular = "Titular",
   Suplente = "Suplente"
 }
-
 
 export interface TrayectoriaItem {
   id?: string
@@ -52,6 +37,7 @@ export interface MiembroConsejo {
   bioExtendida?: string
   telefono?: string
   email?: string
+  linkedin?: string
   trayectoria?: TrayectoriaItem[]
   
   user?: {
@@ -109,6 +95,7 @@ export interface MiembroFormData {
   bioExtendida?: string
   telefono?: string
   email?: string
+  linkedin?: string
   trayectoria?: TrayectoriaItem[]
 }
 
