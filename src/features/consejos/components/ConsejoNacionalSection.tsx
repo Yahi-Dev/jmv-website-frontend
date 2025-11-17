@@ -1,30 +1,41 @@
 // src/features/consejos/components/ConsejoNacionalSection.tsx
 "use client"
 
+import { useEffect, useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import { Button } from "@/src/components/ui/button"
 import { useConsejoActual, useConsejosHistoricos } from "../hook/use-consejos"
 import { ConsejoSkeleton } from "./ConsejoSkeleton"
 import { ConsejoCard } from "./ConsejoCard"
 import { HistorialConsejos } from "./HistorialConsejos"
+import { ConsejoManagement } from "./ConsejoManagement"
 import Link from "next/link"
-import { FileText, Users } from "lucide-react"
+import { FileText, Users, CalendarPlus, Users2 } from "lucide-react"
+import { getClientUser } from "@/src/lib/client-auth"
 
 export function ConsejoNacionalSection() {
-  const { consejo, loading: loadingActual, error: errorActual } = useConsejoActual()
+  const [isAdmin, setIsAdmin] = useState(false)
+  const { consejo, loading: loadingActual, error: errorActual, isEmpty } = useConsejoActual()
   const { consejos: historicos, loading: loadingHistoricos } = useConsejosHistoricos()
+
+  // Verificar si el usuario es administrador
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await getClientUser()
+        // Aquí puedes ajustar la lógica para determinar si es admin
+        // Por ahora, asumimos que cualquier usuario autenticado es admin
+        setIsAdmin(!!user)
+      } catch (error) {
+        console.error("Error checking auth:", error)
+        setIsAdmin(false)
+      }
+    }
+    checkAuth()
+  }, [])
 
   if (loadingActual) {
     return <ConsejoSkeleton />
-  }
-
-  if (errorActual && !consejo) {
-    return (
-      <div className="container px-4 py-16 text-center">
-        <h2 className="mb-4 text-2xl font-bold">Consejo Nacional</h2>
-        <p className="text-muted-foreground">{errorActual}</p>
-      </div>
-    )
   }
 
   return (
@@ -46,6 +57,13 @@ export function ConsejoNacionalSection() {
           </p>
         </div>
 
+        {/* Panel de Administración (solo para admins) */}
+        {isAdmin && (
+          <div className="mb-8">
+            <ConsejoManagement isAdmin={isAdmin} />
+          </div>
+        )}
+
         {/* Tabs */}
         <Tabs defaultValue="actual" className="w-full">
           <TabsList className="grid w-full max-w-xl grid-cols-2 mx-auto mb-8">
@@ -55,7 +73,58 @@ export function ConsejoNacionalSection() {
 
           {/* Consejo Actual */}
           <TabsContent value="actual" className="mt-6">
-            {consejo ? (
+            {errorActual ? (
+              // Estado de error real
+              <div className="py-12 text-center">
+                <div className="max-w-md mx-auto">
+                  <div className="p-4 mx-auto mb-4 rounded-full bg-destructive/10 w-fit">
+                    <Users2 className="w-8 h-8 text-destructive" />
+                  </div>
+                  <h3 className="mb-2 text-xl font-semibold">Error al cargar</h3>
+                  <p className="mb-6 text-muted-foreground">{errorActual}</p>
+                  <Button onClick={() => window.location.reload()}>
+                    Reintentar
+                  </Button>
+                </div>
+              </div>
+            ) : isEmpty ? (
+              // Estado: No hay consejo actual (no es error)
+              <div className="py-12 text-center">
+                <div className="max-w-md mx-auto">
+                  <div className="p-4 mx-auto mb-4 rounded-full bg-muted w-fit">
+                    <CalendarPlus className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="mb-2 text-xl font-semibold">No hay consejo actual</h3>
+                  <p className="mb-6 text-muted-foreground">
+                    Actualmente no hay un consejo nacional activo configurado en el sistema.
+                  </p>
+                  {isAdmin && (
+                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                      <Button asChild>
+                        <Link href="#management">
+                          Crear primer consejo
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
+                  {!isAdmin && (
+                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                      <Button variant="outline" asChild>
+                        <Link href="/historial">
+                          Ver consejos anteriores
+                        </Link>
+                      </Button>
+                      <Button asChild>
+                        <Link href="/contacto">
+                          Contactar administración
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : consejo ? (
+              // Estado normal: Hay consejo actual
               <div className="space-y-8">
                 {/* Info del período actual */}
                 <div className="p-6 border rounded-lg bg-card/50 backdrop-blur-sm">
@@ -65,20 +134,7 @@ export function ConsejoNacionalSection() {
                       {consejo.lema && (
                         <p className="mt-2 text-lg italic text-muted-foreground">"{consejo.lema}"</p>
                       )}
-                      {consejo.sede && (
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          Sede Nacional: {consejo.sede}
-                        </p>
-                      )}
                     </div>
-                    {consejo.actaUrl && (
-                      <Button asChild variant="outline">
-                        <Link href={consejo.actaUrl} target="_blank">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Ver Acta de Constitución
-                        </Link>
-                      </Button>
-                    )}
                   </div>
                 </div>
 
@@ -94,14 +150,18 @@ export function ConsejoNacionalSection() {
                     <p className="text-muted-foreground">
                       No hay miembros registrados en el consejo actual.
                     </p>
+                    {isAdmin && (
+                      <Button 
+                        onClick={() => document.getElementById('management')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="mt-4"
+                      >
+                        Agregar miembros
+                      </Button>
+                    )}
                   </div>
                 )}
               </div>
-            ) : (
-              <div className="py-12 text-center">
-                <p className="text-muted-foreground">No hay consejo actual configurado.</p>
-              </div>
-            )}
+            ) : null}
           </TabsContent>
 
           {/* Historial */}

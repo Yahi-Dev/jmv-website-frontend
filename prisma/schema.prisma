@@ -340,9 +340,7 @@ model ConsejoNacional {
   periodo      String     // "2024-2026"
   fechaInicio  DateTime
   fechaFin     DateTime?
-  sede         String?    // Ciudad/Región sede
   lema         String?
-  actaUrl      String?
   fotoUrl      String?
   isActual     Boolean    @default(false)
   

@@ -1,16 +1,16 @@
 // src/features/consejos/components/MiembroFormDialog.tsx
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
 } from "@/src/components/ui/dialog"
 import {
   Form,
@@ -23,6 +23,7 @@ import {
 import { Input } from "@/src/components/ui/input"
 import { Button } from "@/src/components/ui/button"
 import { Textarea } from "@/src/components/ui/textarea"
+import { Tabs, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import {
   Select,
   SelectContent,
@@ -31,7 +32,7 @@ import {
   SelectValue,
 } from "@/src/components/ui/select"
 import { Badge } from "@/src/components/ui/badge"
-import { Loader2, Plus, Trash2, User, Mail, Phone, MapPin, Linkedin, Briefcase } from "lucide-react"
+import { Loader2, Plus, Trash2, User, Mail, Phone, MapPin, Upload, Link as LinkIcon, X, Briefcase } from "lucide-react"
 import { MiembroFormData, MiembroConsejo, CargoConsejo, EstadoMiembro, TrayectoriaItem } from "../model/types"
 import { miembroCreateSchema, miembroUpdateSchema, MiembroCreateData } from "../schema/validation"
 
@@ -44,6 +45,8 @@ interface MiembroFormDialogProps {
   mode: "create" | "edit"
   consejoId?: number
 }
+
+type TabValue = "url" | "upload"
 
 const CARGO_OPTIONS = Object.values(CargoConsejo).map(cargo => ({
   value: cargo,
@@ -65,6 +68,12 @@ export function MiembroFormDialog({
   consejoId
 }: MiembroFormDialogProps) {
   const [trayectoriaItems, setTrayectoriaItems] = useState<TrayectoriaItem[]>([])
+  const [fotoTab, setFotoTab] = useState<TabValue>("url")
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null)
+  const [fotoFile, setFotoFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
+  
+  const fotoInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<MiembroCreateData>({
     resolver: zodResolver(mode === "create" ? miembroCreateSchema : miembroUpdateSchema),
@@ -98,6 +107,12 @@ export function MiembroFormDialog({
         trayectoria: initialData.trayectoria || []
       })
       setTrayectoriaItems(initialData.trayectoria || [])
+      
+      // Mostrar preview si hay foto URL
+      if (initialData.fotoUrl) {
+        setFotoPreview(initialData.fotoUrl)
+        setFotoTab("url")
+      }
     } else if (open && mode === "create") {
       form.reset({
         nombre: "",
@@ -112,8 +127,86 @@ export function MiembroFormDialog({
         trayectoria: []
       })
       setTrayectoriaItems([])
+      setFotoPreview(null)
+      setFotoFile(null)
+      setFotoTab("url")
     }
   }, [open, initialData, mode, form])
+
+  // Resetear estados cuando se cierra el diálogo
+  useEffect(() => {
+    if (!open) {
+      setFotoPreview(null)
+      setFotoFile(null)
+      setFotoTab("url")
+    }
+  }, [open])
+
+  const handleFotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      // Validar tipo de archivo
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+      if (!allowedTypes.includes(file.type)) {
+        form.setError("fotoUrl", { message: "Formato no válido. Use JPEG, PNG, WebP o GIF" })
+        return
+      }
+
+      // Validar tamaño (5MB máximo)
+      if (file.size > 5 * 1024 * 1024) {
+        form.setError("fotoUrl", { message: "La imagen no debe superar 5MB" })
+        return
+      }
+
+      setFotoFile(file)
+      
+      // Crear preview
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setFotoPreview(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+      
+      // Limpiar error si existe
+      form.clearErrors("fotoUrl")
+    }
+  }
+
+  const removeFoto = () => {
+    setFotoPreview(null)
+    setFotoFile(null)
+    form.setValue("fotoUrl", "")
+    if (fotoInputRef.current) {
+      fotoInputRef.current.value = ""
+    }
+  }
+
+  const uploadFile = async (file: File): Promise<string> => {
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('titulo', `miembro-foto-${Date.now()}`)
+      formData.append('modulo', 'miembros')
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Error al subir archivo')
+      }
+
+      const result = await response.json()
+      return result.Data.filePath
+    } catch (error) {
+      console.error('Error uploading foto:', error)
+      throw new Error('Error al subir la foto')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const addTrayectoriaItem = () => {
     const newItem: TrayectoriaItem = {
@@ -138,21 +231,36 @@ export function MiembroFormDialog({
   }
 
   const handleSubmit = async (data: MiembroCreateData) => {
-    const submitData: MiembroFormData = {
-      ...data,
-      trayectoria: trayectoriaItems.filter(item => item.rol.trim() !== ""), // Solo items con rol
-      ...(mode === "create" && consejoId && { consejoId })
-    }
+    try {
+      let finalFotoUrl = data.fotoUrl
 
-    await onSubmit(submitData)
-    if (mode === "create") {
-      form.reset()
-      setTrayectoriaItems([])
+      // Subir foto si se seleccionó un archivo
+      if (fotoFile && fotoTab === "upload") {
+        finalFotoUrl = await uploadFile(fotoFile)
+      }
+
+      const submitData: MiembroFormData = {
+        ...data,
+        fotoUrl: finalFotoUrl,
+        trayectoria: trayectoriaItems.filter(item => item.rol.trim() !== ""),
+        ...(mode === "create" && consejoId && { consejoId })
+      }
+
+      await onSubmit(submitData)
+      if (mode === "create") {
+        form.reset()
+        setTrayectoriaItems([])
+        setFotoPreview(null)
+        setFotoFile(null)
+      }
+      onOpenChange(false)
+    } catch (error) {
+      console.error("Error en submit:", error)
+      // El error ya se maneja en el hook
     }
-    onOpenChange(false)
   }
 
-  const isSubmitting = isLoading
+  const isSubmitting = isLoading || uploading
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -162,8 +270,8 @@ export function MiembroFormDialog({
             {mode === "create" ? "Agregar Miembro" : "Editar Miembro"}
           </DialogTitle>
           <DialogDescription>
-            {mode === "create" 
-              ? "Agrega un nuevo miembro al consejo nacional" 
+            {mode === "create"
+              ? "Agrega un nuevo miembro al consejo nacional"
               : "Actualiza la información del miembro"
             }
           </DialogDescription>
@@ -299,19 +407,82 @@ export function MiembroFormDialog({
                 />
               </div>
 
-              <FormField
-                control={form.control}
-                name="fotoUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>URL de Foto</FormLabel>
-                    <FormControl>
-                      <Input placeholder="https://ejemplo.com/foto.jpg" {...field} value={field.value || ""} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              <div className="space-y-4">
+                <h3 className="font-medium">Foto del Miembro</h3>
+
+                <Tabs value={fotoTab} onValueChange={(value: string) => setFotoTab(value as TabValue)} className="w-full">
+                  <TabsList className="grid w-40 grid-cols-2">
+                    <TabsTrigger value="url" className="text-xs">
+                      <LinkIcon className="w-3 h-3 mr-1" />
+                      URL
+                    </TabsTrigger>
+                    <TabsTrigger value="upload" className="text-xs">
+                      <Upload className="w-3 h-3 mr-1" />
+                      Subir
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+
+                {fotoTab === "url" ? (
+                  <FormField
+                    control={form.control}
+                    name="fotoUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="https://ejemplo.com/foto-miembro.jpg"
+                            {...field}
+                            value={field.value || ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <div className="space-y-3">
+                    <Input
+                      ref={fotoInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleFotoUpload}
+                      className="cursor-pointer"
+                    />
+
+                    {fotoPreview && (
+                      <div className="relative">
+                        <div className="flex items-center gap-3 p-3 border rounded-lg">
+                          <img
+                            src={fotoPreview}
+                            alt="Preview"
+                            className="object-cover w-16 h-16 rounded"
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">{fotoFile?.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {((fotoFile?.size || 0) / 1024 / 1024).toFixed(2)} MB
+                            </p>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={removeFoto}
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="text-xs text-muted-foreground">
+                      Formatos: JPEG, PNG, WebP, GIF. Máximo 5MB.
+                    </div>
+                  </div>
                 )}
-              />
+              </div>
             </div>
 
             {/* Biografía */}
@@ -324,11 +495,11 @@ export function MiembroFormDialog({
                   <FormItem>
                     <FormLabel>Biografía Corta</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Breve descripción para mostrar en tarjetas..." 
-                        {...field} 
+                      <Textarea
+                        placeholder="Breve descripción para mostrar en tarjetas..."
+                        {...field}
                         value={field.value || ""}
-                        className="min-h-[80px] resize-none"
+                        className="resize-none min-h-20"
                       />
                     </FormControl>
                     <FormMessage />
@@ -346,9 +517,9 @@ export function MiembroFormDialog({
                   <FormItem>
                     <FormLabel>Biografía Extendida</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Descripción más detallada para el perfil completo..." 
-                        {...field} 
+                      <Textarea
+                        placeholder="Descripción más detallada para el perfil completo..."
+                        {...field}
                         value={field.value || ""}
                         className="min-h-[120px] resize-none"
                       />

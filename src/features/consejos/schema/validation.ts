@@ -32,9 +32,7 @@ export const consejoCreateSchema = z.object({
     .regex(/^\d{4}-\d{4}$/, "Formato debe ser AAAA-AAAA (ej: 2024-2026)"),
   fechaInicio: z.string().min(1, "Fecha de inicio requerida"),
   fechaFin: z.string().optional(),
-  sede: z.string().max(100, "Máximo 100 caracteres").optional(),
   lema: z.string().max(200, "Máximo 200 caracteres").optional(),
-  actaUrl: z.string().url("URL inválida").optional().or(z.literal('')),
   fotoUrl: z.string().url("URL inválida").optional().or(z.literal('')),
   isActual: z.boolean().default(false)
 })

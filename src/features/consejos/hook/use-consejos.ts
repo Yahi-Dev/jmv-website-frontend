@@ -15,22 +15,33 @@ export function useConsejoActual() {
   const [consejo, setConsejo] = useState<ConsejoNacional | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isEmpty, setIsEmpty] = useState(false)
 
   const fetchConsejoActual = async () => {
     try {
       setLoading(true)
       setError(null)
+      setIsEmpty(false)
       
       const response = await getConsejoActual()
       
-      if (response.success && response.data) {
-        setConsejo(response.data as ConsejoNacional)
+      if (response.success) {
+        if (response.data) {
+          setConsejo(response.data as ConsejoNacional)
+          setIsEmpty(false)
+        } else {
+          // No hay consejo actual, pero no es un error
+          setConsejo(null)
+          setIsEmpty(true)
+        }
       } else {
-        setError(response.message || "No hay consejo actual")
+        setError(response.message || "Error al cargar el consejo actual")
+        setIsEmpty(false)
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Error desconocido"
       setError(errorMessage)
+      setIsEmpty(false)
       toast.error('Error al cargar el consejo actual', {
         description: errorMessage
       })
@@ -46,7 +57,8 @@ export function useConsejoActual() {
   return { 
     consejo, 
     loading, 
-    error, 
+    error,
+    isEmpty,
     refetch: fetchConsejoActual 
   }
 }

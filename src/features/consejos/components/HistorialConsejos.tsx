@@ -88,12 +88,6 @@ export function HistorialConsejos({ consejos, loading = false }: HistorialConsej
             <AccordionTrigger className="text-lg hover:no-underline">
               <div className="flex items-center gap-3">
                 <span className="font-semibold">{consejo.periodo}</span>
-                {consejo.sede && (
-                  <Badge variant="outline" className="text-xs">
-                    <MapPin className="w-3 h-3 mr-1" />
-                    {consejo.sede}
-                  </Badge>
-                )}
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -115,22 +109,6 @@ export function HistorialConsejos({ consejos, loading = false }: HistorialConsej
                       </Badge>
                     </div>
                   )}
-                  <div className="flex flex-wrap items-center gap-2 text-sm">
-                    {consejo.sede && (
-                      <Badge variant="outline">
-                        <MapPin className="w-3.5 h-3.5 mr-1" />
-                        Sede: {consejo.sede}
-                      </Badge>
-                    )}
-                    {consejo.actaUrl && (
-                      <Button asChild size="sm" variant="outline" className="bg-transparent border-primary/20 hover:bg-primary/5">
-                        <Link href={consejo.actaUrl} target="_blank">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Ver acta
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
                   {consejo.miembros.some(m => m.cargo === CargoConsejo.CoordinadorNacional) && (
                     <div className="text-sm text-muted-foreground">
                       <Crown className="inline w-4 h-4 mr-1" />

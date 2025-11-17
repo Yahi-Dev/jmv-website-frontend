@@ -55,9 +55,7 @@ export interface ConsejoNacional {
   periodo: string
   fechaInicio: Date
   fechaFin?: Date
-  sede?: string
   lema?: string
-  actaUrl?: string
   fotoUrl?: string
   isActual: boolean
   
@@ -73,9 +71,7 @@ export interface ConsejoFormData {
   periodo: string
   fechaInicio: string
   fechaFin?: string
-  sede?: string
   lema?: string
-  actaUrl?: string
   fotoUrl?: string
   isActual: boolean
 }
