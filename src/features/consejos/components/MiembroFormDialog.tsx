@@ -72,7 +72,7 @@ export function MiembroFormDialog({
   const [fotoPreview, setFotoPreview] = useState<string | null>(null)
   const [fotoFile, setFotoFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
-  
+
   const fotoInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<MiembroCreateData>({
@@ -107,7 +107,7 @@ export function MiembroFormDialog({
         trayectoria: initialData.trayectoria || []
       })
       setTrayectoriaItems(initialData.trayectoria || [])
-      
+
       // Mostrar preview si hay foto URL
       if (initialData.fotoUrl) {
         setFotoPreview(initialData.fotoUrl)
@@ -159,14 +159,14 @@ export function MiembroFormDialog({
       }
 
       setFotoFile(file)
-      
+
       // Crear preview
       const reader = new FileReader()
       reader.onload = (e) => {
         setFotoPreview(e.target?.result as string)
       }
       reader.readAsDataURL(file)
-      
+
       // Limpiar error si existe
       form.clearErrors("fotoUrl")
     }
@@ -195,11 +195,29 @@ export function MiembroFormDialog({
       })
 
       if (!response.ok) {
-        throw new Error('Error al subir archivo')
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Error al subir archivo')
       }
 
       const result = await response.json()
-      return result.Data.filePath
+
+      // Debug: log para ver la estructura real
+      console.log('Upload response:', result)
+
+      // Ajusta según la estructura real
+      if (result.Data && result.Data.filePath) {
+        return result.Data.filePath
+      }
+
+      if (result.filePath) {
+        return result.filePath
+      }
+
+      if (result.data && result.data.filePath) {
+        return result.data.filePath
+      }
+
+      throw new Error('Estructura de respuesta inesperada')
     } catch (error) {
       console.error('Error uploading foto:', error)
       throw new Error('Error al subir la foto')

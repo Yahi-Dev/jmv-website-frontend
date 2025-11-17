@@ -15,8 +15,17 @@ export function useConsejoForm() {
   const create = async (data: ConsejoFormData) => {
     setIsLoading(true)
     try {
-      const response = await createConsejo(data)
+      // Validar que tenga fotoUrl para creación
+      if (!data.fotoUrl || data.fotoUrl.trim() === '') {
+        throw new Error("La foto es requerida para crear un nuevo consejo")
+      }
       
+      const response = await createConsejo({
+        ...data,
+        fotoUrl: data.fotoUrl!,
+        lema: data.lema ?? undefined
+      })
+
       if (response.success) {
         toast.success("Consejo creado exitosamente")
         await refetchActual()
@@ -39,8 +48,16 @@ export function useConsejoForm() {
   const update = async (id: number, data: Partial<ConsejoFormData>) => {
     setIsLoading(true)
     try {
-      const response = await updateConsejo(id, data)
-      
+      // Para actualización, permitir fotoUrl vacía
+      const updateData = {
+        ...data,
+        // Asegurar que los campos vacíos se envíen como null
+        lema: data.lema === '' ? null : data.lema,
+        fotoUrl: data.fotoUrl === '' ? null : data.fotoUrl
+      }
+
+      const response = await updateConsejo(id, updateData)
+
       if (response.success) {
         toast.success("Consejo actualizado exitosamente")
         await refetchActual()
@@ -50,6 +67,7 @@ export function useConsejoForm() {
         throw new Error(response.message || "Error al actualizar consejo")
       }
     } catch (error) {
+      console.error("Error updating consejo:", error)
       const errorMessage = error instanceof Error ? error.message : "Error desconocido"
       toast.error("Error al actualizar consejo", {
         description: errorMessage
@@ -64,7 +82,7 @@ export function useConsejoForm() {
     setIsLoading(true)
     try {
       const response = await deleteConsejo(id)
-      
+
       if (response.success) {
         toast.success("Consejo eliminado exitosamente")
         await refetchActual()
@@ -95,7 +113,7 @@ export function useMiembroForm() {
     setIsLoading(true)
     try {
       const response = await createMiembroConsejo(data as any)
-      
+
       if (response.success) {
         toast.success("Miembro agregado exitosamente")
         await refetchActual()
@@ -118,7 +136,7 @@ export function useMiembroForm() {
     setIsLoading(true)
     try {
       const response = await updateMiembroConsejo(id, data)
-      
+
       if (response.success) {
         toast.success("Miembro actualizado exitosamente")
         await refetchActual()
@@ -141,7 +159,7 @@ export function useMiembroForm() {
     setIsLoading(true)
     try {
       const response = await deleteMiembroConsejo(id)
-      
+
       if (response.success) {
         toast.success("Miembro eliminado exitosamente")
         await refetchActual()

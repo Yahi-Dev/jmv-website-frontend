@@ -4,6 +4,8 @@
 /node_modules
 
 /public/formacion
+/public/consejos
+/public/miembros
 
 # next.js
 /.next/

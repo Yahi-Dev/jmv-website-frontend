@@ -2,6 +2,8 @@
 import { ConsejoResponse, ConsejoFormData, MiembroFormData } from '../model/types'
 import { ConsejoCreateData, MiembroCreateData } from '../schema/validation'
 
+
+
 export async function getConsejoActual(): Promise<ConsejoResponse> {
   try {
     const response = await fetch('/api/consejos/actual')
@@ -30,6 +32,10 @@ export async function getConsejoActual(): Promise<ConsejoResponse> {
   }
 }
 
+
+
+
+
 export async function getConsejosHistoricos(): Promise<ConsejoResponse> {
   try {
     const response = await fetch('/api/consejos/historial')
@@ -45,6 +51,10 @@ export async function getConsejosHistoricos(): Promise<ConsejoResponse> {
     throw error
   }
 }
+
+
+
+
 
 export async function createConsejo(data: ConsejoCreateData): Promise<ConsejoResponse> {
   try {
@@ -66,6 +76,10 @@ export async function createConsejo(data: ConsejoCreateData): Promise<ConsejoRes
   }
 }
 
+
+
+
+
 export async function createMiembroConsejo(data: MiembroCreateData): Promise<ConsejoResponse> {
   try {
     const response = await fetch('/api/consejos/miembros', {
@@ -85,6 +99,9 @@ export async function createMiembroConsejo(data: MiembroCreateData): Promise<Con
     throw error
   }
 }
+
+
+
 
 export async function updateConsejoActual(nuevoConsejoId: number): Promise<ConsejoResponse> {
   try {
@@ -106,6 +123,10 @@ export async function updateConsejoActual(nuevoConsejoId: number): Promise<Conse
   }
 }
 
+
+
+
+
 export async function updateConsejo(id: number, data: Partial<ConsejoFormData>): Promise<ConsejoResponse> {
   try {
     const response = await fetch(`/api/consejos/${id}`, {
@@ -125,6 +146,8 @@ export async function updateConsejo(id: number, data: Partial<ConsejoFormData>):
     throw error
   }
 }
+
+
 
 
 export async function updateMiembroConsejo(id: number, data: Partial<MiembroFormData>): Promise<ConsejoResponse> {
@@ -148,6 +171,9 @@ export async function updateMiembroConsejo(id: number, data: Partial<MiembroForm
 }
 
 
+
+
+
 export async function deleteConsejo(id: number): Promise<ConsejoResponse> {
   try {
     const response = await fetch(`/api/consejos/${id}`, {
@@ -165,6 +191,9 @@ export async function deleteConsejo(id: number): Promise<ConsejoResponse> {
     throw error
   }
 }
+
+
+
 
 
 export async function deleteMiembroConsejo(id: number): Promise<ConsejoResponse> {

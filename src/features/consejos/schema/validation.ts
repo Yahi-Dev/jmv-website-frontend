@@ -33,11 +33,21 @@ export const consejoCreateSchema = z.object({
   fechaInicio: z.string().min(1, "Fecha de inicio requerida"),
   fechaFin: z.string().optional(),
   lema: z.string().max(200, "Máximo 200 caracteres").optional(),
-  fotoUrl: z.string().url("URL inválida").optional().or(z.literal('')),
+  fotoUrl: z.string(),
   isActual: z.boolean().default(false)
 })
 
-export const consejoUpdateSchema = consejoCreateSchema.partial()
+export const consejoUpdateSchema = z.object({
+  periodo: z.string()
+    .min(4, "Periodo requerido (ej: 2024-2026)")
+    .regex(/^\d{4}-\d{4}$/, "Formato debe ser AAAA-AAAA (ej: 2024-2026)")
+    .optional(),
+  fechaInicio: z.string().min(1, "Fecha de inicio requerida").optional(),
+  fechaFin: z.string().optional(),
+  lema: z.string().max(200, "Máximo 200 caracteres").optional().or(z.literal('')),
+  fotoUrl: z.string().optional().or(z.literal('')),
+  isActual: z.boolean().default(false).optional()
+})
 
 export type ConsejoCreateData = z.infer<typeof consejoCreateSchema>
 export type ConsejoUpdateData = z.infer<typeof consejoUpdateSchema>

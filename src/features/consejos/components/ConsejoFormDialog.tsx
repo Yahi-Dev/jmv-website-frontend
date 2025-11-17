@@ -4,13 +4,13 @@
 import { useState, useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
 } from "@/src/components/ui/dialog"
 import {
   Form,
@@ -24,9 +24,8 @@ import { Input } from "@/src/components/ui/input"
 import { Button } from "@/src/components/ui/button"
 import { Switch } from "@/src/components/ui/switch"
 import { Textarea } from "@/src/components/ui/textarea"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
-import { Badge } from "@/src/components/ui/badge"
-import { Loader2, Calendar, MapPin, Quote, FileText, Image, Upload, Link as LinkIcon, X } from "lucide-react"
+import { Tabs, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
+import { Loader2, Calendar, MapPin, Quote, Image, Upload, Link as LinkIcon, X } from "lucide-react"
 import { ConsejoFormData, ConsejoNacional } from "../model/types"
 import { consejoCreateSchema, consejoUpdateSchema, ConsejoCreateData } from "../schema/validation"
 import { format } from "date-fns"
@@ -57,7 +56,7 @@ export function ConsejoFormDialog({
   const [fotoFile, setFotoFile] = useState<File | null>(null)
   const [actaFile, setActaFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
-  
+
   const fotoInputRef = useRef<HTMLInputElement>(null)
   const actaInputRef = useRef<HTMLInputElement>(null)
 
@@ -73,18 +72,20 @@ export function ConsejoFormDialog({
     }
   })
 
+  const fotoUrl = form.watch("fotoUrl")
+
   // Generar periodo sugerido al abrir el modal en modo creación
   useEffect(() => {
     if (open && mode === "create") {
       const currentYear = new Date().getFullYear()
       const nextYear = currentYear + 2
       setSuggestedPeriod(`${currentYear}-${nextYear}`)
-      
+
       // Establecer fechas por defecto
       const today = new Date()
       const twoYearsLater = new Date(today)
       twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2)
-      
+
       form.setValue("periodo", `${currentYear}-${nextYear}`)
       form.setValue("fechaInicio", today.toISOString().split('T')[0])
       form.setValue("fechaFin", twoYearsLater.toISOString().split('T')[0])
@@ -103,7 +104,7 @@ export function ConsejoFormDialog({
         fotoUrl: initialData.fotoUrl || "",
         isActual: initialData.isActual
       })
-      
+
       // Mostrar preview si hay foto URL
       if (initialData.fotoUrl) {
         setFotoPreview(initialData.fotoUrl)
@@ -111,6 +112,15 @@ export function ConsejoFormDialog({
       }
     }
   }, [open, initialData, mode, form])
+
+  // Actualizar preview cuando cambia la URL de la foto
+  useEffect(() => {
+    if (fotoTab === "url" && fotoUrl && fotoUrl.trim() !== "") {
+      setFotoPreview(fotoUrl)
+    } else if (fotoTab === "url" && (!fotoUrl || fotoUrl.trim() === "")) {
+      setFotoPreview(null)
+    }
+  }, [fotoUrl, fotoTab])
 
   // Resetear estados cuando se cierra el diálogo
   useEffect(() => {
@@ -140,19 +150,18 @@ export function ConsejoFormDialog({
       }
 
       setFotoFile(file)
-      
+
       // Crear preview
       const reader = new FileReader()
       reader.onload = (e) => {
         setFotoPreview(e.target?.result as string)
       }
       reader.readAsDataURL(file)
-      
+
       // Limpiar error si existe
       form.clearErrors("fotoUrl")
     }
   }
-
 
   const removeFoto = () => {
     setFotoPreview(null)
@@ -162,7 +171,6 @@ export function ConsejoFormDialog({
       fotoInputRef.current.value = ""
     }
   }
-
 
   const uploadFile = async (file: File, type: 'foto' | 'acta'): Promise<string> => {
     setUploading(true)
@@ -178,11 +186,32 @@ export function ConsejoFormDialog({
       })
 
       if (!response.ok) {
-        throw new Error('Error al subir archivo')
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Error al subir archivo')
       }
 
       const result = await response.json()
-      return result.Data.filePath
+
+      // Debug: log para ver la estructura real de la respuesta
+      console.log('Upload response:', result)
+
+      // Ajusta según la estructura real de tu respuesta
+      // Si la respuesta es { Data: { filePath: "...", ... } }
+      if (result.Data && result.Data.filePath) {
+        return result.Data.filePath
+      }
+
+      // Si la respuesta es directa { filePath: "...", ... }
+      if (result.filePath) {
+        return result.filePath
+      }
+
+      // Si la respuesta tiene otra estructura
+      if (result.data && result.data.filePath) {
+        return result.data.filePath
+      }
+
+      throw new Error('Estructura de respuesta inesperada')
     } catch (error) {
       console.error(`Error uploading ${type}:`, error)
       throw new Error(`Error al subir ${type === 'foto' ? 'la foto' : 'el acta'}`)
@@ -199,7 +228,6 @@ export function ConsejoFormDialog({
       if (fotoFile && fotoTab === "upload") {
         finalFotoUrl = await uploadFile(fotoFile, 'foto')
       }
-
 
       const submitData: ConsejoFormData = {
         ...data,
@@ -230,8 +258,8 @@ export function ConsejoFormDialog({
             {mode === "create" ? "Crear Nuevo Consejo" : "Editar Consejo"}
           </DialogTitle>
           <DialogDescription>
-            {mode === "create" 
-              ? "Registra un nuevo período del consejo nacional" 
+            {mode === "create"
+              ? "Registra un nuevo período del consejo nacional"
               : "Actualiza la información del consejo existente"
             }
           </DialogDescription>
@@ -248,9 +276,9 @@ export function ConsejoFormDialog({
                   <FormLabel>Periodo *</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Input 
-                        placeholder="2024-2026" 
-                        {...field} 
+                      <Input
+                        placeholder="2024-2026"
+                        {...field}
                         className="pl-10"
                       />
                       <Calendar className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
@@ -306,9 +334,9 @@ export function ConsejoFormDialog({
                   <FormLabel>Lema del Consejo</FormLabel>
                   <FormControl>
                     <div className="relative">
-                      <Textarea 
-                        placeholder="Lema o frase inspiradora del período..." 
-                        {...field} 
+                      <Textarea
+                        placeholder="Lema o frase inspiradora del período..."
+                        {...field}
                         value={field.value || ""}
                         className="pl-10 resize-none min-h-20"
                       />
@@ -339,26 +367,66 @@ export function ConsejoFormDialog({
               </div>
 
               {fotoTab === "url" ? (
-                <FormField
-                  control={form.control}
-                  name="fotoUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="relative">
-                          <Input 
-                            placeholder="https://ejemplo.com/foto-consejo.jpg" 
-                            {...field} 
-                            value={field.value || ""}
-                            className="pl-10"
-                          />
-                          <Image className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                <div className="space-y-3">
+                  <FormField
+                    control={form.control}
+                    name="fotoUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              placeholder="https://ejemplo.com/foto-consejo.jpg"
+                              {...field}
+                              value={field.value || ""}
+                              className="pl-10"
+                            />
+                            <Image className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  {/* Preview para URL */}
+                  {fotoPreview && (
+                    <div className="p-4 border rounded-lg bg-muted/20">
+                      <h4 className="mb-2 text-sm font-medium">Vista previa:</h4>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={fotoPreview}
+                          alt="Preview de foto del consejo"
+                          className="object-cover w-20 h-20 rounded-lg"
+                          onError={(e) => {
+                            // Si la imagen no carga, mostrar un placeholder
+                            e.currentTarget.src = "/logo_dominicano.png"
+                          }}
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm text-muted-foreground">
+                            Imagen cargada desde URL
+                          </p>
+                          <p className="text-xs truncate text-muted-foreground">
+                            {fotoUrl}
+                          </p>
                         </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setFotoPreview(null)
+                            form.setValue("fotoUrl", "")
+                          }}
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
                   )}
-                />
+                </div>
               ) : (
                 <div className="space-y-3">
                   <Input
@@ -368,14 +436,16 @@ export function ConsejoFormDialog({
                     onChange={handleFotoUpload}
                     className="cursor-pointer"
                   />
-                  
+
+                  {/* Preview para archivo subido */}
                   {fotoPreview && (
-                    <div className="relative">
-                      <div className="flex items-center gap-3 p-3 border rounded-lg">
-                        <img 
-                          src={fotoPreview} 
-                          alt="Preview" 
-                          className="object-cover w-16 h-16 rounded"
+                    <div className="p-4 border rounded-lg bg-muted/20">
+                      <h4 className="mb-2 text-sm font-medium">Vista previa:</h4>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={fotoPreview}
+                          alt="Preview de foto del consejo"
+                          className="object-cover w-20 h-20 rounded-lg"
                         />
                         <div className="flex-1">
                           <p className="text-sm font-medium">{fotoFile?.name}</p>
@@ -395,14 +465,13 @@ export function ConsejoFormDialog({
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="text-xs text-muted-foreground">
                     Formatos: JPEG, PNG, WebP, GIF. Máximo 5MB.
                   </div>
                 </div>
               )}
             </div>
-
 
             {/* Consejo Actual */}
             <FormField

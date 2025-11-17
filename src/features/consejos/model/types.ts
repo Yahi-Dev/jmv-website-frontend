@@ -71,8 +71,8 @@ export interface ConsejoFormData {
   periodo: string
   fechaInicio: string
   fechaFin?: string
-  lema?: string
-  fotoUrl?: string
+  lema?: string | null  
+  fotoUrl?: string | null 
   isActual: boolean
 }
 
