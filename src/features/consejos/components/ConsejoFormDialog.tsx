@@ -73,6 +73,31 @@ export function ConsejoFormDialog({
   })
 
   const fotoUrl = form.watch("fotoUrl")
+  const fechaInicio = form.watch("fechaInicio")
+  const fechaFin = form.watch("fechaFin")
+
+  // Función para generar el periodo automáticamente
+  const generarPeriodo = (inicio: string, fin: string): string => {
+    if (!inicio) return ""
+
+    const añoInicio = new Date(inicio).getFullYear()
+
+    if (!fin) {
+      // Si no hay fecha fin, usar inicio + 2 años
+      return `${añoInicio}-${añoInicio + 2}`
+    }
+
+    const añoFin = new Date(fin).getFullYear()
+    return `${añoInicio}-${añoFin}`
+  }
+
+  // Actualizar periodo automáticamente cuando cambian las fechas
+  useEffect(() => {
+    if (fechaInicio || fechaFin) {
+      const nuevoPeriodo = generarPeriodo(fechaInicio || "", fechaFin || "")
+      form.setValue("periodo", nuevoPeriodo)
+    }
+  }, [fechaInicio, fechaFin, form])
 
   // Generar periodo sugerido al abrir el modal en modo creación
   useEffect(() => {
@@ -86,10 +111,11 @@ export function ConsejoFormDialog({
       const twoYearsLater = new Date(today)
       twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2)
 
-      form.setValue("periodo", `${currentYear}-${nextYear}`)
       form.setValue("fechaInicio", today.toISOString().split('T')[0])
       form.setValue("fechaFin", twoYearsLater.toISOString().split('T')[0])
       form.setValue("isActual", true)
+
+      // El periodo se generará automáticamente por el efecto anterior
     }
   }, [open, mode, form])
 
@@ -267,34 +293,7 @@ export function ConsejoFormDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            {/* Periodo */}
-            <FormField
-              control={form.control}
-              name="periodo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Periodo *</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        placeholder="2024-2026"
-                        {...field}
-                        className="pl-10"
-                      />
-                      <Calendar className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                  {mode === "create" && suggestedPeriod && (
-                    <p className="text-xs text-muted-foreground">
-                      Sugerencia: {suggestedPeriod}
-                    </p>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            {/* Fechas */}
+            {/* Fechas - Ahora van primero para generar el periodo */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
@@ -303,7 +302,14 @@ export function ConsejoFormDialog({
                   <FormItem>
                     <FormLabel>Fecha de Inicio *</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input
+                        type="date"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e)
+                          // El periodo se actualizará automáticamente por el efecto
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -317,7 +323,15 @@ export function ConsejoFormDialog({
                   <FormItem>
                     <FormLabel>Fecha de Fin</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} value={field.value || ""} />
+                      <Input
+                        type="date"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          field.onChange(e)
+                          // El periodo se actualizará automáticamente por el efecto
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -325,27 +339,86 @@ export function ConsejoFormDialog({
               />
             </div>
 
+            {/* Periodo - Ahora es readonly y se genera automáticamente */}
+            <FormField
+              control={form.control}
+              name="periodo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Periodo *</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        placeholder="2024-2026"
+                        {...field}
+                        className="pl-10 bg-muted/50"
+                        readOnly
+                        title="El periodo se genera automáticamente a partir de las fechas seleccionadas"
+                      />
+                      <Calendar className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                  <div className="text-xs text-muted-foreground">
+                    El periodo se genera automáticamente a partir de las fechas seleccionadas
+                  </div>
+                  {mode === "create" && suggestedPeriod && (
+                    <p className="text-xs text-muted-foreground">
+                      Sugerencia: {suggestedPeriod}
+                    </p>
+                  )}
+                </FormItem>
+              )}
+            />
+
             {/* Lema */}
             <FormField
               control={form.control}
               name="lema"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lema del Consejo</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Textarea
-                        placeholder="Lema o frase inspiradora del período..."
-                        {...field}
-                        value={field.value || ""}
-                        className="pl-10 resize-none min-h-20"
-                      />
-                      <Quote className="absolute w-4 h-4 top-3 left-3 text-muted-foreground" />
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const currentLength = field.value?.length || 0
+                const maxLength = 100
+
+                return (
+                  <FormItem>
+                    <FormLabel>Lema del Consejo</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Textarea
+                          placeholder="Lema o frase inspiradora del período..."
+                          {...field}
+                          value={field.value || ""}
+                          className="pl-10 overflow-y-auto resize-none max-h-32 min-h-[100px] pr-12 break-words break-all whitespace-pre-wrap"
+                          maxLength={maxLength}
+                          onChange={(e) => {
+                            // Limitar a 100 caracteres
+                            if (e.target.value.length <= maxLength) {
+                              field.onChange(e)
+                            }
+                          }}
+                          style={{
+                            wordWrap: 'break-word',
+                            overflowWrap: 'break-word'
+                          }}
+                        />
+                        <Quote className="absolute w-4 h-4 top-3 left-3 text-muted-foreground" />
+                        {/* Contador de caracteres */}
+                        <div className={`absolute bottom-2 right-2 text-xs ${currentLength > maxLength - 10 ? 'text-amber-600' : 'text-muted-foreground'
+                          } ${currentLength >= maxLength ? 'text-destructive' : ''
+                          }`}>
+                          {currentLength}/{maxLength}
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                    {currentLength >= maxLength && (
+                      <p className="text-xs text-destructive">
+                        Has alcanzado el límite de {maxLength} caracteres
+                      </p>
+                    )}
+                  </FormItem>
+                )
+              }}
             />
 
             {/* Foto del Consejo */}
@@ -388,7 +461,7 @@ export function ConsejoFormDialog({
                       </FormItem>
                     )}
                   />
-                  
+
                   {/* Preview para URL */}
                   {fotoPreview && (
                     <div className="p-4 border rounded-lg bg-muted/20">
