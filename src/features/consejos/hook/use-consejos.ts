@@ -11,6 +11,9 @@ import {
   createConsejo,
 } from '../service/consejo-service'
 
+
+
+
 export function useConsejoActual() {
   const [consejo, setConsejo] = useState<ConsejoNacional | null>(null)
   const [loading, setLoading] = useState(true)
@@ -59,7 +62,8 @@ export function useConsejoActual() {
     loading, 
     error,
     isEmpty,
-    refetch: fetchConsejoActual 
+    refetch: fetchConsejoActual  
+    
   }
 }
 

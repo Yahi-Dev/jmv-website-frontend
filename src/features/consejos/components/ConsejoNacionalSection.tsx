@@ -15,7 +15,7 @@ import { getClientUser } from "@/src/lib/client-auth"
 
 export function ConsejoNacionalSection() {
   const [isAdmin, setIsAdmin] = useState(false)
-  const { consejo, loading: loadingActual, error: errorActual, isEmpty } = useConsejoActual()
+  const { consejo, loading: loadingActual, error: errorActual, isEmpty, refetch } = useConsejoActual()
   const { consejos: historicos, loading: loadingHistoricos } = useConsejosHistoricos()
 
   // Verificar si el usuario es administrador

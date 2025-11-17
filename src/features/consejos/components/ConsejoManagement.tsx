@@ -20,7 +20,7 @@ export function ConsejoManagement({ isAdmin = false }: ConsejoManagementProps) {
   const [editingConsejo, setEditingConsejo] = useState<ConsejoNacional | null>(null)
   const [editingMiembro, setEditingMiembro] = useState<MiembroConsejo | null>(null)
 
-  const { consejo, refetch } = useConsejoActual()
+  const { consejo, refetch } = useConsejoActual() // Asegúrate de tener refetch aquí
   const { create: createConsejo, update: updateConsejo, isLoading: consejoLoading } = useConsejoForm()
   const { create: createMiembro, update: updateMiembro, isLoading: miembroLoading } = useMiembroForm()
 
@@ -43,12 +43,14 @@ export function ConsejoManagement({ isAdmin = false }: ConsejoManagementProps) {
 
   const handleCreateConsejo = async (data: ConsejoFormData) => {
     await createConsejo(data)
+    await refetch() // Refetch después de crear
     setShowConsejoForm(false)
   }
 
   const handleUpdateConsejo = async (data: ConsejoFormData) => {
     if (editingConsejo) {
       await updateConsejo(editingConsejo.id, data)
+      await refetch() // Refetch después de actualizar
       setEditingConsejo(null)
       setShowConsejoForm(false)
     }
@@ -57,6 +59,7 @@ export function ConsejoManagement({ isAdmin = false }: ConsejoManagementProps) {
   const handleCreateMiembro = async (data: MiembroFormData) => {
     if (consejo) {
       await createMiembro({ ...data, consejoId: consejo.id })
+      await refetch() // Refetch después de agregar miembro
       setShowMiembroForm(false)
     }
   }
@@ -64,6 +67,7 @@ export function ConsejoManagement({ isAdmin = false }: ConsejoManagementProps) {
   const handleUpdateMiembro = async (data: MiembroFormData) => {
     if (editingMiembro) {
       await updateMiembro(editingMiembro.id, data)
+      await refetch() // Refetch después de actualizar miembro
       setEditingMiembro(null)
       setShowMiembroForm(false)
     }
