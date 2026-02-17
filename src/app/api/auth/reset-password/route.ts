@@ -146,7 +146,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: result?.error?.message || "Error al restablecer la contraseña"
+          message: "Error al restablecer la contraseña"
         },
         { status: 400 }
       );

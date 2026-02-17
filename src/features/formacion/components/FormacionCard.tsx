@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
-import { Download, ExternalLink, Edit, Trash2, BookOpen, Mic, Users, Heart, Star, Cross, Eye } from "lucide-react"
+import { Download, ExternalLink, BookOpen, Mic, Users, Heart, Star, Cross } from "lucide-react"
 import type { FormacionType } from "../model/types"
 import { Badge } from "@/src/components/ui/badge"
 import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion"
@@ -11,13 +11,13 @@ import { FormacionDetailDialog } from "./formacion-detail-dialog"
 
 interface FormacionCardProps {
   readonly formacion: FormacionType
-  readonly isLoggedIn: boolean
-  readonly onEdit: () => void
-  readonly onDelete: () => void
+  readonly isLoggedIn?: boolean
+  readonly onEdit?: () => void
+  readonly onDelete?: () => void
   readonly getModuleColor: (modulo: ModulosFormacion) => string
 }
 
-export function FormacionCard({ formacion, isLoggedIn, onEdit, onDelete, getModuleColor }: FormacionCardProps) {
+export function FormacionCard({ formacion, getModuleColor }: FormacionCardProps) {
   const [showDetailDialog, setShowDetailDialog] = useState(false)
   
   // Función para extraer texto plano del HTML
@@ -92,26 +92,6 @@ export function FormacionCard({ formacion, isLoggedIn, onEdit, onDelete, getModu
               </Badge>
             </div>
 
-            {isLoggedIn && (
-              <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onEdit}
-                  className="w-7 h-7 text-muted-foreground hover:text-primary hover:bg-primary/10"
-                >
-                  <Edit className="w-3.5 h-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onDelete}
-                  className="w-7 h-7 text-muted-foreground hover:text-red-600 hover:bg-red-50"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </Button>
-              </div>
-            )}
           </div>
 
           <CardTitle className="text-lg font-bold leading-tight text-balance text-foreground line-clamp-2">

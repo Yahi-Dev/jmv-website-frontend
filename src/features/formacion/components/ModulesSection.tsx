@@ -4,13 +4,11 @@ import { useState, useMemo, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
-import { Search, X, Plus } from "lucide-react";
+import { Search, X, Settings } from "lucide-react";
 import { TabContent } from "./TabContent";
 import { ModulosFormacion } from "@/src/lib/enum/ModulosFormacion";
 import { getClientUser } from "@/src/lib/client-auth";
-import { FormacionFormDialog } from "./formacion-form-dialog";
-import { useCreateFormacion, useGetAllFormaciones } from "../hook/use-formacion";
-import { FormacionCreateData } from "../schema/validation";
+import Link from "next/link";
 
 // Crear tabs dinámicos basados en el enum ModulosFormacion
 const MODULES_TABS = Object.values(ModulosFormacion).map(modulo => ({
@@ -23,10 +21,6 @@ export function ModulesSection() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState(MODULES_TABS[0].value);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-
-  const { create, isLoading: isCreating } = useCreateFormacion();
-  const { formaciones, fetchAll } = useGetAllFormaciones();
 
   // Encontrar el tab activo actual
   const activeTabData = useMemo(() => {
@@ -41,13 +35,6 @@ export function ModulesSection() {
     setActiveTab(value as ModulosFormacion);
   };
 
-  const handleCreate = async (data: FormacionCreateData) => {
-    const newFormacion = await create(data);
-    if (newFormacion) {
-      fetchAll();
-    }
-  };
-    
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -111,12 +98,11 @@ export function ModulesSection() {
             </div>
 
             {isLoggedIn && (
-              <Button 
-                onClick={() => setCreateDialogOpen(true)} 
-                className="text-white bg-primary hover:bg-primary/90 shrink-0"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Agregar Formación
+              <Button asChild variant="outline" className="shrink-0">
+                <Link href="/admin/formacion">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Administrar Formación
+                </Link>
               </Button>
             )}
           </div>
@@ -132,17 +118,6 @@ export function ModulesSection() {
           ))}
         </Tabs>
 
-        {/* Dialog para crear formación */}
-        <FormacionFormDialog
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}
-          onSubmit={async (data) => {
-            await handleCreate(data as FormacionCreateData);
-          }}
-          isLoading={isCreating}
-          mode="create"
-        />
-        
       </div>
     </section>
   );

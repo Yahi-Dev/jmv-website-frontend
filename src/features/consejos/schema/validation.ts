@@ -10,6 +10,7 @@ export const trayectoriaSchema = z.object({
 })
 
 export const miembroCreateSchema = z.object({
+  consejoId: z.number({ required_error: "El consejo es requerido" }),
   nombre: z.string().min(2, "Nombre debe tener al menos 2 caracteres").max(100, "Máximo 100 caracteres"),
   cargo: z.nativeEnum(CargoConsejo, {
     errorMap: () => ({ message: "Selecciona un cargo válido" })

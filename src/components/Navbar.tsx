@@ -14,6 +14,7 @@ import {
   Building,
   LogOut,
   UsersRound,
+  Settings,
 } from "lucide-react"
 import { getClientUser, signOut } from "@/src/lib/client-auth"
 import { useEffect, useState } from "react"
@@ -108,16 +109,29 @@ export default function Navbar() {
               <User className="w-5 h-5" />
             </Button>
           ) : user ? (
-            // Usuario autenticado - Mostrar botón de logout
-            <Button
-              variant="destructive"
-              size="icon"
-              onClick={handleLogout}
-              className="text-red-600 transition-all duration-200 bg-transparent border-2 rounded-full hover:border-destructive hover:scale-105 hover:text-white"
-              title="Cerrar sesión"
-            >
-              <LogOut className="w-5 h-5" />
-            </Button>
+            // Usuario autenticado - Mostrar botones de admin y logout
+            <div className="flex items-center gap-2">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="transition-all duration-200 hover:border-primary hover:scale-105"
+              >
+                <Link href="/admin">
+                  <Settings className="w-4 h-4 mr-1" />
+                  Admin
+                </Link>
+              </Button>
+              <Button
+                variant="destructive"
+                size="icon"
+                onClick={handleLogout}
+                className="text-red-600 transition-all duration-200 bg-transparent border-2 rounded-full hover:border-destructive hover:scale-105 hover:text-white"
+                title="Cerrar sesión"
+              >
+                <LogOut className="w-5 h-5" />
+              </Button>
+            </div>
           ) : (
             // Usuario no autenticado - Mostrar botón de login
             <Button

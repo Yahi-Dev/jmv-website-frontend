@@ -4,27 +4,18 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/src/components/ui/card"
 import { Button } from "@/src/components/ui/button"
-import { Plus, Edit, Trash2 } from "lucide-react"
+import { Settings } from "lucide-react"
 import { getClientUser } from "@/src/lib/client-auth"
 import { TestimonioType } from "../model/types"
-import { TestimonioFormDialog } from "./testimonio-form-dialog"
-import { DeleteTestimonioDialog } from "./delete-testimonio-dialog"
 import { TestimoniosSkeleton } from "./testimonios-skeleton"
 import { EmptyTestimonios } from "./empty-testimonios"
-import { useCreateTestimonio, useDeleteTestimonio, useLatestTestimonios, useUpdateTestimonio } from "../hook/use-testimonio"
+import { useLatestTestimonios } from "../hook/use-testimonio"
 import { StarRating } from "@/src/components/shared/star-rating"
+import Link from "next/link"
 
 export function TestimonialsSection() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [createDialogOpen, setCreateDialogOpen] = useState(false)
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [selectedTestimonio, setSelectedTestimonio] = useState<TestimonioType | null>(null)
-
-  const { testimonios, isLoading, fetchLatest } = useLatestTestimonios(3)
-  const { create, isLoading: isCreating } = useCreateTestimonio()
-  const { update, isLoading: isUpdating } = useUpdateTestimonio()
-  const { remove, isLoading: isDeleting } = useDeleteTestimonio()
+  const { testimonios, isLoading } = useLatestTestimonios(3)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -38,41 +29,11 @@ export function TestimonialsSection() {
     checkAuth()
   }, [])
 
-  const handleCreate = async (data: any) => {
-    await create(data)
-    await fetchLatest()
-  }
-
-  const handleEdit = async (data: any) => {
-    if (selectedTestimonio?.id) {
-      await update(selectedTestimonio.id, data)
-      await fetchLatest() 
-    }
-  }
-
-
-  const handleDelete = async () => {
-    if (selectedTestimonio?.id) {
-      await remove(selectedTestimonio.id)
-      await fetchLatest() 
-    }
-  }
-
-  const openEditDialog = (testimonio: TestimonioType) => {
-    setSelectedTestimonio(testimonio)
-    setEditDialogOpen(true)
-  }
-
-  const openDeleteDialog = (testimonio: TestimonioType) => {
-    setSelectedTestimonio(testimonio)
-    setDeleteDialogOpen(true)
-  }
-
   if (isLoading) {
     return (
       <section className="py-20 lg:py-28 bg-gradient-to-b from-background to-muted/20">
         <div className="container px-6">
-          <SectionHeader isLoggedIn={isLoggedIn} onAddClick={() => setCreateDialogOpen(true)} />
+          <SectionHeader isLoggedIn={isLoggedIn} />
           <TestimoniosSkeleton />
         </div>
       </section>
@@ -82,15 +43,12 @@ export function TestimonialsSection() {
   return (
     <section className="py-20 lg:py-28 bg-gradient-to-b from-background to-muted/20">
       <div className="container px-6">
-        <SectionHeader 
-          isLoggedIn={isLoggedIn} 
-          onAddClick={() => setCreateDialogOpen(true)} 
-        />
+        <SectionHeader isLoggedIn={isLoggedIn} />
 
         {testimonios.length === 0 ? (
-          <EmptyTestimonios 
-            isLoggedIn={isLoggedIn}
-            onAddClick={() => setCreateDialogOpen(true)}
+          <EmptyTestimonios
+            isLoggedIn={false}
+            onAddClick={() => {}}
           />
         ) : (
           <div className="grid gap-8 md:grid-cols-3">
@@ -98,49 +56,16 @@ export function TestimonialsSection() {
               <TestimonioCard
                 key={testimonio.id}
                 testimonio={testimonio}
-                isLoggedIn={isLoggedIn}
-                onEdit={() => openEditDialog(testimonio)}
-                onDelete={() => openDeleteDialog(testimonio)}
               />
             ))}
           </div>
         )}
-
-        {/* Dialogs */}
-        <TestimonioFormDialog
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}
-          onSubmit={handleCreate}
-          isLoading={isCreating}
-          mode="create"
-        />
-
-        <TestimonioFormDialog
-          open={editDialogOpen}
-          onOpenChange={setEditDialogOpen}
-          onSubmit={handleEdit}
-          isLoading={isUpdating}
-          initialData={selectedTestimonio || undefined}
-          mode="edit"
-        />
-
-        <DeleteTestimonioDialog
-          open={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
-          onConfirm={handleDelete}
-          isLoading={isDeleting}
-          testimonioName={selectedTestimonio?.nombre || ""}
-        />
       </div>
     </section>
   )
 }
 
-// Componente de Header actualizado
-function SectionHeader({ isLoggedIn, onAddClick }: { 
-  isLoggedIn: boolean; 
-  onAddClick: () => void 
-}) {
+function SectionHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
     <div className="mb-16">
       <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-center sm:justify-between">
@@ -153,11 +78,13 @@ function SectionHeader({ isLoggedIn, onAddClick }: {
             Mostrando los 3 testimonios más recientes
           </p>
         </div>
-        
+
         {isLoggedIn && (
-          <Button onClick={onAddClick} className="text-white bg-primary hover:bg-primary/90 shrink-0">
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar Testimonio
+          <Button asChild variant="outline" className="shrink-0">
+            <Link href="/admin/testimonios">
+              <Settings className="w-4 h-4 mr-2" />
+              Administrar Testimonios
+            </Link>
           </Button>
         )}
       </div>
@@ -165,56 +92,21 @@ function SectionHeader({ isLoggedIn, onAddClick }: {
   )
 }
 
-// Componente de Card Individual (se mantiene igual)
-function TestimonioCard({ 
-  testimonio, 
-  isLoggedIn, 
-  onEdit, 
-  onDelete 
-}: { 
-  testimonio: TestimonioType
-  isLoggedIn: boolean
-  onEdit: () => void
-  onDelete: () => void
-}) {
+function TestimonioCard({ testimonio }: { testimonio: TestimonioType }) {
   return (
     <Card className="relative transition-all duration-300 border-0 shadow-lg hover:shadow-xl hover:-translate-y-1 bg-gradient-to-br from-card to-background group">
       <CardContent className="pt-8 pb-6">
-        {isLoggedIn && (
-          <div className="absolute flex gap-2 transition-opacity duration-200 opacity-0 top-4 right-4 group-hover:opacity-100">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onEdit}
-              className="w-8 h-8 border-gray-200 bg-white/90 hover:bg-green-50 hover:text-green-600"
-              title="Editar testimonio"
-            >
-              <Edit className="w-3 h-3" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={onDelete}
-              className="w-8 h-8 border-gray-200 bg-white/90 hover:bg-red-50 hover:text-red-600"
-              title="Eliminar testimonio"
-            >
-              <Trash2 className="w-3 h-3" />
-            </Button>
-          </div>
-        )}
-
         <div className="flex justify-center mb-6">
-          <StarRating 
-            rating={testimonio.reputacion || 5} 
-            readonly 
-            size="md" 
+          <StarRating
+            rating={testimonio.reputacion || 5}
+            readonly
+            size="md"
           />
         </div>
 
         <blockquote className="mb-6 overflow-hidden text-base italic leading-relaxed text-center break-words whitespace-pre-line text-foreground/90">
-          "{testimonio.mensaje}"
+          &ldquo;{testimonio.mensaje}&rdquo;
         </blockquote>
-
 
         <div className="text-center">
           <div className="text-lg font-bold text-foreground">{testimonio.nombre}</div>

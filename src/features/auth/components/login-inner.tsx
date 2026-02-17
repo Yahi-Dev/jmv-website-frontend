@@ -65,7 +65,7 @@ export function LoginInner() {
         email,
         password,
         rememberMe,
-        callbackURL: "/",
+        callbackURL: "/admin",
       })) as SignInResponse;
 
       if (signInError) {
@@ -84,7 +84,7 @@ export function LoginInner() {
       await resetRateLimit();
       
       toast.success("¡Inicio de sesión exitoso!");
-      router.push("/");
+      router.push("/admin");
       
     } catch {
       setError("Ocurrió un error inesperado");

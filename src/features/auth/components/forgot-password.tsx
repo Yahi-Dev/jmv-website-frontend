@@ -29,12 +29,12 @@ export default function ForgotPasswordForm() {
 
     try {
       console.log("Enviando solicitud para:", email); // Debug
-      const result = await authClient.forgetPassword({
+      const result = await authClient.requestPasswordReset({
         email,
         redirectTo: "/reset-password",
       }) as PasswordResetResponse;
 
-      console.log("Respuesta de forgetPassword:", result); // Debug
+      console.log("Respuesta de requestPasswordReset:", result); // Debug
 
       if (result.success) {
         toast.success("Si el correo existe, se ha enviado un enlace de restablecimiento.", {

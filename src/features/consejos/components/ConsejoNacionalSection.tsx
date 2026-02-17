@@ -8,23 +8,19 @@ import { useConsejoActual, useConsejosHistoricos } from "../hook/use-consejos"
 import { ConsejoSkeleton } from "./ConsejoSkeleton"
 import { ConsejoCard } from "./ConsejoCard"
 import { HistorialConsejos } from "./HistorialConsejos"
-import { ConsejoManagement } from "./ConsejoManagement"
 import Link from "next/link"
-import { FileText, Users, CalendarPlus, Users2 } from "lucide-react"
+import { Users, CalendarPlus, Users2, Settings } from "lucide-react"
 import { getClientUser } from "@/src/lib/client-auth"
 
 export function ConsejoNacionalSection() {
   const [isAdmin, setIsAdmin] = useState(false)
-  const { consejo, loading: loadingActual, error: errorActual, isEmpty, refetch } = useConsejoActual()
+  const { consejo, loading: loadingActual, error: errorActual, isEmpty } = useConsejoActual()
   const { consejos: historicos, loading: loadingHistoricos } = useConsejosHistoricos()
 
-  // Verificar si el usuario es administrador
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const user = await getClientUser()
-        // Aquí puedes ajustar la lógica para determinar si es admin
-        // Por ahora, asumimos que cualquier usuario autenticado es admin
         setIsAdmin(!!user)
       } catch (error) {
         console.error("Error checking auth:", error)
@@ -55,14 +51,18 @@ export function ConsejoNacionalSection() {
           <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
             Conoce a quienes sirven actualmente y explora el historial de consejos anteriores.
           </p>
-        </div>
 
-        {/* Panel de Administración (solo para admins) */}
-        {isAdmin && (
-          <div className="mb-8">
-            <ConsejoManagement isAdmin={isAdmin} />
-          </div>
-        )}
+          {isAdmin && (
+            <div className="mt-6">
+              <Button asChild variant="outline">
+                <Link href="/admin/consejos">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Administrar Consejo
+                </Link>
+              </Button>
+            </div>
+          )}
+        </div>
 
         {/* Tabs */}
         <Tabs defaultValue="actual" className="w-full">
@@ -74,7 +74,6 @@ export function ConsejoNacionalSection() {
           {/* Consejo Actual */}
           <TabsContent value="actual" className="mt-6">
             {errorActual ? (
-              // Estado de error real
               <div className="py-12 text-center">
                 <div className="max-w-md mx-auto">
                   <div className="p-4 mx-auto mb-4 rounded-full bg-destructive/10 w-fit">
@@ -88,7 +87,6 @@ export function ConsejoNacionalSection() {
                 </div>
               </div>
             ) : isEmpty ? (
-              // Estado: No hay consejo actual (no es error)
               <div className="py-12 text-center">
                 <div className="max-w-md mx-auto">
                   <div className="p-4 mx-auto mb-4 rounded-full bg-muted w-fit">
@@ -98,47 +96,21 @@ export function ConsejoNacionalSection() {
                   <p className="mb-6 text-muted-foreground">
                     Actualmente no hay un consejo nacional activo configurado en el sistema.
                   </p>
-                  {isAdmin && (
-                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                      <Button asChild>
-                        <Link href="#management">
-                          Crear primer consejo
-                        </Link>
-                      </Button>
-                    </div>
-                  )}
-                  {!isAdmin && (
-                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
-                      <Button variant="outline" asChild>
-                        <Link href="/historial">
-                          Ver consejos anteriores
-                        </Link>
-                      </Button>
-                      <Button asChild>
-                        <Link href="/contacto">
-                          Contactar administración
-                        </Link>
-                      </Button>
-                    </div>
-                  )}
                 </div>
               </div>
             ) : consejo ? (
-              // Estado normal: Hay consejo actual
               <div className="space-y-8">
-                {/* Info del período actual */}
                 <div className="p-6 border rounded-lg bg-card/50 backdrop-blur-sm">
                   <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div>
                       <h3 className="text-2xl font-bold">{consejo.periodo}</h3>
                       {consejo.lema && (
-                        <p className="mt-2 text-lg italic text-muted-foreground">"{consejo.lema}"</p>
+                        <p className="mt-2 text-lg italic text-muted-foreground">&ldquo;{consejo.lema}&rdquo;</p>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* Miembros */}
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {consejo.miembros.map(miembro => (
                     <ConsejoCard key={miembro.id} miembro={miembro} />
@@ -150,14 +122,6 @@ export function ConsejoNacionalSection() {
                     <p className="text-muted-foreground">
                       No hay miembros registrados en el consejo actual.
                     </p>
-                    {isAdmin && (
-                      <Button 
-                        onClick={() => document.getElementById('management')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="mt-4"
-                      >
-                        Agregar miembros
-                      </Button>
-                    )}
                   </div>
                 )}
               </div>
@@ -166,9 +130,9 @@ export function ConsejoNacionalSection() {
 
           {/* Historial */}
           <TabsContent value="historial" className="mt-6">
-            <HistorialConsejos 
-              consejos={loadingHistoricos ? [] : historicos} 
-              loading={loadingHistoricos} 
+            <HistorialConsejos
+              consejos={loadingHistoricos ? [] : historicos}
+              loading={loadingHistoricos}
             />
           </TabsContent>
         </Tabs>
