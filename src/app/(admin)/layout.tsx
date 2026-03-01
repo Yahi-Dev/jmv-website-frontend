@@ -4,7 +4,10 @@ import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import { getClientUser, signOut } from "@/src/lib/client-auth"
-import { Star, LogOut, ExternalLink, Home, MessageSquare, BookOpen, UsersRound, User } from "lucide-react"
+import {
+  Star, LogOut, ExternalLink, Home, MessageSquare, BookOpen,
+  UsersRound, User, CalendarDays, Newspaper, Activity, Building2,
+} from "lucide-react"
 import { Button } from "@/src/components/ui/button"
 
 const NAV_ITEMS = [
@@ -12,6 +15,10 @@ const NAV_ITEMS = [
   { href: "/admin/testimonios", label: "Testimonios", icon: MessageSquare },
   { href: "/admin/formacion", label: "Formación", icon: BookOpen },
   { href: "/admin/consejos", label: "Consejos", icon: UsersRound },
+  { href: "/admin/eventos", label: "Eventos", icon: CalendarDays },
+  { href: "/admin/noticias", label: "Noticias", icon: Newspaper },
+  { href: "/admin/actividades", label: "Actividades", icon: Activity },
+  { href: "/admin/centros", label: "Centros", icon: Building2 },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -55,81 +62,84 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white border-b">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center gap-4">
-              <Link href="/admin" className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-10 h-10 shadow-lg rounded-xl bg-gradient-to-br from-primary to-secondary">
-                  <Star className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <div>
-                  <span className="font-bold text-primary">JMV Admin</span>
-                  <p className="text-xs text-muted-foreground">Panel Administrativo</p>
-                </div>
-              </Link>
+    <div className="flex min-h-screen bg-gray-50">
+
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 z-40 w-56 bg-white border-r flex flex-col">
+
+        {/* Logo */}
+        <div className="flex items-center gap-3 px-5 h-16 border-b shrink-0">
+          <Link href="/admin" className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center w-9 h-9 shadow-md rounded-xl bg-linear-to-br from-primary to-secondary shrink-0">
+              <Star className="w-4 h-4 text-primary-foreground" />
             </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-primary leading-none">JMV Admin</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Panel Administrativo</p>
+            </div>
+          </Link>
+        </div>
 
-            {/* Navigation */}
-            <nav className="items-center hidden gap-1 md:flex">
-              {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-                const isActive = pathname === href
-                return (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors
-                      ${isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-gray-100 hover:text-foreground"
-                      }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {label}
-                  </Link>
-                )
-              })}
-            </nav>
-
-            {/* User actions */}
-            <div className="flex items-center gap-3">
+        {/* Nav */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+            const isActive =
+              href === "/admin"
+                ? pathname === "/admin"
+                : pathname === href || pathname.startsWith(href + "/")
+            return (
               <Link
-                href="/"
-                target="_blank"
-                className="flex items-center gap-2 px-3 py-2 text-sm transition-colors rounded-lg text-muted-foreground hover:bg-gray-100 hover:text-foreground"
+                key={href}
+                href={href}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-150
+                  ${isActive
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-gray-100"
+                  }`}
               >
-                <ExternalLink className="w-4 h-4" />
-                <span className="hidden sm:inline">Ver Sitio</span>
+                <Icon className="w-4 h-4 shrink-0" />
+                {label}
               </Link>
+            )
+          })}
+        </nav>
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline">
-                  {user.firstName || user.userName || user.email}
-                </span>
-              </div>
-
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="text-red-600 hover:bg-red-50 hover:text-red-700"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden ml-2 sm:inline">Salir</span>
-              </Button>
-            </div>
+        {/* User + actions */}
+        <div className="shrink-0 border-t px-4 py-4 space-y-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <User className="w-4 h-4 shrink-0" />
+            <span className="truncate text-xs">{user.firstName || user.userName || user.email}</span>
+          </div>
+          <div className="flex gap-2">
+            <Link
+              href="/"
+              target="_blank"
+              className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 text-xs rounded-md text-muted-foreground hover:bg-gray-100 hover:text-foreground transition-colors border"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              Ver Sitio
+            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="flex-1 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 h-auto py-1.5"
+            >
+              <LogOut className="w-3.5 h-3.5 mr-1" />
+              Salir
+            </Button>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        {children}
-      </main>
+      </aside>
+
+      {/* Main content — offset by sidebar width */}
+      <div className="flex-1 ml-56 flex flex-col min-h-screen">
+        <main className="flex-1 px-6 py-8">
+          {children}
+        </main>
+      </div>
+
     </div>
   )
 }

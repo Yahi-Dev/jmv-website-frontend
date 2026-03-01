@@ -1,23 +1,47 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent } from "@/src/components/ui/card"
-import { Input } from "@/src/components/ui/input"
-import { Badge } from "@/src/components/ui/badge"
-import { Plus, Edit, Trash2, Search, ArrowLeft, ExternalLink, Download } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { ColumnDef } from "@tanstack/react-table"
+import { Edit, Trash2, MoreHorizontal, ArrowLeft, ExternalLink, Download } from "lucide-react"
 import Link from "next/link"
+
+import { DataTable, createSortableColumn } from "@/src/components/data-table"
+import { Button } from "@/src/components/ui/button"
+import { Badge } from "@/src/components/ui/badge"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu"
+
 import { FormacionType } from "@/src/features/formacion/model/types"
 import { FormacionFormDialog } from "@/src/features/formacion/components/formacion-form-dialog"
 import { DeleteFormacionDialog } from "@/src/features/formacion/components/delete-formacion-dialog"
-import { useCreateFormacion, useDeleteFormacion, useGetAllFormaciones, useUpdateFormacion } from "@/src/features/formacion/hook/use-formacion"
+import {
+  useCreateFormacion,
+  useDeleteFormacion,
+  useGetAllFormaciones,
+  useUpdateFormacion,
+} from "@/src/features/formacion/hook/use-formacion"
+import { FormacionCreateData, FormacionUpdateData } from "@/src/features/formacion/schema/validation"
+
+const MODULO_COLORS: Record<string, string> = {
+  Voluntario: "bg-blue-100 text-blue-700 border-blue-200",
+  Catequesis: "bg-purple-100 text-purple-700 border-purple-200",
+  Oraciones: "bg-green-100 text-green-700 border-green-200",
+  Podcast: "bg-orange-100 text-orange-700 border-orange-200",
+  Mision: "bg-red-100 text-red-700 border-red-200",
+  Guia: "bg-yellow-100 text-yellow-700 border-yellow-200",
+}
 
 export default function AdminFormacionPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedFormacion, setSelectedFormacion] = useState<FormacionType | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
 
   const { formaciones, isLoading, fetchAll } = useGetAllFormaciones()
   const { create, isLoading: isCreating } = useCreateFormacion()
@@ -28,15 +52,15 @@ export default function AdminFormacionPage() {
     fetchAll()
   }, [])
 
-  const handleCreate = async (data: any) => {
-    await create(data)
+  const handleCreate = async (data: FormacionCreateData | FormacionUpdateData) => {
+    await create(data as FormacionCreateData)
     await fetchAll()
     setCreateDialogOpen(false)
   }
 
-  const handleEdit = async (data: any) => {
+  const handleEdit = async (data: FormacionCreateData | FormacionUpdateData) => {
     if (selectedFormacion?.id) {
-      await update(selectedFormacion.id, data)
+      await update(selectedFormacion.id, data as FormacionUpdateData)
       await fetchAll()
       setEditDialogOpen(false)
     }
@@ -50,125 +74,184 @@ export default function AdminFormacionPage() {
     }
   }
 
-  const filteredFormaciones = formaciones.filter(f =>
-    f.titulo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    f.descripcion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    f.modulo?.toLowerCase().includes(searchTerm.toLowerCase())
+  const columns: ColumnDef<FormacionType>[] = useMemo(
+    () => [
+      createSortableColumn<FormacionType>("titulo", "Título"),
+
+      // Módulo
+      {
+        accessorKey: "modulo",
+        id: "modulo",
+        header: "Módulo",
+        cell: ({ row }) => {
+          const modulo = row.original.modulo
+          if (!modulo) return <span className="text-sm text-muted-foreground">—</span>
+          const colorClass = MODULO_COLORS[modulo] ?? "bg-gray-100 text-gray-700 border-gray-200"
+          return (
+            <Badge variant="outline" className={`text-xs font-medium ${colorClass}`}>
+              {modulo}
+            </Badge>
+          )
+        },
+      },
+
+      // Descripción (truncada, sin HTML)
+      {
+        id: "descripcion",
+        header: "Descripción",
+        cell: ({ row }) => {
+          const desc = row.original.descripcion
+          if (!desc) return <span className="text-sm text-muted-foreground">—</span>
+          const plain = desc.replace(/<[^>]*>/g, "")
+          return (
+            <p className="max-w-[300px] truncate text-sm text-muted-foreground" title={plain}>
+              {plain}
+            </p>
+          )
+        },
+      },
+
+      // Recurso (enlace o archivo)
+      {
+        id: "recurso",
+        header: "Recurso",
+        cell: ({ row }) => {
+          const { enlace, ruta } = row.original
+          if (enlace) {
+            return (
+              <a
+                href={enlace}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-sm text-primary hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Enlace
+              </a>
+            )
+          }
+          if (ruta) {
+            return (
+              <a
+                href={ruta}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-sm text-primary hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Download className="w-3.5 h-3.5" />
+                Archivo
+              </a>
+            )
+          }
+          return <span className="text-sm text-muted-foreground">—</span>
+        },
+      },
+
+      // Fecha de creación (con filtro por rango)
+      {
+        accessorKey: "createdDate",
+        id: "createdDate",
+        header: "Fecha",
+        cell: ({ row }) => {
+          const date = row.original.createdDate
+          if (!date) return <span className="text-sm text-muted-foreground">—</span>
+          return (
+            <span className="text-sm">
+              {new Date(date).toLocaleDateString("es-ES")}
+            </span>
+          )
+        },
+      },
+
+      // Acciones
+      {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          const f = row.original
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="h-8 w-8 p-0"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span className="sr-only">Abrir menú</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+                <DropdownMenuLabel className="text-center">Acciones</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedFormacion(f)
+                    setEditDialogOpen(true)
+                  }}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Editar
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-red-600 focus:text-red-700 focus:bg-red-50"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setSelectedFormacion(f)
+                    setDeleteDialogOpen(true)
+                  }}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Eliminar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   )
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    )
+  }
+
   return (
-    <div>
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <Link href="/admin">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Formación</h1>
-            <p className="text-sm text-muted-foreground">
-              {formaciones.length} recurso{formaciones.length !== 1 ? "s" : ""} registrado{formaciones.length !== 1 ? "s" : ""}
-            </p>
-          </div>
-        </div>
-        <Button onClick={() => setCreateDialogOpen(true)} className="text-white bg-primary hover:bg-primary/90">
-          <Plus className="w-4 h-4 mr-2" />
-          Nuevo Recurso
-        </Button>
-      </div>
-
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Buscar por título, descripción o módulo..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 bg-white"
-        />
-      </div>
-
-      {/* List */}
-      {isLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="w-8 h-8 border-4 rounded-full border-primary border-t-transparent animate-spin" />
-        </div>
-      ) : filteredFormaciones.length === 0 ? (
-        <div className="py-12 text-center">
-          <p className="text-muted-foreground">
-            {searchTerm ? "No se encontraron recursos con ese criterio." : "No hay recursos de formación registrados."}
+      <div className="flex items-center gap-3">
+        <Link href="/admin">
+          <Button variant="ghost" size="icon">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        </Link>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Formación</h1>
+          <p className="text-sm text-muted-foreground">
+            Gestiona los recursos de formación del sitio
           </p>
         </div>
-      ) : (
-        <div className="grid gap-4">
-          {filteredFormaciones.map((formacion) => (
-            <Card key={formacion.id} className="border border-gray-100 shadow-sm">
-              <CardContent className="flex items-start justify-between gap-4 p-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-foreground">{formacion.titulo}</h3>
-                    {formacion.modulo && (
-                      <Badge variant="secondary" className="text-xs">
-                        {formacion.modulo}
-                      </Badge>
-                    )}
-                  </div>
-                  {formacion.descripcion && (
-                    <p className="mb-2 text-sm text-muted-foreground line-clamp-2">
-                      {formacion.descripcion}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                    {formacion.enlace && (
-                      <a href={formacion.enlace} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-primary">
-                        <ExternalLink className="w-3 h-3" />
-                        Enlace
-                      </a>
-                    )}
-                    {formacion.ruta && (
-                      <a href={formacion.ruta} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-primary">
-                        <Download className="w-3 h-3" />
-                        Archivo
-                      </a>
-                    )}
-                    {formacion.createdDate && (
-                      <span>{new Date(formacion.createdDate).toLocaleDateString("es-ES")}</span>
-                    )}
-                  </div>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      setSelectedFormacion(formacion)
-                      setEditDialogOpen(true)
-                    }}
-                    className="w-8 h-8"
-                    title="Editar"
-                  >
-                    <Edit className="w-3.5 h-3.5" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => {
-                      setSelectedFormacion(formacion)
-                      setDeleteDialogOpen(true)
-                    }}
-                    className="w-8 h-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                    title="Eliminar"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      </div>
+
+      {/* Data Table */}
+      <DataTable
+        columns={columns}
+        data={formaciones}
+        searchPlaceholder="Buscar por título, descripción o módulo..."
+        createButtonText="Nuevo Recurso"
+        onCreateClick={() => setCreateDialogOpen(true)}
+        dateColumnId="createdDate"
+        showDateRangeFilter
+      />
 
       {/* Dialogs */}
       <FormacionFormDialog

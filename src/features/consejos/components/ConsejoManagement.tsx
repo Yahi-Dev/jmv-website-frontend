@@ -7,7 +7,7 @@ import { Plus, Users, Settings, Calendar } from "lucide-react"
 import { ConsejoFormDialog } from "./ConsejoFormDialog"
 import { MiembroFormDialog } from "./MiembroFormDialog"
 import { useConsejoActual } from "../hook/use-consejos"
-import { ConsejoFormData, MiembroFormData, ConsejoNacional, MiembroConsejo } from "../model/types"
+import { ConsejoFormData, MiembroFormData, ConsejoNacional, MiembroConsejo, CARGO_LABELS } from "../model/types"
 import { useConsejoForm, useMiembroForm } from "../hook/use-consejo-form"
 
 interface ConsejoManagementProps {
@@ -179,7 +179,7 @@ export function ConsejoManagement({ isAdmin = false }: ConsejoManagementProps) {
                   <div className="flex-1">
                     <div className="font-medium">{miembro.nombre}</div>
                     <div className="text-sm text-muted-foreground">
-                      {miembro.cargo} • {miembro.ciudad || "Sin ciudad especificada"}
+                      {CARGO_LABELS[miembro.cargo]} • {miembro.ciudad || "Sin ciudad especificada"}
                     </div>
                   </div>
                 </div>

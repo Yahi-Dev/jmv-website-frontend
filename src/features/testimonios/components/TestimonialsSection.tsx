@@ -105,7 +105,7 @@ function TestimonioCard({ testimonio }: { testimonio: TestimonioType }) {
         </div>
 
         <blockquote className="mb-6 overflow-hidden text-base italic leading-relaxed text-center break-words whitespace-pre-line text-foreground/90">
-          &ldquo;{testimonio.mensaje}&rdquo;
+          &ldquo;{(testimonio.mensaje ?? "").replace(/<[^>]*>/g, "")}&rdquo;
         </blockquote>
 
         <div className="text-center">

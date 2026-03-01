@@ -32,8 +32,9 @@ import {
   SelectValue,
 } from "@/src/components/ui/select"
 import { Badge } from "@/src/components/ui/badge"
-import { Loader2, Plus, Trash2, User, Mail, Phone, MapPin, Upload, Link as LinkIcon, X, Briefcase } from "lucide-react"
-import { MiembroFormData, MiembroConsejo, CargoConsejo, EstadoMiembro, TrayectoriaItem } from "../model/types"
+import { Loader2, Plus, Trash2, User, Mail, MapPin, Upload, Link as LinkIcon, X, Briefcase } from "lucide-react"
+import { PhoneInputField } from "@/src/components/ui/phone-input"
+import { MiembroFormData, MiembroConsejo, CargoConsejo, EstadoMiembro, TrayectoriaItem, CARGO_LABELS } from "../model/types"
 import { miembroCreateSchema, miembroUpdateSchema, MiembroCreateData } from "../schema/validation"
 
 interface MiembroFormDialogProps {
@@ -50,7 +51,7 @@ type TabValue = "url" | "upload"
 
 const CARGO_OPTIONS = Object.values(CargoConsejo).map(cargo => ({
   value: cargo,
-  label: cargo
+  label: CARGO_LABELS[cargo]
 }))
 
 const ESTADO_OPTIONS = [
@@ -78,6 +79,7 @@ export function MiembroFormDialog({
   const form = useForm<MiembroCreateData>({
     resolver: zodResolver(mode === "create" ? miembroCreateSchema : miembroUpdateSchema),
     defaultValues: {
+      consejoId: consejoId,
       nombre: "",
       cargo: CargoConsejo.CoordinadorNacional,
       ciudad: "",
@@ -115,6 +117,7 @@ export function MiembroFormDialog({
       }
     } else if (open && mode === "create") {
       form.reset({
+        consejoId: consejoId,
         nombre: "",
         cargo: CargoConsejo.CoordinadorNacional,
         ciudad: "",
@@ -410,16 +413,16 @@ export function MiembroFormDialog({
                 <FormField
                   control={form.control}
                   name="telefono"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
-                      <FormLabel>Teléfono</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Input placeholder="+1 (809) 555-0123" {...field} value={field.value || ""} className="pl-10" />
-                          <Phone className="absolute w-4 h-4 -translate-y-1/2 left-3 top-1/2 text-muted-foreground" />
-                        </div>
+                        <PhoneInputField
+                          label="Teléfono"
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                          error={fieldState.error?.message}
+                        />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />

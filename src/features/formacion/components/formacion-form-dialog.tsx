@@ -184,9 +184,20 @@ export function FormacionFormDialog({
               name="titulo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Título *</FormLabel>
+                  <FormLabel className="flex items-center justify-between">
+                    <span>Título *</span>
+                    <span className={`text-sm font-normal ${
+                      (field.value?.length ?? 0) >= 200 ? "text-destructive" : "text-muted-foreground"
+                    }`}>
+                      {field.value?.length ?? 0}/200
+                    </span>
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Introducción a la Espiritualidad Vicenciana" {...field} />
+                    <Input
+                      placeholder="Ej: Introducción a la Espiritualidad Vicenciana"
+                      maxLength={200}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -234,7 +245,7 @@ export function FormacionFormDialog({
                       onChange={field.onChange}
                       placeholder="Escribe la descripción de la formación..."
                       className="min-h-[200px]"
-                      maxLength={250}
+                      maxLength={5000}
                       showCharacterCount={true}
                     />
                   </FormControl>

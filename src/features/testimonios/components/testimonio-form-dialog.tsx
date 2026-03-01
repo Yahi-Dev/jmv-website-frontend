@@ -120,9 +120,16 @@ export function TestimonioFormDialog({
               name="nombre"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre completo *</FormLabel>
+                  <FormLabel className="flex items-center justify-between">
+                    <span>Nombre completo *</span>
+                    <span className={`text-sm font-normal ${
+                      (field.value?.length ?? 0) >= 50 ? "text-destructive" : "text-muted-foreground"
+                    }`}>
+                      {field.value?.length ?? 0}/50
+                    </span>
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: María González" {...field} />
+                    <Input placeholder="Ej: María González" maxLength={50} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -203,9 +210,21 @@ export function TestimonioFormDialog({
               name="iglesia"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Iglesia/Capítulo *</FormLabel>
+                  <FormLabel className="flex items-center justify-between">
+                    <span>Iglesia</span>
+                    <span className={`text-sm font-normal ${
+                      (field.value?.length ?? 0) >= 100 ? "text-destructive" : "text-muted-foreground"
+                    }`}>
+                      {field.value?.length ?? 0}/100
+                    </span>
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Parroquia San José" {...field} value={field.value || ""} />
+                    <Input
+                      placeholder="Ej: Parroquia San José"
+                      maxLength={100}
+                      {...field}
+                      value={field.value || ""}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

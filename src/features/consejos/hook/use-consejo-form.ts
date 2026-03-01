@@ -112,7 +112,17 @@ export function useMiembroForm() {
   const create = async (data: MiembroFormData) => {
     setIsLoading(true)
     try {
-      const response = await createMiembroConsejo(data as any)
+      // Sanitize optional string fields: empty strings → undefined
+      const cleanData = {
+        ...data,
+        ciudad: data.ciudad?.trim() || undefined,
+        fotoUrl: data.fotoUrl?.trim() || undefined,
+        email: data.email?.trim() || undefined,
+        telefono: data.telefono?.trim() || undefined,
+        bioCorta: data.bioCorta?.trim() || undefined,
+        bioExtendida: data.bioExtendida?.trim() || undefined,
+      }
+      const response = await createMiembroConsejo(cleanData as any)
 
       if (response.success) {
         toast.success("Miembro agregado exitosamente")

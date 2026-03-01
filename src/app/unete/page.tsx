@@ -7,7 +7,6 @@ import { Textarea } from "@/src/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/src/components/ui/accordion"
 import {
-  Star,
   Heart,
   Users,
   MapPin,
@@ -20,10 +19,11 @@ import {
   Sparkles,
   Target,
   Globe,
-  User,
+  Star,
 } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/src/components/Navbar"
+import { FooterSection } from "@/src/components/shared/FooterSection"
 
 // Local chapters data
 const chapters = [
@@ -697,79 +697,7 @@ export default function UnetePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-16 bg-gradient-to-br from-foreground to-foreground/90 text-background">
-        <div className="container">
-          <div className="grid gap-12 md:grid-cols-4">
-            <div>
-              <div className="flex items-center mb-6 space-x-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-secondary to-accent">
-                  <Star className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <span className="text-xl font-bold font-heading">JMV RD</span>
-                  <p className="text-sm text-background/80">Juventud Mariana Vicenciana</p>
-                </div>
-              </div>
-              <p className="text-sm leading-relaxed text-background/70">República Dominicana</p>
-            </div>
-
-            <div>
-              <h3 className="mb-6 text-lg font-semibold">Enlaces</h3>
-              <ul className="space-y-3 text-sm">
-                <li>
-                  <Link href="/quienes-somos" className="transition-colors hover:text-secondary">
-                    Quiénes Somos
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/formacion" className="transition-colors hover:text-secondary">
-                    Formación
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/eventos" className="transition-colors hover:text-secondary">
-                    Eventos
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/noticias" className="transition-colors hover:text-secondary">
-                    Noticias
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="mb-6 text-lg font-semibold">Contacto</h3>
-              <ul className="space-y-3 text-sm text-background/80">
-                <li>Santo Domingo, RD</li>
-                <li>info@jmvrd.org</li>
-                <li>+1 (809) 123-4567</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="mb-6 text-lg font-semibold">Síguenos</h3>
-              <div className="flex space-x-6">
-                <Link href="#" className="transition-colors hover:text-secondary">
-                  Instagram
-                </Link>
-                <Link href="#" className="transition-colors hover:text-secondary">
-                  Facebook
-                </Link>
-                <Link href="#" className="transition-colors hover:text-secondary">
-                  YouTube
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-8 mt-12 text-sm text-center border-t border-background/20 text-background/70">
-            <p>&copy; 2024 JMV República Dominicana. Todos los derechos reservados.</p>
-          </div>
-        </div>
-      </footer>
+      <FooterSection />
     </div>
   )
 }

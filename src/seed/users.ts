@@ -20,7 +20,7 @@ export async function seedUsers(prisma: PrismaClient) {
         lastName: "User",
       },
     }).catch(async (error) => {
-      console.log("⚠️ Usuario ya existe, intentando eliminar y recrear...");
+      console.log("Usuario ya existe, intentando eliminar y recrear...");
       
       // Eliminar usuario existente problemático
       await prisma.account.deleteMany({

@@ -106,16 +106,21 @@ export function ConsejoFormDialog({
       const nextYear = currentYear + 2
       setSuggestedPeriod(`${currentYear}-${nextYear}`)
 
-      // Establecer fechas por defecto
       const today = new Date()
       const twoYearsLater = new Date(today)
       twoYearsLater.setFullYear(twoYearsLater.getFullYear() + 2)
 
-      form.setValue("fechaInicio", today.toISOString().split('T')[0])
-      form.setValue("fechaFin", twoYearsLater.toISOString().split('T')[0])
-      form.setValue("isActual", true)
-
-      // El periodo se generará automáticamente por el efecto anterior
+      form.reset({
+        periodo: "",
+        fechaInicio: today.toISOString().split('T')[0],
+        fechaFin: twoYearsLater.toISOString().split('T')[0],
+        lema: "",
+        fotoUrl: "",
+        isActual: true,
+      })
+      setFotoPreview(null)
+      setFotoFile(null)
+      setFotoTab("url")
     }
   }, [open, mode, form])
 

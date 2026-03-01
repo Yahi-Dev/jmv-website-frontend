@@ -23,7 +23,6 @@ import {
   CodeSquare,
   Minus,
   MoreVertical,
-  ChevronDown,
 } from "lucide-react";
 import { Toggle } from "@/src/components/ui/toggle";
 import { Button } from "@/src/components/ui/button";
@@ -158,45 +157,41 @@ const MinimalTiptap = forwardRef<HTMLDivElement, MinimalTiptapProps>(
 
             <div className="w-px h-4 mx-1 bg-border" />
 
-            {/* Menú de encabezados */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <Heading1 className="w-4 h-4" />
-                  <ChevronDown className="w-3 h-3" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem 
-                  onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-                  className={editor.isActive("heading", { level: 1 }) ? "bg-accent" : ""}
-                >
-                  <Heading1 className="w-4 h-4 mr-2" />
-                  Título 1
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-                  className={editor.isActive("heading", { level: 2 }) ? "bg-accent" : ""}
-                >
-                  <Heading2 className="w-4 h-4 mr-2" />
-                  Título 2
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-                  className={editor.isActive("heading", { level: 3 }) ? "bg-accent" : ""}
-                >
-                  <Heading3 className="w-4 h-4 mr-2" />
-                  Título 3
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => editor.chain().focus().setParagraph().run()}
-                  className={editor.isActive("paragraph") ? "bg-accent" : ""}
-                >
-                  <Pilcrow className="w-4 h-4 mr-2" />
-                  Párrafo
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Encabezados como Toggle directo (evita pérdida de foco en Dialog) */}
+            <div className="flex items-center gap-1">
+              <Toggle
+                size="sm"
+                pressed={editor.isActive("heading", { level: 1 })}
+                onPressedChange={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                title="Título 1"
+              >
+                <Heading1 className="w-4 h-4" />
+              </Toggle>
+              <Toggle
+                size="sm"
+                pressed={editor.isActive("heading", { level: 2 })}
+                onPressedChange={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                title="Título 2"
+              >
+                <Heading2 className="w-4 h-4" />
+              </Toggle>
+              <Toggle
+                size="sm"
+                pressed={editor.isActive("heading", { level: 3 })}
+                onPressedChange={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+                title="Título 3"
+              >
+                <Heading3 className="w-4 h-4" />
+              </Toggle>
+              <Toggle
+                size="sm"
+                pressed={editor.isActive("paragraph")}
+                onPressedChange={() => editor.chain().focus().setParagraph().run()}
+                title="Párrafo"
+              >
+                <Pilcrow className="w-4 h-4" />
+              </Toggle>
+            </div>
 
             <div className="w-px h-4 mx-1 bg-border" />
 

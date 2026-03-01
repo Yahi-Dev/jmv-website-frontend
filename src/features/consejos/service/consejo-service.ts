@@ -7,21 +7,29 @@ import { ConsejoCreateData, MiembroCreateData } from '../schema/validation'
 export async function getConsejoActual(): Promise<ConsejoResponse> {
   try {
     const response = await fetch('/api/consejos/actual')
-    
+
+    // 404 significa que no hay consejo actual configurado, no es un error real
+    if (response.status === 404) {
+      return {
+        success: true,
+        message: "No hay consejo actual configurado",
+        data: null
+      }
+    }
+
     if (!response.ok) {
-      // Si hay un error real (no 404), lanzamos excepción
       const result = await response.json()
       throw new Error(result.message || "Error al obtener el consejo actual")
     }
 
     const result = await response.json()
-    
-    // Si no hay consejo actual, devolvemos success pero con data null
-    if (!result.data) {
+
+    // Por si el backend devuelve 200 sin data
+    if (!result.data && !result.Data) {
       return {
         success: true,
         message: result.message || "No hay consejo actual configurado",
-        data: result.Data
+        data: null
       }
     }
 
@@ -90,6 +98,9 @@ export async function createMiembroConsejo(data: MiembroCreateData): Promise<Con
 
     if (!response.ok) {
       const errorData = await response.json()
+      if (errorData.data?.fieldErrors) {
+        console.error("Validation field errors:", JSON.stringify(errorData.data.fieldErrors, null, 2))
+      }
       throw new Error(errorData.message || "Error al crear miembro")
     }
 

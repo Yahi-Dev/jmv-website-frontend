@@ -1,7 +1,7 @@
 // src/features/consejos/model/types.ts
 export enum CargoConsejo {
   CoordinadorNacional = "CoordinadorNacional",
-  SecretarioNacional = "SecretarioNacional", 
+  SecretarioNacional = "SecretarioNacional",
   TesoreroNacional = "TesoreroNacional",
   VocalDeFormacion = "VocalDeFormacion",
   VocalDeMisionYCaridad = "VocalDeMisionYCaridad",
@@ -9,6 +9,18 @@ export enum CargoConsejo {
   VocalDeExpansion = "VocalDeExpansion",
   VocalDePrejuveniles = "VocalDePrejuveniles",
   VocalDeCulturaYRecreacion = "VocalDeCulturaYRecreacion"
+}
+
+export const CARGO_LABELS: Record<CargoConsejo, string> = {
+  [CargoConsejo.CoordinadorNacional]: "Coordinador/a Nacional",
+  [CargoConsejo.SecretarioNacional]: "Secretario/a Nacional",
+  [CargoConsejo.TesoreroNacional]: "Tesorero/a Nacional",
+  [CargoConsejo.VocalDeFormacion]: "Vocal de Formación",
+  [CargoConsejo.VocalDeMisionYCaridad]: "Vocal de Misión y Caridad",
+  [CargoConsejo.VocalLiturgiaYMariana]: "Vocal de Liturgia y Mariana",
+  [CargoConsejo.VocalDeExpansion]: "Vocal de Expansión",
+  [CargoConsejo.VocalDePrejuveniles]: "Vocal de Pre-juveniles",
+  [CargoConsejo.VocalDeCulturaYRecreacion]: "Vocal de Cultura y Recreación",
 }
 
 export enum EstadoMiembro {

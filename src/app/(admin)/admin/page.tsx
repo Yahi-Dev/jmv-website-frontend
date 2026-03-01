@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { MessageSquare, BookOpen, UsersRound, ArrowRight } from "lucide-react"
+import { MessageSquare, BookOpen, UsersRound, CalendarDays, Newspaper, Activity, Building2, ArrowRight } from "lucide-react"
 
 const ADMIN_SECTIONS = [
   {
@@ -30,6 +30,42 @@ const ADMIN_SECTIONS = [
     color: "from-violet-500 to-violet-600",
     bgLight: "bg-violet-50",
     textColor: "text-violet-600",
+  },
+  {
+    title: "Eventos",
+    description: "Publica y gestiona los eventos del movimiento",
+    href: "/admin/eventos",
+    icon: CalendarDays,
+    color: "from-orange-500 to-orange-600",
+    bgLight: "bg-orange-50",
+    textColor: "text-orange-600",
+  },
+  {
+    title: "Noticias",
+    description: "Publica y gestiona las noticias del movimiento",
+    href: "/admin/noticias",
+    icon: Newspaper,
+    color: "from-rose-500 to-rose-600",
+    bgLight: "bg-rose-50",
+    textColor: "text-rose-600",
+  },
+  {
+    title: "Actividades",
+    description: "Registra y gestiona las actividades de los centros",
+    href: "/admin/actividades",
+    icon: Activity,
+    color: "from-blue-500 to-blue-600",
+    bgLight: "bg-blue-50",
+    textColor: "text-blue-600",
+  },
+  {
+    title: "Centros",
+    description: "Gestiona los centros JMV, sus consejos y comunidades",
+    href: "/admin/centros",
+    icon: Building2,
+    color: "from-teal-500 to-teal-600",
+    bgLight: "bg-teal-50",
+    textColor: "text-teal-600",
   },
 ]
 

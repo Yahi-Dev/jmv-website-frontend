@@ -413,3 +413,184 @@ enum ModulosFormacion {
   Mision
   Guia
 }
+
+model Evento {
+  id                  Int       @id @default(autoincrement())
+  slug                String    @unique
+  titulo              String    @db.VarChar(200)
+  descripcionBreve    String    @db.VarChar(300)
+  descripcionCompleta String?   @db.Text
+  imagenUrl           String
+  ubicacion           String    @db.VarChar(200)
+  fecha               DateTime
+  hora                String    @db.VarChar(50)
+  email               String?   @db.VarChar(150)
+  telefono            String?   @db.VarChar(30)
+  etiquetas           Json      // string[]
+  actividades         Json      // string[]
+  agenda              Json      // { dia: string, actividades: { hora: string, actividad: string }[] }[]
+  requisitos          Json      // string[]
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deleted      Boolean   @default(false)
+  deletedDate  DateTime?
+  deletedById  String?
+
+  @@map("eventos")
+}
+
+model Noticia {
+  id                  Int       @id @default(autoincrement())
+  slug                String    @unique
+  titulo              String    @db.VarChar(200)
+  descripcionBreve    String    @db.VarChar(300)
+  descripcionCompleta String?   @db.LongText
+  imagenUrl           String    @db.VarChar(500)
+  ubicacion           String    @db.VarChar(200)
+  fecha               DateTime
+  hora                String?   @db.VarChar(50)
+  tipo                String    @db.VarChar(100)
+  etiquetas           Json      // string[]
+  destacada           Boolean   @default(false)
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deleted      Boolean   @default(false)
+  deletedDate  DateTime?
+  deletedById  String?
+
+  @@map("noticias")
+}
+
+model NoticiaTipo {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique @db.VarChar(100)
+  activo      Boolean  @default(true)
+  createdDate DateTime @default(now())
+
+  @@map("noticia_tipos")
+}
+
+// === NUEVOS MODELOS JMV — CENTROS Y ACTIVIDADES ===
+
+model CentroJmv {
+  id                      Int      @id @default(autoincrement())
+  slug                    String   @unique
+  nombreParroquia         String   @db.VarChar(200)
+  ubicacion               String   @db.VarChar(300)
+  cantidadMiembrosActivos Int
+  nombreCoordinadora      String   @db.VarChar(200)
+  telefono                String   @db.VarChar(30)
+  correo                  String   @db.VarChar(150)
+  resumen                 String   @db.Text
+  anioFundacion           Int
+  imagenUrl               String   @db.VarChar(500)
+  etiquetas               Json
+  ultimaActividadId       Int?
+
+  ultimaActividad         ActividadJmv?      @relation("UltimaActividadCentro", fields: [ultimaActividadId], references: [id], onDelete: SetNull)
+  miembros                MiembroCentroJmv[]
+  comunidades             ComunidadJmv[]
+  actividades             ActividadJmv[]     @relation("ActividadesDeCentro")
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deleted      Boolean   @default(false)
+  deletedDate  DateTime?
+  deletedById  String?
+
+  @@map("centros_jmv")
+}
+
+model ActividadJmv {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  titulo    String   @db.VarChar(200)
+  centroId  Int
+  resumen   String   @db.Text
+  fecha     DateTime
+  imagenUrl String   @db.VarChar(500)
+  etiquetas Json
+
+  centro        CentroJmv   @relation("ActividadesDeCentro", fields: [centroId], references: [id], onDelete: Cascade)
+  centrosUltAct CentroJmv[] @relation("UltimaActividadCentro")
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deleted      Boolean   @default(false)
+  deletedDate  DateTime?
+  deletedById  String?
+
+  @@map("actividades_jmv")
+}
+
+model MiembroCentroJmv {
+  id          Int    @id @default(autoincrement())
+  centroId    Int
+  nombre      String @db.VarChar(200)
+  imagenUrl   String @db.VarChar(500)
+  descripcion String @db.Text
+  cargo       String @db.VarChar(100)
+
+  centro CentroJmv @relation(fields: [centroId], references: [id], onDelete: Cascade)
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deleted      Boolean   @default(false)
+  deletedDate  DateTime?
+  deletedById  String?
+
+  @@map("miembros_centro_jmv")
+}
+
+model ComunidadJmv {
+  id               Int      @id @default(autoincrement())
+  centroId         Int
+  nombre           String   @db.VarChar(200)
+  imagenUrl        String   @db.VarChar(500)
+  cantidadMiembros Int
+  inicioDate       DateTime
+  etapa            String   @db.VarChar(100)
+  etiquetas        Json
+
+  centro CentroJmv @relation(fields: [centroId], references: [id], onDelete: Cascade)
+
+  createdDate  DateTime  @default(now())
+  createdById  String?
+  modifiedDate DateTime?
+  modifiedById String?
+  deleted      Boolean   @default(false)
+  deletedDate  DateTime?
+  deletedById  String?
+
+  @@map("comunidades_jmv")
+}
+
+model CargoCentroJmv {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique @db.VarChar(100)
+  activo      Boolean  @default(true)
+  createdDate DateTime @default(now())
+
+  @@map("cargos_centro_jmv")
+}
+
+model EtapaComunidadJmv {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @unique @db.VarChar(100)
+  activo      Boolean  @default(true)
+  createdDate DateTime @default(now())
+
+  @@map("etapas_comunidad_jmv")
+}

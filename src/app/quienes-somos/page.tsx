@@ -1,9 +1,10 @@
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
-import { Star, Heart, Users, BookOpen, Calendar, Award, Target, ArrowRight, MapPin, Phone, Mail, Church, User } from "lucide-react"
+import { Star, Heart, Users, BookOpen, Calendar, Award, Target, ArrowRight, Church } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/src/components/Navbar"
+import { FooterSection } from "@/src/components/shared/FooterSection"
 
 export default function QuienesSomosPage() {
   return (
@@ -351,88 +352,7 @@ export default function QuienesSomosPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-16 text-white bg-gray-900">
-        <div className="container">
-          <div className="grid gap-12 md:grid-cols-4">
-            <div className="md:col-span-2">
-              <div className="flex items-center mb-6 space-x-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary">
-                  <Star className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <span className="text-xl font-bold font-heading">JMV RD</span>
-                  <p className="text-sm text-white/80">Juventud Mariana Vicenciana</p>
-                </div>
-              </div>
-              <p className="max-w-md leading-relaxed text-white/80">
-                Formando jóvenes líderes comprometidos con la fe, el servicio y la transformación social desde 1995.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="mb-6 text-lg font-semibold">Enlaces Rápidos</h3>
-              <ul className="space-y-3">
-                <li>
-                  <Link href="/quienes-somos" className="transition-colors text-white/80 hover:text-white">
-                    Quiénes Somos
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/formacion" className="transition-colors text-white/80 hover:text-white">
-                    Formación
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/eventos" className="transition-colors text-white/80 hover:text-white">
-                    Eventos
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/noticias" className="transition-colors text-white/80 hover:text-white">
-                    Noticias
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="mb-6 text-lg font-semibold">Contacto</h3>
-              <ul className="space-y-4">
-                <li className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4 text-primary" />
-                  <span className="text-white/80">Santo Domingo, RD</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Mail className="w-4 h-4 text-primary" />
-                  <span className="text-white/80">info@jmvrd.org</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-primary" />
-                  <span className="text-white/80">+1 (809) 123-4567</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center justify-between gap-4 pt-8 mt-12 border-t border-white/20 md:flex-row">
-            <p className="text-sm text-white/60">
-              &copy; 2024 JMV República Dominicana. Todos los derechos reservados.
-            </p>
-            <div className="flex space-x-6">
-              <Link href="#" className="text-sm transition-colors text-white/60 hover:text-primary">
-                Instagram
-              </Link>
-              <Link href="#" className="text-sm transition-colors text-white/60 hover:text-primary">
-                Facebook
-              </Link>
-              <Link href="#" className="text-sm transition-colors text-white/60 hover:text-primary">
-                YouTube
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <FooterSection />
     </div>
   )
 }

@@ -16,7 +16,7 @@ export const miembroCreateSchema = z.object({
     errorMap: () => ({ message: "Selecciona un cargo válido" })
   }),
   ciudad: z.string().max(100, "Máximo 100 caracteres").optional(),
-  fotoUrl: z.string().url("URL inválida").optional().or(z.literal('')),
+  fotoUrl: z.string().optional(),
   estado: z.nativeEnum(EstadoMiembro),
   bioCorta: z.string().max(200, "Máximo 200 caracteres").optional(),
   bioExtendida: z.string().max(2000, "Máximo 2000 caracteres").optional(),
