@@ -30,6 +30,7 @@ import {
 import {
   Building2,
   Edit,
+  Eye,
   MoreHorizontal,
   Plus,
   Search,
@@ -141,6 +142,10 @@ export function CentroManagement() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => router.push(`/admin/centros/${row.original.id}`)}>
+                <Eye className="w-4 h-4 mr-2" />
+                Ver detalle
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push(`/admin/centros/${row.original.id}/edit`)}>
                 <Edit className="w-4 h-4 mr-2" />
                 Editar

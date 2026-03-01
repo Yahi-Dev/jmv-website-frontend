@@ -64,12 +64,25 @@ let store: {
   get: (key: string) => Promise<{ count: number; resetTime: number } | null>
 }
 
+// Timeout para operaciones Redis — evita esperar el timeout del sistema cuando Redis no es alcanzable
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`Redis timeout (${ms}ms)`)), ms)
+    ),
+  ])
+}
+
+const REDIS_TIMEOUT_MS = 3000
+const memoryFallback = new MemoryStore()
+
 if (redisUrl && redisToken) {
   try {
-    // Redis para producción
     const redis = new Redis({
       url: redisUrl,
       token: redisToken,
+      retry: { retries: 0 }, // No reintentar — falla rápido al fallback
     })
 
     store = {
@@ -79,43 +92,35 @@ if (redisUrl && redisToken) {
           const now = Date.now()
           const resetTime = now + windowMs
 
-          const result = await redis.incr(keyWithPrefix)
+          const result = await withTimeout(redis.incr(keyWithPrefix), REDIS_TIMEOUT_MS)
 
           if (result === 1) {
-            // Primera vez - establecer expiración
-            await redis.pexpire(keyWithPrefix, windowMs)
+            await withTimeout(redis.pexpire(keyWithPrefix, windowMs), REDIS_TIMEOUT_MS)
           }
 
           return { count: result, resetTime }
-        } catch (error) {
-          console.error('Redis increment error:', error)
-          // Fallback a memory store en caso de error
-          const memoryStore = new MemoryStore()
-          return memoryStore.increment(key, windowMs)
+        } catch {
+          return memoryFallback.increment(key, windowMs)
         }
       },
       async get(key: string) {
         try {
           const keyWithPrefix = `rate-limit:${key}`
-          const count = await redis.get<number>(keyWithPrefix)
-          const ttl = await redis.pttl(keyWithPrefix)
+          const [count, ttl] = await Promise.all([
+            withTimeout(redis.get<number>(keyWithPrefix), REDIS_TIMEOUT_MS),
+            withTimeout(redis.pttl(keyWithPrefix), REDIS_TIMEOUT_MS),
+          ])
 
-          if (count === null || ttl <= 0) {
-            return null
-          }
-
+          if (count === null || ttl <= 0) return null
           return { count, resetTime: Date.now() + ttl }
-        } catch (error) {
-          console.error('Redis get error:', error)
-          // Fallback a memory store
-          const memoryStore = new MemoryStore()
-          return memoryStore.get(key)
+        } catch {
+          return memoryFallback.get(key)
         }
       }
     }
   } catch (error) {
     console.error('Redis connection failed, using memory store:', error)
-    store = new MemoryStore()
+    store = memoryFallback
   }
 } else {
   // Memory store para desarrollo
@@ -299,13 +304,13 @@ export class RateLimitService {
       const blockKey = `block:${identifier}`;
 
       if (redisUrl && redisToken) {
-        // Para Redis: eliminar las keys
         const redis = new Redis({
           url: redisUrl,
           token: redisToken,
+          retry: { retries: 0 },
         });
-        await redis.del(`rate-limit:${attemptKey}`);
-        await redis.del(`rate-limit:${blockKey}`);
+        await withTimeout(redis.del(`rate-limit:${attemptKey}`), REDIS_TIMEOUT_MS);
+        await withTimeout(redis.del(`rate-limit:${blockKey}`), REDIS_TIMEOUT_MS);
       } else {
         // Para Memory Store: eliminar del Map
         const memoryStore = store as MemoryStore;

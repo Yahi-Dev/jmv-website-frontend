@@ -205,6 +205,7 @@ export function CentroFormPage({ mode, centroId }: CentroFormPageProps) {
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Error al guardar")
+    } finally {
       setIsSubmitting(false)
     }
   }

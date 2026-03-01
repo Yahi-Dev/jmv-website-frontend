@@ -1,19 +1,25 @@
 // src/features/centros/components/CentroDetail.tsx
 "use client"
 
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { Badge } from "@/src/components/ui/badge"
 import { Button } from "@/src/components/ui/button"
 import { Separator } from "@/src/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/ui/tabs"
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/src/components/ui/select"
+import {
   ArrowLeft, Building2, Calendar, Mail, MapPin, Loader2,
-  Phone, Users, Activity, Tag, Star,
+  Phone, Users, Activity, Tag, Star, X,
 } from "lucide-react"
 import Navbar from "@/src/components/Navbar"
 import { FooterSection } from "@/src/components/shared/FooterSection"
 import { getTagColor } from "../model/types"
 import { useCentro } from "../hook/use-centros"
+import { getActividades } from "@/src/features/actividades/service/actividad-service"
+import type { ActividadJmv } from "@/src/features/actividades/model/types"
 
 interface CentroDetailProps {
   slug: string
@@ -21,6 +27,44 @@ interface CentroDetailProps {
 
 export function CentroDetail({ slug }: CentroDetailProps) {
   const { centro, loading, notFound } = useCentro(slug)
+
+  // Actividades tab state
+  const [actividades, setActividades] = useState<ActividadJmv[]>([])
+  const [actLoading, setActLoading] = useState(false)
+  const [yearFilter, setYearFilter] = useState<string>("all")
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+
+  useEffect(() => {
+    if (!centro?.id) return
+    setActLoading(true)
+    getActividades({ centroId: centro.id, limit: 200 })
+      .then((r) => setActividades(Array.isArray(r.data) ? (r.data as ActividadJmv[]) : []))
+      .catch(() => setActividades([]))
+      .finally(() => setActLoading(false))
+  }, [centro?.id])
+
+  const availableYears = useMemo(() => {
+    const years = [...new Set(actividades.map((a) => new Date(a.fecha).getFullYear()))]
+    return years.sort((a, b) => b - a)
+  }, [actividades])
+
+  const availableTags = useMemo(() => {
+    return [...new Set(actividades.flatMap((a) => a.etiquetas))]
+  }, [actividades])
+
+  const filteredActividades = useMemo(() => {
+    return actividades.filter((a) => {
+      if (yearFilter !== "all" && new Date(a.fecha).getFullYear() !== Number(yearFilter)) return false
+      if (selectedTags.length > 0 && !selectedTags.some((t) => a.etiquetas.includes(t))) return false
+      return true
+    })
+  }, [actividades, yearFilter, selectedTags])
+
+  const toggleTag = (tag: string) =>
+    setSelectedTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])
+
+  const clearFilters = () => { setYearFilter("all"); setSelectedTags([]) }
+  const hasFilters = yearFilter !== "all" || selectedTags.length > 0
 
   if (loading) {
     return (
@@ -87,7 +131,7 @@ export function CentroDetail({ slug }: CentroDetailProps) {
       {/* Stats strip */}
       <div className="border-b bg-card">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-3 divide-x py-4">
+          <div className="grid grid-cols-4 divide-x py-4">
             <div className="flex flex-col items-center py-2 px-4">
               <span className="text-2xl font-bold text-primary">{centro.cantidadMiembrosActivos}</span>
               <span className="text-xs text-muted-foreground mt-0.5">Miembros activos</span>
@@ -95,6 +139,10 @@ export function CentroDetail({ slug }: CentroDetailProps) {
             <div className="flex flex-col items-center py-2 px-4">
               <span className="text-2xl font-bold text-primary">{comunidadesCount}</span>
               <span className="text-xs text-muted-foreground mt-0.5">Comunidades</span>
+            </div>
+            <div className="flex flex-col items-center py-2 px-4">
+              <span className="text-2xl font-bold text-primary">{actividades.length || "—"}</span>
+              <span className="text-xs text-muted-foreground mt-0.5">Actividades</span>
             </div>
             <div className="flex flex-col items-center py-2 px-4">
               <span className="text-2xl font-bold text-primary">{centro.anioFundacion}</span>
@@ -125,6 +173,12 @@ export function CentroDetail({ slug }: CentroDetailProps) {
               <Star className="w-4 h-4" /> Comunidades
               {comunidadesCount > 0 && (
                 <Badge variant="secondary" className="ml-1 text-xs">{comunidadesCount}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="actividades" className="gap-2">
+              <Activity className="w-4 h-4" /> Actividades
+              {actividades.length > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">{actividades.length}</Badge>
               )}
             </TabsTrigger>
           </TabsList>
@@ -203,7 +257,6 @@ export function CentroDetail({ slug }: CentroDetailProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {centro.miembros.map((m) => (
                   <div key={m.id} className="bg-card border rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-                    {/* Avatar */}
                     <div className="relative h-48 bg-muted">
                       {m.imagenUrl ? (
                         <img src={m.imagenUrl} alt={m.nombre} className="w-full h-full object-cover object-top" />
@@ -235,7 +288,6 @@ export function CentroDetail({ slug }: CentroDetailProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {centro.comunidades.map((c) => (
                   <div key={c.id} className="bg-card border rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-                    {/* Image */}
                     <div className="h-40 bg-muted overflow-hidden relative">
                       {c.imagenUrl ? (
                         <img src={c.imagenUrl} alt={c.nombre} className="w-full h-full object-cover" />
@@ -268,6 +320,137 @@ export function CentroDetail({ slug }: CentroDetailProps) {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Tab: Actividades */}
+          <TabsContent value="actividades">
+            {actLoading ? (
+              <div className="flex justify-center py-24">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Filters */}
+                {actividades.length > 0 && (
+                  <div className="p-4 bg-card border rounded-2xl space-y-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      {/* Year filter */}
+                      <Select value={yearFilter} onValueChange={setYearFilter}>
+                        <SelectTrigger className="w-40 h-9">
+                          <Calendar className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
+                          <SelectValue placeholder="Todos los años" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Todos los años</SelectItem>
+                          {availableYears.map((y) => (
+                            <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {/* Clear */}
+                      {hasFilters && (
+                        <button
+                          onClick={clearFilters}
+                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" /> Limpiar filtros
+                        </button>
+                      )}
+
+                      <span className="ml-auto text-xs text-muted-foreground">
+                        {filteredActividades.length} actividad{filteredActividades.length !== 1 ? "es" : ""}
+                      </span>
+                    </div>
+
+                    {/* Tag chips */}
+                    {availableTags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {availableTags.map((tag) => {
+                          const active = selectedTags.includes(tag)
+                          return (
+                            <button
+                              key={tag}
+                              onClick={() => toggleTag(tag)}
+                              className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all ${
+                                active
+                                  ? `${getTagColor(tag)} ring-2 ring-offset-1 ring-primary/40`
+                                  : "bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                              }`}
+                            >
+                              {tag}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Grid */}
+                {filteredActividades.length === 0 ? (
+                  <div className="py-20 text-center">
+                    <Activity className="w-12 h-12 mx-auto mb-4 text-muted-foreground/30" />
+                    <p className="text-lg font-medium text-muted-foreground">
+                      {actividades.length === 0 ? "Sin actividades registradas" : "No hay actividades con esos filtros"}
+                    </p>
+                    {hasFilters && (
+                      <button onClick={clearFilters} className="mt-3 text-sm text-primary hover:underline">
+                        Quitar filtros
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredActividades.map((act) => (
+                      <Link
+                        key={act.id}
+                        href={`/actividades/${act.slug}`}
+                        className="group bg-card border rounded-2xl overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                      >
+                        <div className="h-44 bg-muted overflow-hidden relative">
+                          {act.imagenUrl ? (
+                            <img
+                              src={act.imagenUrl}
+                              alt={act.titulo}
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/5 to-secondary/10">
+                              <Activity className="w-12 h-12 text-primary/20" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-4 space-y-2">
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Calendar className="w-3.5 h-3.5 shrink-0" />
+                            {new Date(act.fecha).toLocaleDateString("es-DO", { day: "numeric", month: "long", year: "numeric" })}
+                          </div>
+                          <h3 className="font-semibold leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                            {act.titulo}
+                          </h3>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{act.resumen}</p>
+                          {act.etiquetas.length > 0 && (
+                            <div className="flex flex-wrap gap-1 pt-1">
+                              {act.etiquetas.slice(0, 3).map((tag) => (
+                                <Badge key={tag} variant="outline" className={`text-xs px-2 py-0.5 ${getTagColor(tag)}`}>
+                                  {tag}
+                                </Badge>
+                              ))}
+                              {act.etiquetas.length > 3 && (
+                                <Badge variant="outline" className="text-xs px-2 py-0.5">
+                                  +{act.etiquetas.length - 3}
+                                </Badge>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </TabsContent>
