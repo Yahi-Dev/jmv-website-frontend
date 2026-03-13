@@ -16,10 +16,10 @@ export function PillarsSection() {
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: BookOpen, title: "Formación", text: "Crecimiento espiritual y humano a través de la catequesis y el liderazgo cristiano", color: "primary" },
+            { icon: BookOpen, title: "Comunidad Juvenil", text: "Crecimiento espiritual y humano a través de la catequesis y el liderazgo cristiano", color: "primary" },
             { icon: Star, title: "Espiritualidad", text: "Oración y contemplación siguiendo el ejemplo de María y San Vicente", color: "secondary" },
-            { icon: Heart, title: "Servicio", text: "Compromiso con los más necesitados a través de obras de caridad", color: "primary" },
-            { icon: Users, title: "Comunidad", text: "Fraternidad y apoyo mutuo en el camino de fe y servicio", color: "secondary" },
+            { icon: Heart, title: "Apostolado", text: "Compromiso con los más necesitados a través de obras de caridad", color: "primary" },
+            { icon: Users, title: "Formación", text: "Fraternidad y apoyo mutuo en el camino de fe y servicio", color: "secondary" },
           ].map(({ icon: Icon, title, text, color }, i) => (
             <Card key={i} className="relative overflow-hidden transition-all duration-500 border-0 shadow-lg group hover:shadow-2xl hover:-translate-y-2 bg-gradient-to-br from-card to-background">
               <div className={`absolute inset-0 transition-opacity duration-500 opacity-0 bg-gradient-to-br from-${color}/5 to-transparent group-hover:opacity-100`} />
@@ -29,9 +29,6 @@ export function PillarsSection() {
                 </div>
                 <CardTitle className="text-2xl font-bold">{title}</CardTitle>
               </CardHeader>
-              <CardContent className="relative z-10">
-                <CardDescription className="text-base leading-relaxed text-center">{text}</CardDescription>
-              </CardContent>
             </Card>
           ))}
         </div>
