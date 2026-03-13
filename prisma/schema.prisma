@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -447,7 +447,7 @@ model Noticia {
   slug                String    @unique
   titulo              String    @db.VarChar(200)
   descripcionBreve    String    @db.VarChar(300)
-  descripcionCompleta String?   @db.LongText
+  descripcionCompleta String?   @db.Text
   imagenUrl           String    @db.VarChar(500)
   ubicacion           String    @db.VarChar(200)
   fecha               DateTime

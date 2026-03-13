@@ -14,7 +14,7 @@ const logoUrl = process.env.NEXT_PUBLIC_APP_URL_LOGO;
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
-    provider: "mysql"
+    provider: "postgresql"
   }),
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL,
   secret: process.env.BETTER_AUTH_SECRET,
