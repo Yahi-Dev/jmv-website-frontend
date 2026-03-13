@@ -7,8 +7,8 @@ import Link from "next/link"
 
 export function HeroSection() {
   return (
-    <section className="relative py-24 overflow-hidden bg-black lg:py-32">
-      <div className="absolute inset-0 bg-[url('/images/jmv/jmv-1.jpeg')] bg-cover bg-[position:center_135%]" />
+    <section className="relative pt-10 pb-20 overflow-hidden bg-black lg:pt-14 lg:pb-28">
+      <div className="absolute inset-0 bg-[url('/images/jmv/jmv-1.jpeg')] bg-cover bg-[position:center_90%]" />
       <div className="absolute inset-0 bg-black/60" />
       <div className="absolute w-20 h-20 rounded-full top-20 left-10 bg-white/5 blur-xl animate-pulse" />
       <div className="absolute w-32 h-32 delay-1000 rounded-full bottom-20 right-10 bg-white/5 blur-xl animate-pulse" />

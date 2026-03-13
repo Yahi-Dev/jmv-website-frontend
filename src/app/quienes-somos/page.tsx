@@ -1,7 +1,7 @@
 import { Button } from "@/src/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
 import { Badge } from "@/src/components/ui/badge"
-import { Star, Heart, Users, BookOpen, Calendar, Award, Target, ArrowRight, Church } from "lucide-react"
+import { Star, Heart, Users, BookOpen, Calendar, Award, Target, ArrowRight, Church, Globe } from "lucide-react"
 import Link from "next/link"
 import Navbar from "@/src/components/Navbar"
 import { FooterSection } from "@/src/components/shared/FooterSection"
@@ -306,6 +306,44 @@ export default function QuienesSomosPage() {
                     Implementación de nuevas plataformas digitales para fortalecer la formación y comunicación entre
                     todos los capítulos del país, alcanzando una nueva generación de jóvenes.
                   </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* JMV Internacional Section */}
+      <section className="py-20 lg:py-28 bg-gradient-to-br from-muted/50 to-background">
+        <div className="container">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex flex-col items-center gap-12 lg:flex-row">
+              <div className="flex-1 space-y-6">
+                <Badge variant="outline" className="mb-2">
+                  <Globe className="w-4 h-4 mr-2" />
+                  Presencia Mundial
+                </Badge>
+                <h2 className="text-4xl font-bold text-balance">JMV Internacional</h2>
+                <p className="text-lg leading-relaxed text-muted-foreground">
+                  La Juventud Mariana Vicenciana es un movimiento con presencia en más de 50 países del mundo.
+                  Como parte de la gran familia vicentina, JMV República Dominicana está conectada con jóvenes
+                  de todos los continentes que comparten el mismo carisma de fe y servicio.
+                </p>
+                <p className="text-lg leading-relaxed text-muted-foreground">
+                  A través de JMV Internacional, participamos en encuentros mundiales, intercambios de experiencias
+                  y misiones internacionales que enriquecen nuestra fe y amplían nuestro horizonte de servicio.
+                </p>
+                <Button asChild size="lg" variant="outline" className="border-2">
+                  <a href="https://jmvinter.org/" target="_blank" rel="noopener noreferrer">
+                    <Globe className="w-4 h-4 mr-2" />
+                    Visitar JMV Internacional
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </a>
+                </Button>
+              </div>
+              <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center shadow-2xl h-64 w-64 rounded-3xl bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10">
+                  <Globe className="w-28 h-28 text-primary/50" />
                 </div>
               </div>
             </div>

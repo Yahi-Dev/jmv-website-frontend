@@ -1,6 +1,6 @@
 "use client"
 
-import { Star, MapPin } from "lucide-react"
+import { Star, MapPin, Globe } from "lucide-react"
 import Link from "next/link"
 
 export function FooterSection() {
@@ -39,6 +39,17 @@ export function FooterSection() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <a
+                  href="https://jmvinter.org/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 transition-colors duration-200 hover:text-secondary"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  JMV Internacional
+                </a>
+              </li>
             </ul>
           </div>
 

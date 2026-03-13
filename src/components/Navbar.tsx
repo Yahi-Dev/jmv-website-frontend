@@ -32,7 +32,6 @@ import {
   UsersRound,
   Settings,
   Menu,
-  Globe,
 } from "lucide-react"
 import { getClientUser, signOut } from "@/src/lib/client-auth"
 import { useEffect, useState } from "react"
@@ -50,12 +49,12 @@ export default function Navbar() {
     { href: "/libro-oracion", label: "Libro de Oración", icon: BookMarked },
     { href: "/centros", label: "Centros", icon: Building },
     { href: "/consejos", label: "Consejo Nacional", icon: UsersRound },
-    { href: "/actividades", label: "Actividades", icon: Activity },
   ]
 
   const actualidadLinks = [
     { href: "/noticias", label: "Noticias", icon: Newspaper, desc: "Últimas noticias de JMV" },
     { href: "/eventos", label: "Eventos", icon: Calendar, desc: "Próximos eventos y actividades" },
+    { href: "/actividades", label: "Actividades", icon: Activity, desc: "Actividades y proyectos en curso" },
   ]
 
   const comunidadLinks = [
@@ -108,15 +107,18 @@ export default function Navbar() {
           <Image
             src="/bandera/bandera-nacional-mundo-republica-dominicana.avif"
             alt="Bandera Dominicana"
-            width={46}
-            height={34}
+            width={34}
+            height={24}
             className="object-cover rounded-sm shadow-sm"
           />
+          <span className="hidden sm:block text-sm font-semibold leading-tight">
+            JMV República<br />Dominicana
+          </span>
         </Link>
 
         {/* Desktop Nav */}
         <div className="items-center hidden gap-1 lg:flex">
-          <NavigationMenu>
+          <NavigationMenu viewport={false}>
             <NavigationMenuList>
 
               {/* Links primarios */}
@@ -177,35 +179,6 @@ export default function Navbar() {
                     )}
                   >
                     Formación
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              {/* JMV Internacional */}
-              <NavigationMenuItem>
-                <a
-                  href="https://jmvinter.org/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(navigationMenuTriggerStyle(), "bg-transparent text-sm flex items-center gap-1")}
-                >
-                  <Globe className="w-3.5 h-3.5" />
-                  Internacional
-                </a>
-              </NavigationMenuItem>
-
-              {/* Contáctanos */}
-              <NavigationMenuItem>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href="/unete"
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "bg-transparent text-sm",
-                      pathname === "/unete" && "text-primary font-semibold"
-                    )}
-                  >
-                    Contáctanos
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
@@ -272,17 +245,6 @@ export default function Navbar() {
                     {label}
                   </Link>
                 ))}
-                <a
-                  href="https://jmvinter.org/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors hover:bg-accent"
-                >
-                  <Globe className="w-4 h-4 shrink-0" />
-                  JMV Internacional
-                </a>
-
                 <div className="pt-2 mt-2 border-t">
                   {user ? (
                     <>
