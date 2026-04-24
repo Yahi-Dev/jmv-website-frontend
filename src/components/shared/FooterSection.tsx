@@ -172,6 +172,30 @@ export function FooterSection() {
             <a href="https://jmvinter.org/" target="_blank" rel="noopener noreferrer" className="jmv-ft-bottom-link" style={{ color: "rgba(255,255,255,0.55)", textDecoration: "none", transition: "color .15s" }}>JMV Internacional</a>
           </span>
         </div>
+
+        {/* Website credit */}
+        <p
+          style={{
+            marginTop: 18,
+            paddingTop: 14,
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            textAlign: "center",
+            fontFamily: FONT_UI,
+            fontSize: 12,
+          }}
+        >
+          <span style={{ color: "rgba(255,255,255,0.6)" }}>Sitio web creado por </span>
+          <Link
+            href="https://www.ampirics.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="jmv-ft-bottom-link"
+            style={{ color: "rgba(255,255,255,0.8)", fontWeight: 500, textDecoration: "none", transition: "color .15s" }}
+          >
+            AMPIRICS
+          </Link>
+        </p>
+
       </div>
     </footer>
   )
