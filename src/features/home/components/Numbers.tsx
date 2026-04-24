@@ -1,4 +1,5 @@
 import { Serif } from "../ui-kit/Primitives"
+import { CountUp } from "../ui-kit/CountUp"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
 
 const stats = [
@@ -39,7 +40,7 @@ export function Numbers() {
               }}
             >
               <div style={{ fontFamily: FONT_DISPLAY, fontSize: 72, fontWeight: 300, color: "#fff", letterSpacing: "-0.03em", lineHeight: 1 }}>
-                {s.n}
+                <CountUp value={s.n} />
               </div>
               <div style={{ fontFamily: FONT_UI, fontSize: 13, color: "#fff", marginTop: 24, fontWeight: 500 }}>{s.t}</div>
               <div style={{ fontFamily: FONT_UI, fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>{s.d}</div>

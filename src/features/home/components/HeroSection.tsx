@@ -10,7 +10,7 @@ export function HeroSection() {
   const onAbout = () => router.push("/quienes-somos")
 
   return (
-    <section style={{ position: "relative", background: JMV.white, padding: "72px 32px 0" }}>
+    <section style={{ position: "relative", background: JMV.white, padding: "32px 32px 0" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         {/* Top meta row */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 56, fontFamily: FONT_UI, fontSize: 12, color: JMV.mute, letterSpacing: "0.06em" }}>

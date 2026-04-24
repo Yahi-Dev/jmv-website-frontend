@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { Eyebrow, Icon, Serif } from "@/src/features/home/ui-kit/Primitives"
+import { CountUp } from "@/src/features/home/ui-kit/CountUp"
 import { JMV, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 
 export function HeroQuienes() {
@@ -111,7 +112,7 @@ export function HeroQuienes() {
                 {s.k}
               </div>
               <Serif size={36} weight={300}>
-                {s.v}
+                <CountUp value={s.v} />
               </Serif>
             </div>
           ))}
