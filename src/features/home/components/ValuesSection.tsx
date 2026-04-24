@@ -1,30 +1,52 @@
-"use client"
+import { Eyebrow, Serif } from "../ui-kit/Primitives"
+import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
+
+const values = [
+  { word: "Eclesial", desc: "Miembros vivos de la Iglesia católica." },
+  { word: "Laical", desc: "Una vocación laical dentro de la Familia Vicenciana." },
+  { word: "Mariana", desc: "María, primera discípula, es nuestra guía." },
+  { word: "Misionera", desc: "Enviados a anunciar el Evangelio con obras." },
+  { word: "Vicentina", desc: "Al estilo y carisma de San Vicente de Paúl." },
+]
 
 export function ValuesSection() {
-  const values = [
-    { title: "Eclesial", subtitle: "Confianza plena en Dios" },
-    { title: "Laical", subtitle: "Amor al prójimo en acción" },
-    { title: "Mariana", subtitle: "Evangelización y servicio" },
-    { title: "Misionera", subtitle: "Energía y esperanza" },
-    { title: "Vicentina", subtitle: "Energía y esperanza" },
-  ]
-
   return (
-    <section className="relative py-20 overflow-hidden text-white bg-black">
-      <div className="absolute inset-0 bg-[url('/images/jmv/jmv-11.jpeg')] bg-cover bg-position-[center_50%]" />
-      <div className="absolute inset-0 bg-black/60" />
-      <div className="container relative z-10 px-6">
-        <div className="mb-16 text-center">
-          <h2 className="mb-6 text-4xl font-bold">NOTAS DISTINTIVAS</h2>
-          <p className="max-w-2xl mx-auto text-xl text-white/80">
-            Los valores que nos definen como comunidad de fe
-          </p>
+    <section style={{ background: JMV.white, padding: "140px 32px" }}>
+      <div style={{ maxWidth: 1040, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 80 }}>
+          <Eyebrow align="center">Notas Distintivas</Eyebrow>
+          <Serif size={52} weight={300} style={{ display: "block", marginTop: 20 }}>
+            Cinco palabras que<br />nos <span style={{ fontStyle: "italic", color: JMV.gold }}>definen</span>.
+          </Serif>
         </div>
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5">
+
+        <div>
           {values.map((v, i) => (
-            <div key={i} className="text-center group">
-              <div className="mb-6 text-6xl font-black transition-transform duration-300 group-hover:scale-110">{v.title}</div>
-              {/* <p className="text-lg font-medium text-white/90">{v.subtitle}</p> */}
+            <div
+              key={i}
+              className="jmv-values-row"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "64px 1fr auto",
+                gap: 32,
+                alignItems: "center",
+                padding: "32px 0",
+                borderTop: "1px solid " + JMV.line,
+                borderBottom: i === values.length - 1 ? "1px solid " + JMV.line : "none",
+              }}
+            >
+              <div style={{ fontFamily: FONT_UI, fontSize: 12, color: JMV.meta, letterSpacing: "0.2em" }}>
+                0{i + 1}
+              </div>
+              <div
+                className="jmv-values-word"
+                style={{ fontFamily: FONT_DISPLAY, fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 300, letterSpacing: "-0.025em", lineHeight: 1 }}
+              >
+                {v.word}
+              </div>
+              <div style={{ fontFamily: FONT_BODY, fontSize: 15, color: JMV.mute, maxWidth: 340, textAlign: "right", lineHeight: 1.5 }}>
+                {v.desc}
+              </div>
             </div>
           ))}
         </div>

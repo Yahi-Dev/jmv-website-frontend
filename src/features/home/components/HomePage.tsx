@@ -1,20 +1,23 @@
 import Navbar from "@/src/components/Navbar"
 import { HeroSection } from "./HeroSection"
+import { MissionQuote } from "./MissionQuote"
+import { PillarsSection } from "./PillarsSection"
 import { ValuesSection } from "./ValuesSection"
+import { Numbers } from "./Numbers"
 import { ActivitiesSection } from "./ActivitiesSection"
 import { ContactSection } from "./ContactSection"
 import { FooterSection } from "../../../components/shared/FooterSection"
-import { PillarsSection } from "./PillarsSection"
-import { TestimonialsSection } from "../../testimonios/components/TestimonialsSection"
+import "../ui-kit/jmv-ui-kit.css"
 
 export function HomePage() {
   return (
-    <div className="min-h-screen">
+    <div className="jmv-kit-root" style={{ minHeight: "100vh", background: "#fff" }}>
       <Navbar />
       <HeroSection />
+      <MissionQuote />
       <PillarsSection />
       <ValuesSection />
-      <TestimonialsSection />
+      <Numbers />
       <ActivitiesSection />
       <ContactSection />
       <FooterSection />

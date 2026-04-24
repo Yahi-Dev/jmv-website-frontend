@@ -78,8 +78,26 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-source-sans-3);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
+  --font-ui: var(--font-inter);
+  --font-body: var(--font-source-sans-3);
+
+  /* JMV brand tokens — matches UI Kit Primitives.jsx */
+  --color-jmv-blue: #19168D;
+  --color-jmv-blue-dk: #100E66;
+  --color-jmv-celeste: #139FCC;
+  --color-jmv-gold: #F3A736;
+  --color-jmv-ink: #0B1020;
+  --color-jmv-body: #4B5563;
+  --color-jmv-mute: #6B7280;
+  --color-jmv-meta: #9CA3AF;
+  --color-jmv-line: #E7E7EC;
+  --color-jmv-line-soft: #F1F1F4;
+  --color-jmv-paper: #FAFAF7;
+  --color-jmv-mist: #F4F6FB;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

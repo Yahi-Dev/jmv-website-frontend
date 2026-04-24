@@ -1,0 +1,116 @@
+/* ==============================================
+   JMV RD — UI Kit CSS (hovers, marquee, details)
+   Used alongside inline styles to replicate the
+   exact behavior of website-kit/index.html
+   ============================================== */
+
+/* Ensure Google Fonts are available even if next/font cache misses */
+.jmv-kit-root,
+.jmv-kit-root * {
+  box-sizing: border-box;
+}
+
+/* Button hover */
+.jmv-btn-primary { background: #19168D !important; color: #fff; border: 1px solid #19168D; }
+.jmv-btn-primary:hover { background: #100E66 !important; }
+.jmv-btn-gold { background: #F3A736; color: #1a1300; border: 1px solid #F3A736; }
+.jmv-btn-gold:hover { background: #e89b2e; }
+.jmv-btn-outline { background: transparent; color: #19168D; border: 1px solid rgba(25,22,141,0.2); }
+.jmv-btn-outline:hover { background: rgba(25,22,141,0.04); }
+.jmv-btn-ghost { background: transparent; color: #19168D; border: 1px solid transparent; }
+.jmv-btn-ghost:hover { background: rgba(25,22,141,0.04); }
+.jmv-btn-dark { background: #0B1020; color: #fff; border: 1px solid #0B1020; }
+.jmv-btn-dark:hover { background: #000; }
+
+/* Pillar hover */
+.jmv-pillar { background: transparent; transition: background 0.25s; }
+.jmv-pillar:hover { background: #ffffff; }
+
+/* Event card hover */
+.jmv-event-card h3 { transition: color 0.2s; }
+.jmv-event-card:hover h3 { color: #19168D; }
+
+/* Nav link (underline on hover for inactive) */
+.jmv-nav-link { transition: color 0.15s; }
+.jmv-nav-link:hover { color: #0B1020; }
+
+/* Sliding gold underline indicator — transition lives here so React can't
+   overwrite it on re-render. Direct DOM mutations of left/width trigger it. */
+.jmv-nav-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 1.5px;
+  background: #F3A736;
+  border-radius: 2px;
+  pointer-events: none;
+  transition: left .35s cubic-bezier(.4,0,.2,1),
+              width .35s cubic-bezier(.4,0,.2,1),
+              opacity .25s ease;
+}
+.jmv-nav-indicator--instant { transition: none !important; }
+
+/* Ver todos events link hover */
+.jmv-arrow-link:hover { color: #19168D; }
+
+/* Editorial ghost pill button — thin line, ink text, gold accent on hover.
+   Used on sub-page heroes where the bold "Únete" dark button would feel
+   too loud alongside the rest of the editorial layout. */
+.jmv-ghost-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  background: #E7E7EC;
+  border: 1px solid #FFFFFF;
+  border-radius: 999px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0B1020;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: border-color .22s ease, color .22s ease, background-color .22s ease;
+}
+.jmv-ghost-pill:hover {
+  background: rgba(243, 167, 54, 0.12);
+  border-color: #F3A736;
+  color: #8A5A00;
+}
+.jmv-ghost-pill svg { transition: transform .22s ease; }
+.jmv-ghost-pill:hover svg { transform: translate(2px, -2px); }
+
+/* Values section — left-to-right gold wipe on hover.
+   Technique: a dual-stop gradient (gold | ink) sized 200% wide, text is
+   transparent and clipped to the gradient. Animating background-position
+   from 100% to 0% slides the gold in from the left on hover; on leave it
+   reverses naturally back to ink. */
+.jmv-values-word {
+  background-image: linear-gradient(to right, #F3A736 50%, #0B1020 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  transition: background-position .55s cubic-bezier(.4,0,.2,1);
+}
+.jmv-values-row:hover .jmv-values-word { background-position: 0 0; }
+
+/* Footer hover effects */
+.jmv-ft-link:hover { color: #F3A736 !important; }
+.jmv-ft-bottom-link:hover { color: #fff !important; }
+.jmv-ft-social:hover { color: #1a1300 !important; background: #F3A736 !important; border-color: #F3A736 !important; }
+
+/* Marquee belt — continuous horizontal scroll.
+   Content must be duplicated exactly once so translateX(-50%) loops seamlessly. */
+@keyframes jmv-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.jmv-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: jmv-marquee 40s linear infinite;
+  will-change: transform;
+}
+.jmv-marquee-track:hover { animation-play-state: paused; }

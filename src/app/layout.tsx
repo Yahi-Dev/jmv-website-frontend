@@ -1,9 +1,9 @@
 // src/app/layout.tsx
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter, Source_Sans_3 } from "next/font/google"
+import { Inter, Source_Sans_3, Fraunces } from "next/font/google"
 import "./globals.css"
-import { Toaster } from "@/src/components/ui/sonner" 
+import { Toaster } from "@/src/components/ui/sonner"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,6 +17,14 @@ const sourceSans3 = Source_Sans_3({
   display: "swap",
   variable: "--font-source-sans-3",
   weight: ["400", "500", "600"],
+})
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-fraunces",
+  weight: ["300", "400", "500"],
+  style: ["normal", "italic"],
 })
 
 export const metadata: Metadata = {
@@ -63,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${inter.variable} ${sourceSans3.variable} antialiased`}>
+    <html lang="es" className={`${inter.variable} ${sourceSans3.variable} ${fraunces.variable} antialiased`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>{`

@@ -1,55 +1,73 @@
 "use client"
 
-import { Button } from "@/src/components/ui/button"
-import { ArrowRight } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Eyebrow, Button, Icon, PhotoTile } from "../ui-kit/Primitives"
+import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
 
 export function HeroSection() {
-  return (
-    <section className="relative pt-10 pb-20 overflow-hidden bg-black lg:pt-14 lg:pb-28">
-      <div className="absolute inset-0 bg-[url('/images/jmv/jmv-1.jpeg')] bg-cover bg-[position:center_90%]" />
-      <div className="absolute inset-0 bg-black/60" />
-      <div className="absolute w-20 h-20 rounded-full top-20 left-10 bg-white/5 blur-xl animate-pulse" />
-      <div className="absolute w-32 h-32 delay-1000 rounded-full bottom-20 right-10 bg-white/5 blur-xl animate-pulse" />
+  const router = useRouter()
+  const onJoin = () => router.push("/unete")
+  const onAbout = () => router.push("/quienes-somos")
 
-      <div className="container relative px-6">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="flex justify-center">
-            <Image src="/logo/jvm-logo-blancoynegro-removebg-preview.png" alt="JMV Logo" width={56} height={56} className="object-cover h-100 w-100 rounded-2xl" />
+  return (
+    <section style={{ position: "relative", background: JMV.white, padding: "72px 32px 0" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+        {/* Top meta row */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 56, fontFamily: FONT_UI, fontSize: 12, color: JMV.mute, letterSpacing: "0.06em" }}>
+          <span>EST. 1847 · JMV INTERNACIONAL</span>
+          <span>REPÚBLICA DOMINICANA · {new Date().getFullYear()}</span>
+        </div>
+
+        {/* Main split */}
+        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 64, alignItems: "end" }}>
+          <div>
+            <Eyebrow>Juventud · Fe · Servicio</Eyebrow>
+            <h1 style={{ margin: "28px 0 0", fontFamily: FONT_DISPLAY, color: JMV.ink, fontWeight: 300, lineHeight: 0.98, letterSpacing: "-0.035em", fontSize: "clamp(3.5rem, 8vw, 7.5rem)" }}>
+              Una juventud<br />
+              <span style={{ fontStyle: "italic", fontWeight: 300 }}>mariana</span><br />
+              que sirve.
+            </h1>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, marginTop: 48, maxWidth: 640 }}>
+              <p style={{ fontFamily: FONT_BODY, fontSize: 16, lineHeight: 1.65, color: JMV.body, margin: 0 }}>
+                Somos una comunidad de jóvenes dominicanos formados en la espiritualidad de María y San Vicente de Paúl, comprometidos con la fe y con quienes más lo necesitan.
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14, justifyContent: "flex-end" }}>
+                <Button variant="dark" size="lg" onClick={onJoin}>
+                  Únete a JMV <Icon name="arrowUR" size={16} />
+                </Button>
+                <Button variant="ghost" size="lg" onClick={onAbout}>
+                  Conoce nuestra historia <Icon name="arrow" size={16} />
+                </Button>
+              </div>
+            </div>
           </div>
 
-          <h1 className="mb-8 text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
-            Juventud Mariana
-            <span className="block text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
-              Vicenciana
-            </span>
-            <span className="block text-4xl font-bold text-white sm:text-5xl lg:text-6xl">
-              República Dominicana
-            </span>
-          </h1>
+          {/* Right column — photo + caption block */}
+          <div>
+            <PhotoTile h={520} label="Encuentro Nacional · 2024" kind="community" />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginTop: 20, fontFamily: FONT_UI, fontSize: 12.5, color: JMV.mute }}>
+              <div style={{ maxWidth: 220, lineHeight: 1.5 }}>
+                Miles de jóvenes en más de 60 países viven el carisma JMV.
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ color: JMV.ink, fontFamily: FONT_DISPLAY, fontSize: 42, fontWeight: 400, lineHeight: 1 }}>
+                  20<span style={{ color: JMV.gold }}>+</span>
+                </div>
+                <div style={{ marginTop: 4, letterSpacing: "0.14em", fontSize: 10.5, textTransform: "uppercase" }}>Centros en RD</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-
-
-          <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
-            <Button
-              size="lg"
-              asChild
-              className="px-10 py-6 text-lg font-semibold transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
-            >
-              <Link href="/unete" className="flex items-center gap-2">
-                Únete a JMV
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              asChild
-              className="px-10 py-6 text-lg font-semibold text-white transition-all duration-300 bg-transparent border-2 hover:border-primary hover:scale-105"
-            >
-              <Link href="/quienes-somos">Conoce nuestra misión</Link>
-            </Button>
+        {/* Bottom marquee-style belt — auto-scrolling carousel */}
+        <div style={{ marginTop: 96, padding: "22px 0", borderTop: "1px solid " + JMV.line, borderBottom: "1px solid " + JMV.line, fontFamily: FONT_UI, fontSize: 12, letterSpacing: "0.24em", textTransform: "uppercase", color: JMV.mute, overflow: "hidden", whiteSpace: "nowrap" }}>
+          <div className="jmv-marquee-track" style={{ alignItems: "center", gap: 56, paddingRight: 56 }}>
+            {["Eclesial", "Laical", "Mariana", "Misionera", "Vicentina", "Eclesial", "Laical", "Mariana", "Misionera", "Vicentina"].map((w, i) => (
+              <span key={i} style={{ display: "inline-flex", alignItems: "center", gap: 56, color: i % 5 === 2 ? JMV.gold : JMV.mute }}>
+                {w}
+                <span style={{ display: "inline-block", width: 4, height: 4, borderRadius: 999, background: JMV.gold }} />
+              </span>
+            ))}
           </div>
         </div>
       </div>

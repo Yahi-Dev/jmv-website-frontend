@@ -1,94 +1,82 @@
 "use client"
 
-import { Badge } from "@/src/components/ui/badge"
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Eyebrow, Serif, Icon, Tag, PhotoTile } from "../ui-kit/Primitives"
+import { JMV, FONT_DISPLAY, FONT_UI } from "../ui-kit/tokens"
+
+type Kind = "community" | "prayer" | "service" | "landscape" | "dark"
+
+const items: {
+  day: string
+  mon: string
+  y: string
+  title: string
+  type: string
+  loc: string
+  time: string
+  kind: Kind
+}[] = [
+  { day: "15", mon: "Dic", y: "2024", title: "Taller de Liderazgo JMV", type: "Formación", loc: "Santo Domingo", time: "9:00 AM", kind: "community" },
+  { day: "22", mon: "Dic", y: "2024", title: "Misión de Adviento", type: "Misión", loc: "Monte Plata", time: "7:00 AM", kind: "service" },
+  { day: "28", mon: "Dic", y: "2024", title: "Vigilia Mariana", type: "Espiritualidad", loc: "Santiago", time: "8:00 PM", kind: "prayer" },
+  { day: "12", mon: "Ene", y: "2025", title: "Encuentro Nacional de Centros", type: "Comunidad", loc: "La Vega", time: "10:00 AM", kind: "landscape" },
+]
 
 export function ActivitiesSection() {
-  const activities = [
-    {
-      title: "Taller de Liderazgo JMV",
-      date: "15 Dic 2024",
-      type: "Formación",
-      location: "Santo Domingo",
-      time: "9:00 AM",
-      color: "primary",
-      desc: "Desarrollo de habilidades de liderazgo cristiano para jóvenes comprometidos",
-    },
-    {
-      title: "Misión de Verano",
-      date: "22 Dic 2024",
-      type: "Misión",
-      location: "Monte Plata",
-      time: "7:00 AM",
-      color: "secondary",
-      desc: "Experiencia misionera de servicio a comunidades rurales necesitadas",
-    },
-    {
-      title: "Vigilia Mariana",
-      date: "28 Dic 2024",
-      type: "Espiritualidad",
-      location: "Santiago",
-      time: "8:00 PM",
-      color: "primary",
-      desc: "Noche de oración y reflexión en honor a la Virgen María",
-    },
-  ]
+  const router = useRouter()
+  const onAll = () => router.push("/eventos")
 
   return (
-    <section className="py-20 bg-gradient-to-br from-card to-background lg:py-28">
-      <div className="container px-6">
-        <div className="mb-16 text-center">
-          <h2 className="mb-4 text-4xl font-bold text-balance">Próximas Actividades</h2>
-          <p className="max-w-2xl mx-auto text-xl text-muted-foreground text-pretty">
-            Únete a nuestros próximos eventos y actividades de formación
-          </p>
-        </div>
-
-        <div className="grid gap-8 md:grid-cols-3">
-          {activities.map((a, i) => (
-            <Card key={i} className="overflow-hidden transition-all duration-300 border-0 shadow-lg hover:shadow-xl hover:-translate-y-1 group">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between mb-4">
-                  <Badge variant="secondary" className={`font-medium border-0 bg-${a.color}/10 text-${a.color}`}>
-                    {a.type}
-                  </Badge>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    {a.date}
-                  </div>
-                </div>
-                <CardTitle className="text-2xl font-bold transition-colors group-hover:text-primary">{a.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center mb-4 text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  {a.location}
-                  <Clock className="w-4 h-4 ml-4 mr-1" />
-                  {a.time}
-                </div>
-                <CardDescription className="mb-6 text-base leading-relaxed">{a.desc}</CardDescription>
-                <Button className="w-full transition-all duration-200 bg-transparent shadow-md hover:shadow-lg" variant="outline">
-                  Más información
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="mt-12 text-center">
-          <Button
-            asChild
-            size="lg"
-            className="px-8 py-4 text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+    <section style={{ background: JMV.white, padding: "120px 32px", borderTop: "1px solid " + JMV.line }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 64 }}>
+          <div>
+            <Eyebrow>Actualidad</Eyebrow>
+            <Serif size={56} weight={300} style={{ display: "block", marginTop: 20 }}>
+              Próximos encuentros
+            </Serif>
+          </div>
+          <span
+            onClick={onAll}
+            className="jmv-arrow-link"
+            style={{ cursor: "pointer", fontFamily: FONT_UI, fontSize: 13.5, color: JMV.ink, display: "inline-flex", alignItems: "center", gap: 8, borderBottom: "1px solid " + JMV.ink, paddingBottom: 4 }}
           >
-            <Link href="/eventos" className="flex items-center gap-2">
-              Ver todos los eventos
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-          </Button>
+            Ver todos los eventos <Icon name="arrowUR" size={14} />
+          </span>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+          {items.map((a, i) => (
+            <div key={i} className="jmv-event-card" style={{ cursor: "pointer" }} onClick={onAll}>
+              <PhotoTile h={260} label={a.type.toUpperCase()} kind={a.kind} />
+              <div style={{ padding: "20px 4px 0" }}>
+                <div style={{ display: "flex", gap: 14, alignItems: "baseline", marginBottom: 12 }}>
+                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 36, fontWeight: 300, color: JMV.ink, lineHeight: 1, letterSpacing: "-0.02em" }}>
+                    {a.day}
+                  </span>
+                  <span style={{ fontFamily: FONT_UI, fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", color: JMV.mute }}>
+                    {a.mon} {a.y}
+                  </span>
+                </div>
+                <div style={{ marginBottom: 10 }}>
+                  <Tag tone="primary">{a.type}</Tag>
+                </div>
+                <h3 style={{ fontFamily: FONT_DISPLAY, fontSize: 22, fontWeight: 400, color: JMV.ink, margin: "0 0 10px", lineHeight: 1.2, letterSpacing: "-0.01em" }}>
+                  {a.title}
+                </h3>
+                <div style={{ display: "flex", gap: 14, fontSize: 12.5, color: JMV.mute, fontFamily: FONT_UI }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                    <Icon name="pin" size={12} />
+                    {a.loc}
+                  </span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                    <Icon name="clock" size={12} />
+                    {a.time}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

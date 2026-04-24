@@ -1,35 +1,44 @@
-"use client"
+import { Eyebrow, Serif } from "../ui-kit/Primitives"
+import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { BookOpen, Star, Heart, Users } from "lucide-react"
+const pillars = [
+  { num: "01", title: "Comunidad Juvenil", desc: "Crecimiento espiritual y humano a través de la catequesis y el liderazgo cristiano." },
+  { num: "02", title: "Espiritualidad", desc: "Oración y contemplación siguiendo el ejemplo de María y San Vicente." },
+  { num: "03", title: "Apostolado", desc: "Compromiso con los más necesitados a través de obras de caridad." },
+  { num: "04", title: "Formación", desc: "Fraternidad y apoyo mutuo en el camino de fe y servicio." },
+]
 
 export function PillarsSection() {
   return (
-    <section className="py-20 lg:py-28">
-      <div className="container px-6">
-        <div className="mb-16 text-center">
-          <h2 className="mb-4 text-4xl font-bold text-balance">Nuestros Pilares</h2>
-          <p className="max-w-2xl mx-auto text-xl text-muted-foreground text-pretty">
-            Cuatro pilares fundamentales que guían nuestro caminar cristiano
+    <section style={{ background: JMV.mist, padding: "120px 32px" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 64, alignItems: "end", marginBottom: 80 }}>
+          <div>
+            <Eyebrow>Pilares</Eyebrow>
+            <Serif size={56} weight={300} style={{ display: "block", marginTop: 20, color: JMV.blue }}>
+              Cuatro caminos,<br />una misma <span style={{ fontStyle: "italic" }}>vocación</span>.
+            </Serif>
+          </div>
+          <p style={{ fontFamily: FONT_BODY, fontSize: 17, lineHeight: 1.6, color: JMV.body, margin: 0, maxWidth: 520, justifySelf: "end" }}>
+            Los cimientos sobre los que construimos comunidad y respondemos al llamado del Evangelio en la República Dominicana.
           </p>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { icon: BookOpen, title: "Comunidad Juvenil", text: "Crecimiento espiritual y humano a través de la catequesis y el liderazgo cristiano", color: "primary" },
-            { icon: Star, title: "Espiritualidad", text: "Oración y contemplación siguiendo el ejemplo de María y San Vicente", color: "secondary" },
-            { icon: Heart, title: "Apostolado", text: "Compromiso con los más necesitados a través de obras de caridad", color: "primary" },
-            { icon: Users, title: "Formación", text: "Fraternidad y apoyo mutuo en el camino de fe y servicio", color: "secondary" },
-          ].map(({ icon: Icon, title, text, color }, i) => (
-            <Card key={i} className="relative overflow-hidden transition-all duration-500 border-0 shadow-lg group hover:shadow-2xl hover:-translate-y-2 bg-gradient-to-br from-card to-background">
-              <div className={`absolute inset-0 transition-opacity duration-500 opacity-0 bg-gradient-to-br from-${color}/5 to-transparent group-hover:opacity-100`} />
-              <CardHeader className="relative z-10 pb-4 text-center">
-                <div className={`flex items-center justify-center w-16 h-16 mx-auto mb-6 transition-transform duration-300 rounded-2xl bg-gradient-to-br from-${color}/20 to-${color}/10 group-hover:scale-110`}>
-                  <Icon className={`w-8 h-8 text-${color}`} />
-                </div>
-                <CardTitle className="text-2xl font-bold">{title}</CardTitle>
-              </CardHeader>
-            </Card>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0, borderTop: "1px solid " + JMV.line }}>
+          {pillars.map((p, i) => (
+            <div
+              key={i}
+              className="jmv-pillar"
+              style={{
+                padding: "36px 28px 40px",
+                borderRight: i < pillars.length - 1 ? "1px solid " + JMV.line : "none",
+                borderBottom: "1px solid " + JMV.line,
+              }}
+            >
+              <div style={{ fontFamily: FONT_UI, fontSize: 11, letterSpacing: "0.3em", color: JMV.gold, marginBottom: 36 }}>{p.num}</div>
+              <div style={{ fontFamily: FONT_DISPLAY, fontSize: 28, color: JMV.ink, fontWeight: 400, letterSpacing: "-0.015em", marginBottom: 14, lineHeight: 1.1 }}>{p.title}</div>
+              <p style={{ fontFamily: FONT_BODY, fontSize: 14.5, lineHeight: 1.6, color: JMV.mute, margin: 0 }}>{p.desc}</p>
+            </div>
           ))}
         </div>
       </div>
