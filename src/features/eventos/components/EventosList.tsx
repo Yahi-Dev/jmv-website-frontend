@@ -1,7 +1,8 @@
 // src/features/eventos/components/EventosList.tsx
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
+import { useDebouncedValue } from "@/src/hooks/use-debounced-value"
 import Link from "next/link"
 import Image from "next/image"
 import Navbar from "@/src/components/Navbar"
@@ -12,35 +13,33 @@ import { CountUp } from "@/src/features/home/ui-kit/CountUp"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 import { Evento } from "../model/types"
 import { getEventos } from "../service/evento-service"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 export function EventosList() {
   const [search, setSearch] = useState("")
+  const debouncedSearch = useDebouncedValue(search, 350)
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [tagsExpanded, setTagsExpanded] = useState(false)
   const [allEventos, setAllEventos] = useState<Evento[]>([])
   const [loading, setLoading] = useState(true)
 
-  const fetchEventos = useCallback(async (q: string) => {
-    setLoading(true)
-    try {
-      const result = await getEventos({ search: q || undefined, limit: 100 })
-      const data = result.data
-      setAllEventos(Array.isArray(data) ? data : [])
-    } catch {
-      setAllEventos([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
   useEffect(() => {
-    const t = setTimeout(() => {
-      setSelectedTag(null)
-      fetchEventos(search)
-    }, 350)
-    return () => clearTimeout(t)
-  }, [search, fetchEventos])
+    const ctrl = new AbortController()
+    setLoading(true)
+    setSelectedTag(null)
+    getEventos({ search: debouncedSearch || undefined, limit: 100, signal: ctrl.signal })
+      .then((result) => {
+        const data = result.data
+        setAllEventos(Array.isArray(data) ? data : [])
+      })
+      .catch((err) => {
+        if ((err as Error)?.name === "AbortError") return
+        setAllEventos([])
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setLoading(false)
+      })
+    return () => ctrl.abort()
+  }, [debouncedSearch])
 
   const availableTags = useMemo(() => {
     const tagSet = new Set<string>()
@@ -53,24 +52,24 @@ export function EventosList() {
     return allEventos.filter((e) => e.etiquetas.includes(selectedTag))
   }, [allEventos, selectedTag])
 
-  const now = Date.now()
-  const proximos = useMemo(
-    () =>
-      filtered
-        .filter((e) => new Date(e.fecha).getTime() >= now)
-        .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()),
-    [filtered, now]
-  )
-  const pasados = useMemo(
-    () =>
-      filtered
-        .filter((e) => new Date(e.fecha).getTime() < now)
-        .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()),
-    [filtered, now]
-  )
+  const proximos = useMemo(() => {
+    const now = Date.now()
+    return filtered
+      .filter((e) => new Date(e.fecha).getTime() >= now)
+      .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+  }, [filtered])
+  const pasados = useMemo(() => {
+    const now = Date.now()
+    return filtered
+      .filter((e) => new Date(e.fecha).getTime() < now)
+      .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+  }, [filtered])
 
   const stats = useMemo(() => {
-    const futuros = allEventos.filter((e) => new Date(e.fecha).getTime() >= now)
+    const now = Date.now()
+    const futuros = allEventos
+      .filter((e) => new Date(e.fecha).getTime() >= now)
+      .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
     const closest = futuros.length > 0
       ? Math.round(
           (new Date(futuros[0].fecha).getTime() - now) / (1000 * 60 * 60 * 24)
@@ -81,7 +80,7 @@ export function EventosList() {
       proximos: futuros.length,
       diasProximo: Math.max(0, closest),
     }
-  }, [allEventos, now])
+  }, [allEventos])
 
   const clearFilters = () => {
     setSearch("")

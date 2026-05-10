@@ -3,6 +3,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Source_Sans_3, Fraunces } from "next/font/google"
 import "./globals.css"
+import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 import { Toaster } from "@/src/components/ui/sonner"
 
 const inter = Inter({

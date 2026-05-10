@@ -15,7 +15,6 @@ import { getActividades } from "@/src/features/actividades/service/actividad-ser
 import type { ActividadJmv } from "@/src/features/actividades/model/types"
 import type { MiembroCentroJmv } from "../model/types"
 import { MiembroCentroDialog } from "./MiembroCentroDialog"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 type TabKey = "info" | "consejo" | "comunidades" | "actividades"
 
@@ -35,11 +34,18 @@ export function CentroDetail({ slug }: Props) {
 
   useEffect(() => {
     if (!centro?.id) return
+    const ctrl = new AbortController()
     setActLoading(true)
-    getActividades({ centroId: centro.id, limit: 200 })
+    getActividades({ centroId: centro.id, limit: 200, signal: ctrl.signal })
       .then((r) => setActividades(Array.isArray(r.data) ? (r.data as ActividadJmv[]) : []))
-      .catch(() => setActividades([]))
-      .finally(() => setActLoading(false))
+      .catch((err) => {
+        if ((err as Error)?.name === "AbortError") return
+        setActividades([])
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setActLoading(false)
+      })
+    return () => ctrl.abort()
   }, [centro?.id])
 
   const availableYears = useMemo(() => {

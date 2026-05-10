@@ -6,6 +6,7 @@ export async function getEventos(params?: {
   search?: string
   page?: number
   limit?: number
+  signal?: AbortSignal
 }): Promise<EventoResponse> {
   try {
     const query = new URLSearchParams()
@@ -13,7 +14,7 @@ export async function getEventos(params?: {
     if (params?.page) query.set("page", String(params.page))
     if (params?.limit) query.set("limit", String(params.limit))
 
-    const response = await fetch(`/api/eventos?${query}`)
+    const response = await fetch(`/api/eventos?${query}`, { signal: params?.signal })
     const result = await response.json()
 
     if (!response.ok) {
@@ -22,14 +23,18 @@ export async function getEventos(params?: {
 
     return result
   } catch (error) {
+    if ((error as Error)?.name === "AbortError") throw error
     console.error("Error al obtener eventos:", error)
     throw error
   }
 }
 
-export async function getEventoBySlug(slug: string): Promise<EventoResponse> {
+export async function getEventoBySlug(
+  slug: string,
+  signal?: AbortSignal
+): Promise<EventoResponse> {
   try {
-    const response = await fetch(`/api/eventos/${slug}`)
+    const response = await fetch(`/api/eventos/${slug}`, { signal })
     const result = await response.json()
 
     if (!response.ok) {
@@ -38,6 +43,7 @@ export async function getEventoBySlug(slug: string): Promise<EventoResponse> {
 
     return result
   } catch (error) {
+    if ((error as Error)?.name === "AbortError") throw error
     console.error("Error al obtener evento:", error)
     throw error
   }

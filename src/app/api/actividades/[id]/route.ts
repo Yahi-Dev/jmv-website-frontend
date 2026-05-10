@@ -11,7 +11,7 @@ import { actividadUpdateSchema } from "@/src/features/actividades/schema/validat
 import { auth } from "@/src/lib/auth"
 
 const INCLUDE = {
-  centro: { select: { id: true, nombreParroquia: true } },
+  centro: { select: { id: true, slug: true, nombreParroquia: true } },
 }
 
 // ── GET /api/actividades/[id] ─────────────────────────────────────────────────

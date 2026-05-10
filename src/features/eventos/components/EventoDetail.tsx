@@ -10,7 +10,6 @@ import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 import { EventoShareButtons } from "./EventoShareButtons"
 import { useEvento } from "../hook/use-eventos"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 interface Props {
   slug: string

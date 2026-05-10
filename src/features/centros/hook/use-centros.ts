@@ -46,7 +46,7 @@ export function useCentro(slug: string) {
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
 
-  const fetch = useCallback(async () => {
+  const refetch = useCallback(async () => {
     if (!slug) return
     setLoading(true)
     setNotFound(false)
@@ -70,8 +70,39 @@ export function useCentro(slug: string) {
     }
   }, [slug])
 
-  useEffect(() => { fetch() }, [fetch])
-  return { centro, loading, notFound, refetch: fetch }
+  useEffect(() => {
+    if (!slug) return
+    const ctrl = new AbortController()
+    setLoading(true)
+    setNotFound(false)
+    getCentroBySlug(slug, ctrl.signal)
+      .then((r) => {
+        const data = r.data
+        if (!data || Array.isArray(data)) {
+          setNotFound(true)
+          return
+        }
+        setCentro({
+          ...data,
+          etiquetas: Array.isArray(data.etiquetas) ? data.etiquetas : [],
+          miembros: data.miembros ?? [],
+          comunidades: (data.comunidades ?? []).map((c: any) => ({
+            ...c,
+            etiquetas: Array.isArray(c.etiquetas) ? c.etiquetas : [],
+          })),
+        })
+      })
+      .catch((err) => {
+        if ((err as Error)?.name === "AbortError") return
+        setNotFound(true)
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setLoading(false)
+      })
+    return () => ctrl.abort()
+  }, [slug])
+
+  return { centro, loading, notFound, refetch }
 }
 
 // ── Centro form ───────────────────────────────────────────────────────────────

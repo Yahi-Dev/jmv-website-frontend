@@ -6,7 +6,6 @@ import { FundadoresSection } from "./FundadoresSection"
 import { CarismaSection } from "./CarismaSection"
 import { TimelineSection } from "./TimelineSection"
 import { InternacionalSection } from "./InternacionalSection"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 export function QuienesSomosPage() {
   return (

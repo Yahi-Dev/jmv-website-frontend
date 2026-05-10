@@ -1,6 +1,7 @@
 "use client"
 
 import { CSSProperties, ReactNode, useEffect, useRef, useState } from "react"
+import { usePrefersReducedMotion } from "@/src/hooks/use-prefers-reduced-motion"
 
 type Props = {
   children: ReactNode
@@ -28,9 +29,14 @@ export function Reveal({
   once = true,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null)
+  const reducedMotion = usePrefersReducedMotion()
   const [shown, setShown] = useState(false)
 
   useEffect(() => {
+    if (reducedMotion) {
+      setShown(true)
+      return
+    }
     const el = ref.current
     if (!el) return
     const obs = new IntersectionObserver(
@@ -46,7 +52,9 @@ export function Reveal({
     )
     obs.observe(el)
     return () => obs.disconnect()
-  }, [threshold, once])
+  }, [threshold, once, reducedMotion])
+
+  const animate = !reducedMotion
 
   return (
     <div
@@ -54,9 +62,11 @@ export function Reveal({
       className={className}
       style={{
         opacity: shown ? 1 : 0,
-        transform: shown ? "translateY(0)" : `translateY(${y}px)`,
-        transition: `opacity ${duration}ms cubic-bezier(.2,.7,.2,1) ${delay}ms, transform ${duration}ms cubic-bezier(.2,.7,.2,1) ${delay}ms`,
-        willChange: "opacity, transform",
+        transform: shown || !animate ? "translateY(0)" : `translateY(${y}px)`,
+        transition: animate
+          ? `opacity ${duration}ms cubic-bezier(.2,.7,.2,1) ${delay}ms, transform ${duration}ms cubic-bezier(.2,.7,.2,1) ${delay}ms`
+          : "none",
+        willChange: animate ? "opacity, transform" : undefined,
         ...style,
       }}
     >

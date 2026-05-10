@@ -1,7 +1,8 @@
 // src/features/centros/components/CentroList.tsx
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
+import { useDebouncedValue } from "@/src/hooks/use-debounced-value"
 import Link from "next/link"
 import Image from "next/image"
 import Navbar from "@/src/components/Navbar"
@@ -12,40 +13,35 @@ import { CountUp } from "@/src/features/home/ui-kit/CountUp"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 import { CentroJmv } from "../model/types"
 import { getCentros } from "../service/centro-service"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 export function CentroList() {
   const [search, setSearch] = useState("")
-  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const debouncedSearch = useDebouncedValue(search, 350)
   const [centros, setCentros] = useState<CentroJmv[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 350)
-    return () => clearTimeout(t)
-  }, [search])
-
-  const fetch = useCallback(async () => {
+    const ctrl = new AbortController()
     setLoading(true)
-    try {
-      const r = await getCentros({ search: debouncedSearch || undefined, limit: 100 })
-      const data = Array.isArray(r.data) ? r.data : []
-      setCentros(
-        data.map((c) => ({
-          ...c,
-          etiquetas: Array.isArray(c.etiquetas) ? c.etiquetas : [],
-        }))
-      )
-    } catch {
-      setCentros([])
-    } finally {
-      setLoading(false)
-    }
+    getCentros({ search: debouncedSearch || undefined, limit: 100, signal: ctrl.signal })
+      .then((r) => {
+        const data = Array.isArray(r.data) ? r.data : []
+        setCentros(
+          data.map((c) => ({
+            ...c,
+            etiquetas: Array.isArray(c.etiquetas) ? c.etiquetas : [],
+          }))
+        )
+      })
+      .catch((err) => {
+        if ((err as Error)?.name === "AbortError") return
+        setCentros([])
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setLoading(false)
+      })
+    return () => ctrl.abort()
   }, [debouncedSearch])
-
-  useEffect(() => {
-    fetch()
-  }, [fetch])
 
   // Aggregate stats across all centros
   const stats = useMemo(() => {

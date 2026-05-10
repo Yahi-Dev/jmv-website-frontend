@@ -33,7 +33,16 @@ export function MiembroCardEditorial({ miembro, featured = false }: Props) {
     <>
       <div
         className="jmv-miembro-card"
+        role="button"
+        tabIndex={0}
+        aria-label={`Ver perfil de ${miembro.nombre}`}
         onClick={() => setOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            setOpen(true)
+          }
+        }}
         style={{
           cursor: "pointer",
           background: JMV.white,

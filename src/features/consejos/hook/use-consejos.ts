@@ -14,26 +14,33 @@ import {
 
 
 
-export function useConsejoActual() {
+interface UseConsejoActualOptions {
+  /** Si es `false` el hook NO realiza la petición (útil cuando otro componente
+   *  ya cargó el consejo y se pasa por props). Por defecto `true`. */
+  enabled?: boolean
+}
+
+export function useConsejoActual(options: UseConsejoActualOptions = {}) {
+  const { enabled = true } = options
   const [consejo, setConsejo] = useState<ConsejoNacional | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(enabled)
   const [error, setError] = useState<string | null>(null)
   const [isEmpty, setIsEmpty] = useState(false)
 
-  const fetchConsejoActual = async () => {
+  const fetchConsejoActual = async (signal?: AbortSignal) => {
     try {
       setLoading(true)
       setError(null)
       setIsEmpty(false)
-      
-      const response = await getConsejoActual()
-      
+
+      const response = await getConsejoActual(signal)
+      if (signal?.aborted) return
+
       if (response.success) {
         if (response.data) {
           setConsejo(response.data as ConsejoNacional)
           setIsEmpty(false)
         } else {
-          // No hay consejo actual, pero no es un error
           setConsejo(null)
           setIsEmpty(true)
         }
@@ -42,6 +49,7 @@ export function useConsejoActual() {
         setIsEmpty(false)
       }
     } catch (err) {
+      if ((err as Error)?.name === "AbortError") return
       const errorMessage = err instanceof Error ? err.message : "Error desconocido"
       setError(errorMessage)
       setIsEmpty(false)
@@ -49,21 +57,26 @@ export function useConsejoActual() {
         description: errorMessage
       })
     } finally {
-      setLoading(false)
+      if (!signal?.aborted) setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchConsejoActual()
-  }, [])
+    if (!enabled) {
+      setLoading(false)
+      return
+    }
+    const ctrl = new AbortController()
+    fetchConsejoActual(ctrl.signal)
+    return () => ctrl.abort()
+  }, [enabled])
 
-  return { 
-    consejo, 
-    loading, 
+  return {
+    consejo,
+    loading,
     error,
     isEmpty,
-    refetch: fetchConsejoActual  
-    
+    refetch: () => fetchConsejoActual()
   }
 }
 

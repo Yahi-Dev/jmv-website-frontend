@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Dialog, DialogContent, DialogTitle } from "@/src/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/src/components/ui/dialog"
 import { Icon } from "@/src/features/home/ui-kit/Primitives"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 import type { MiembroCentroJmv } from "../model/types"
@@ -30,7 +30,7 @@ export function MiembroCentroDialog({ open, onOpenChange, miembro, parroquia }: 
                 src={miembro.imagenUrl}
                 alt={miembro.nombre}
                 fill
-                sizes="(max-width: 1024px) 100vw, 48vw"
+                sizes="(max-width: 1024px) 95vw, 488px"
                 style={{ objectFit: "cover", objectPosition: "top" }}
               />
             ) : (
@@ -171,6 +171,9 @@ export function MiembroCentroDialog({ open, onOpenChange, miembro, parroquia }: 
                 {miembro.nombre}
               </h2>
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              {`Perfil de ${miembro.nombre} (miembro del consejo de centro)`}
+            </DialogDescription>
 
             {/* Meta */}
             <div

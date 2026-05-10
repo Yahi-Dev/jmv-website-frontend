@@ -18,7 +18,16 @@ export function CoordinadorFeatured({ miembro }: Props) {
     <>
       <article
         className="jmv-coordinador-card"
+        role="button"
+        tabIndex={0}
+        aria-label={`Ver perfil de ${miembro.nombre}`}
         onClick={() => setOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            setOpen(true)
+          }
+        }}
         style={{
           cursor: "pointer",
           background: "linear-gradient(135deg, #FAFAF7 0%, #FFFFFF 60%, rgba(243,167,54,0.06) 100%)",

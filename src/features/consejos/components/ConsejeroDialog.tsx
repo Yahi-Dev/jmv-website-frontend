@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Dialog, DialogContent, DialogTitle } from "@/src/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/src/components/ui/dialog"
 import { Icon } from "@/src/features/home/ui-kit/Primitives"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 import { CARGO_LABELS, CargoConsejo, MiembroConsejo } from "../model/types"
@@ -185,6 +185,9 @@ export function ConsejeroDialog({ open, onOpenChange, miembro }: Props) {
                 {miembro.nombre}
               </h2>
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              {`Perfil del consejero ${miembro.nombre}`}
+            </DialogDescription>
 
             {/* Meta */}
             <div

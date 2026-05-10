@@ -1,6 +1,12 @@
 import { NextRequest } from "next/server"
-import { uploadToCloudinary } from "@/src/lib/cloudinary"
-import { sendBadRequest, sendCreated, sendServerError } from "@/src/utils/httpResponse"
+import { uploadBufferToCloudinary } from "@/src/lib/cloudinary"
+import {
+  sendBadRequest,
+  sendCreated,
+  sendServerError,
+  sendUnauthorized,
+} from "@/src/utils/httpResponse"
+import { getServerSession } from "@/src/lib/server-auth"
 
 const ALLOWED_TYPES = [
   "image/jpeg",
@@ -12,37 +18,47 @@ const ALLOWED_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "application/vnd.ms-excel",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-]
+] as const
 
 const MAX_SIZE = 30 * 1024 * 1024 // 30 MB
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession()
+    if (!session?.user) {
+      return sendUnauthorized("Debes iniciar sesión para subir archivos")
+    }
+
     const formData = await request.formData()
-    const file = formData.get("file") as File | null
-    const titulo = (formData.get("titulo") as string) || ""
+    const file = formData.get("file")
+    const titulo = (formData.get("titulo") as string | null) ?? ""
 
-    if (!file) return sendBadRequest("No se proporcionó ningún archivo")
-    if (!titulo) return sendBadRequest("Se requiere un título para el archivo")
+    if (!(file instanceof File)) {
+      return sendBadRequest("No se proporcionó ningún archivo")
+    }
+    if (!titulo.trim()) {
+      return sendBadRequest("Se requiere un título para el archivo")
+    }
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    if (!ALLOWED_TYPES.includes(file.type as (typeof ALLOWED_TYPES)[number])) {
       return sendBadRequest("Tipo de archivo no permitido")
     }
     if (file.size > MAX_SIZE) {
       return sendBadRequest("El archivo es demasiado grande. Máximo 30MB")
     }
 
-    // Convert to base64 data URI for the Cloudinary SDK
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-    const base64 = `data:${file.type};base64,${buffer.toString("base64")}`
+    const buffer = Buffer.from(await file.arrayBuffer())
 
     // Images go to "image" resource type so transformations work; documents
     // (PDF, DOC, XLS) go to "raw" so Cloudinary serves them as-is.
     const isImage = file.type.startsWith("image/")
     const resourceType = isImage ? "image" : "raw"
 
-    const result = await uploadToCloudinary(base64, "jmv/formacion", resourceType)
+    const result = await uploadBufferToCloudinary(
+      buffer,
+      "jmv/formacion",
+      resourceType
+    )
 
     return sendCreated(
       {

@@ -12,7 +12,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/src/components/ui/accordion"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 // ── Razones para unirse ──────────────────────────────────────────────────────
 const razones: { num: string; title: string; body: string; icon: IconName }[] = [

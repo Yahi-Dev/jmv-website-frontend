@@ -47,9 +47,10 @@ export function useActividad(slug: string) {
 
   useEffect(() => {
     if (!slug) return
+    const ctrl = new AbortController()
     setLoading(true)
     setNotFound(false)
-    getActividadBySlug(slug)
+    getActividadBySlug(slug, ctrl.signal)
       .then((r) => {
         const data = r.data
         if (!data || Array.isArray(data)) { setNotFound(true); return }
@@ -58,8 +59,14 @@ export function useActividad(slug: string) {
           etiquetas: Array.isArray(data.etiquetas) ? data.etiquetas : [],
         })
       })
-      .catch(() => setNotFound(true))
-      .finally(() => setLoading(false))
+      .catch((err) => {
+        if ((err as Error)?.name === "AbortError") return
+        setNotFound(true)
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setLoading(false)
+      })
+    return () => ctrl.abort()
   }, [slug])
 
   return { actividad, loading, notFound }

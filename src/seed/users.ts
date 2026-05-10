@@ -3,8 +3,14 @@ import { auth } from "@/src/lib/auth";
 import { PrismaClient } from "@prisma/client";
 
 export async function seedUsers(prisma: PrismaClient): Promise<string> {
-  const testEmail = "yahinnieltheking01@gmail.com";
-  const testPassword = "password123";
+  const testEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@jmv.local";
+  const testPassword = process.env.SEED_ADMIN_PASSWORD ?? "ChangeMe!123";
+
+  if (!process.env.SEED_ADMIN_EMAIL || !process.env.SEED_ADMIN_PASSWORD) {
+    console.warn(
+      "⚠️  SEED_ADMIN_EMAIL/SEED_ADMIN_PASSWORD no están definidas; usando credenciales por defecto SOLO para desarrollo local."
+    );
+  }
 
   console.log("👤 Creando usuario de prueba para JMV...");
 
@@ -125,7 +131,9 @@ export async function seedUsers(prisma: PrismaClient): Promise<string> {
     });
 
     console.log("🎉 SEED USERS COMPLETADO EXITOSAMENTE");
-    console.log(`📋 CREDENCIALES: ${testEmail} / ${testPassword}`);
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`📋 CREDENCIALES: ${testEmail} / ${testPassword}`);
+    }
 
     return userRes.user.id;
   } catch (error) {

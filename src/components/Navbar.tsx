@@ -3,11 +3,15 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, type FocusEvent, type KeyboardEvent } from "react"
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet"
 import { getClientUser, signOut } from "@/src/lib/client-auth"
 import { Button, Icon, Logo } from "@/src/features/home/ui-kit/Primitives"
 import { JMV, FONT_DISPLAY, FONT_UI } from "@/src/features/home/ui-kit/tokens"
+
+// `useLayoutEffect` no existe en SSR; usamos useEffect en servidor para evitar warnings.
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect
 
 type SubLink = { href: string; label: string }
 type NavLink = { href: string; id: string; label: string; submenu?: SubLink[] }
@@ -51,10 +55,15 @@ export default function Navbar() {
   const initializedRef = useRef(false)
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Sincronizamos `scrolled` antes del primer paint para evitar el "flicker"
+  // donde el navbar se renderiza grande y luego salta a su versión compacta.
+  useIsomorphicLayoutEffect(() => {
+    setScrolled(window.scrollY > 20)
+  }, [])
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener("scroll", onScroll)
-    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
@@ -114,6 +123,32 @@ export default function Navbar() {
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
     closeTimerRef.current = setTimeout(() => setOpenDropdownId(null), 140)
   }
+  const closeDropdownImmediate = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    setOpenDropdownId(null)
+  }
+  // Cierra al perder foco si el siguiente elemento focusable está FUERA del wrapper.
+  const handleDropdownBlur = (e: FocusEvent<HTMLDivElement>) => {
+    const next = e.relatedTarget as Node | null
+    if (!e.currentTarget.contains(next)) closeDropdownImmediate()
+  }
+  const handleDropdownKeyDown = (e: KeyboardEvent<HTMLDivElement>, id: string) => {
+    if (e.key === "Escape") {
+      closeDropdownImmediate()
+      return
+    }
+    if (e.key === "ArrowDown" && openDropdownId !== id) {
+      e.preventDefault()
+      openDropdown(id)
+    }
+  }
+
+  // Limpieza del timer al desmontar
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    }
+  }, [])
 
   const handleLogout = async () => {
     try {
@@ -200,7 +235,7 @@ export default function Navbar() {
                   alignItems: "center",
                   gap: 4,
                 }}
-                aria-haspopup={hasSubmenu ? "menu" : undefined}
+                aria-haspopup={hasSubmenu ? "true" : undefined}
                 aria-expanded={hasSubmenu ? isOpen : undefined}
               >
                 {l.label}
@@ -228,6 +263,9 @@ export default function Navbar() {
                 style={{ position: "relative" }}
                 onMouseEnter={() => openDropdown(l.id)}
                 onMouseLeave={closeDropdownDeferred}
+                onFocus={() => openDropdown(l.id)}
+                onBlur={handleDropdownBlur}
+                onKeyDown={(e) => handleDropdownKeyDown(e, l.id)}
               >
                 {trigger}
 
@@ -244,7 +282,6 @@ export default function Navbar() {
                   }}
                 >
                   <div
-                    role="menu"
                     style={{
                       minWidth: 200,
                       background: JMV.white,
@@ -263,8 +300,9 @@ export default function Navbar() {
                         <Link
                           key={s.href}
                           href={s.href}
-                          role="menuitem"
                           onClick={() => setOpenDropdownId(null)}
+                          tabIndex={isOpen ? 0 : -1}
+                          aria-hidden={!isOpen}
                           className="jmv-dropdown-item"
                           style={{
                             display: "block",

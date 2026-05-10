@@ -5,6 +5,7 @@ import { Prisma } from '@prisma/client';
 import { formacionCreateSchema, formacionUpdateSchema } from '@/src/features/formacion/schema/validation';
 import { auth } from '@/src/lib/auth';
 import { z } from 'zod';
+import { sanitizeRichHtml } from '@/src/lib/sanitize';
 
 export async function GET(req: NextRequest) {
   try {
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
     const created = await prisma.formacion.create({
       data: {
         titulo: data.titulo,
-        descripcion: data.descripcion,
+        descripcion: sanitizeRichHtml(data.descripcion) ?? "",
         modulo: data.modulo,
         enlace: data.enlace,
         ruta: data.ruta,
@@ -144,6 +145,9 @@ export async function PUT(request: NextRequest) {
       where: { id },
       data: {
         ...parsed.data,
+        ...(parsed.data.descripcion !== undefined && {
+          descripcion: sanitizeRichHtml(parsed.data.descripcion) ?? "",
+        }),
         modifiedDate: new Date(),
         modifiedById: session?.user?.email ?? "sistema@jmv.org",
       }

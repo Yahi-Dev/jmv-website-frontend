@@ -13,7 +13,6 @@ import { ActividadJmv } from "../model/types"
 import { useActividad } from "../hook/use-actividades"
 import { getActividades } from "../service/actividad-service"
 import { ActividadCardEditorial } from "./ActividadList"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 interface Props {
   slug: string
@@ -25,12 +24,14 @@ export function ActividadDetail({ slug }: Props) {
 
   useEffect(() => {
     if (!actividad?.centroId) return
-    getActividades({ centroId: actividad.centroId, limit: 6 })
+    const ctrl = new AbortController()
+    getActividades({ centroId: actividad.centroId, limit: 6, signal: ctrl.signal })
       .then((r) => {
         const list = Array.isArray(r.data) ? r.data : []
         setRelated(list.filter((a) => a.slug !== slug).slice(0, 3))
       })
       .catch(() => {})
+    return () => ctrl.abort()
   }, [actividad?.centroId, slug])
 
   // Loading
@@ -559,15 +560,11 @@ export function ActividadDetail({ slug }: Props) {
   )
 }
 
-// Build a centro slug from the actividad's centro reference. Since the activity
-// only has the centro name (not the slug), we slugify it for the link target.
+// Use the centro slug returned by the API (centro: { id, slug, nombreParroquia }).
+// Falls back to slugifying the parroquia name only if the API ever omits the slug.
 function getCentroSlug(actividad: ActividadJmv): string {
-  const slugFromActividad = actividad.slug.split("-")[0] // best-effort guess
-  // The activity slug typically begins with the centro slug; if not, fall back
-  // to a slugified parroquia name.
+  if (actividad.centro?.slug) return actividad.centro.slug
   if (actividad.centro?.nombreParroquia) {
-    const guess = slugFromActividad
-    if (guess && guess.length > 2) return guess
     return actividad.centro.nombreParroquia
       .toLowerCase()
       .normalize("NFD")
@@ -575,7 +572,7 @@ function getCentroSlug(actividad: ActividadJmv): string {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "")
   }
-  return slugFromActividad
+  return ""
 }
 
 function SidebarRow({

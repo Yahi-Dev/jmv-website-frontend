@@ -10,7 +10,21 @@ import { seedFormacion } from "./formacion"
 import { seedTestimonios } from "./testimonios"
 import { seedBiblioteca } from "./biblioteca"
 
+function assertSeedSafe() {
+  const env = (process.env.NODE_ENV || "").toLowerCase()
+  const force = process.env.SEED_ALLOW_PRODUCTION === "1"
+  if (env === "production" && !force) {
+    console.error(
+      "\n🛑 Seeding bloqueado: NODE_ENV=production.\n" +
+        "   El seeder ejecuta deleteMany() sobre datos reales y los destruiría.\n" +
+        "   Si DE VERDAD quieres ejecutarlo, define SEED_ALLOW_PRODUCTION=1.\n"
+    )
+    process.exit(1)
+  }
+}
+
 async function runSeeders() {
+  assertSeedSafe()
   console.log("🌱 Starting database seeding...\n")
   const prisma = new PrismaClient()
   const start = Date.now()

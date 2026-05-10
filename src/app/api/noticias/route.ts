@@ -10,6 +10,7 @@ import {
 import { noticiaCreateSchema } from "@/src/features/noticias/schema/validation"
 import { auth } from "@/src/lib/auth"
 import { Prisma } from "@prisma/client"
+import { sanitizeRichHtml } from "@/src/lib/sanitize"
 
 // ── Slug generator ─────────────────────────────────────────────────────────────
 function generateSlug(titulo: string, id: number): string {
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
         slug: `temp-${Date.now()}`,
         titulo: data.titulo,
         descripcionBreve: data.descripcionBreve,
-        descripcionCompleta: data.descripcionCompleta || null,
+        descripcionCompleta: sanitizeRichHtml(data.descripcionCompleta),
         imagenUrl: data.imagenUrl,
         ubicacion: data.ubicacion,
         fecha: new Date(data.fecha),

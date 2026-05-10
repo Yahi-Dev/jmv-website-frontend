@@ -7,7 +7,6 @@ import { Numbers } from "./Numbers"
 import { ActivitiesSection } from "./ActivitiesSection"
 import { ContactSection } from "./ContactSection"
 import { FooterSection } from "../../../components/shared/FooterSection"
-import "../ui-kit/jmv-ui-kit.css"
 
 export function HomePage() {
   return (

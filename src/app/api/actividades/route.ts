@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     const [actividades, total] = await Promise.all([
       prisma.actividadJmv.findMany({
         where,
-        include: { centro: { select: { id: true, nombreParroquia: true } } },
+        include: { centro: { select: { id: true, slug: true, nombreParroquia: true } } },
         orderBy: { fecha: "desc" },
         skip,
         take: limit,
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     const updated = await prisma.actividadJmv.update({
       where: { id: actividad.id },
       data: { slug },
-      include: { centro: { select: { id: true, nombreParroquia: true } } },
+      include: { centro: { select: { id: true, slug: true, nombreParroquia: true } } },
     })
 
     return sendCreated({ Data: updated }, "Actividad creada exitosamente")

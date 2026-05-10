@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import { usePrefersReducedMotion } from "@/src/hooks/use-prefers-reduced-motion"
 
 type Props = {
   value: string
@@ -20,6 +21,7 @@ export function CountUp({ value, duration = 2500 }: Props) {
   const ref = useRef<HTMLSpanElement>(null)
   const hasRunOnceRef = useRef(false)
   const displayRef = useRef(0)
+  const reducedMotion = usePrefersReducedMotion()
   const [display, setDisplay] = useState(0)
 
   useEffect(() => {
@@ -39,6 +41,13 @@ export function CountUp({ value, duration = 2500 }: Props) {
   useEffect(() => {
     const el = ref.current
     if (!el || !parsed) return
+
+    // Respeta prefers-reduced-motion: salta directo al valor final sin animar.
+    if (reducedMotion) {
+      hasRunOnceRef.current = true
+      setDisplay(parsed.target)
+      return
+    }
 
     let rafId = 0
 
@@ -82,7 +91,7 @@ export function CountUp({ value, duration = 2500 }: Props) {
       observer.disconnect()
       if (rafId) cancelAnimationFrame(rafId)
     }
-  }, [parsed, duration])
+  }, [parsed, duration, reducedMotion])
 
   if (!parsed) return <span ref={ref}>{value}</span>
 

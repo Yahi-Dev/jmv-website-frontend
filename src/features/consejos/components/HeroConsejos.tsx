@@ -5,9 +5,16 @@ import { Eyebrow } from "@/src/features/home/ui-kit/Primitives"
 import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 import { useConsejoActual } from "../hook/use-consejos"
+import type { ConsejoNacional } from "../model/types"
 
-export function HeroConsejos() {
-  const { consejo } = useConsejoActual()
+interface HeroConsejosProps {
+  /** Cuando se provee, evita re-fetchear `useConsejoActual()` desde este componente. */
+  consejo?: ConsejoNacional | null
+}
+
+export function HeroConsejos({ consejo: consejoProp }: HeroConsejosProps = {}) {
+  const fallback = useConsejoActual({ enabled: consejoProp === undefined })
+  const consejo = consejoProp !== undefined ? consejoProp : fallback.consejo
   const fotoUrl = consejo?.fotoUrl
   const periodo = consejo?.periodo || "2024 — 2026"
 

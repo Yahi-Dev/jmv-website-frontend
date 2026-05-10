@@ -1,7 +1,8 @@
 // src/features/noticias/components/NoticiasList.tsx
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
+import { useDebouncedValue } from "@/src/hooks/use-debounced-value"
 import Link from "next/link"
 import Image from "next/image"
 import Navbar from "@/src/components/Navbar"
@@ -21,42 +22,42 @@ import {
   CommandItem,
   CommandList,
 } from "@/src/components/ui/command"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 export function NoticiasList() {
   const [search, setSearch] = useState("")
+  const debouncedSearch = useDebouncedValue(search, 350)
   const [selectedTipo, setSelectedTipo] = useState<string>("all")
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [allNoticias, setAllNoticias] = useState<Noticia[]>([])
   const [tipos, setTipos] = useState<NoticiaTipo[]>([])
   const [loading, setLoading] = useState(true)
 
-  const fetchNoticias = useCallback(async (q: string) => {
-    setLoading(true)
-    try {
-      const result = await getNoticias({ search: q || undefined, limit: 100 })
-      const data = result.data
-      setAllNoticias(Array.isArray(data) ? data : [])
-    } catch {
-      setAllNoticias([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
   useEffect(() => {
-    getNoticiaTipos()
+    const ctrl = new AbortController()
+    getNoticiaTipos(ctrl.signal)
       .then((r) => setTipos(Array.isArray(r.data) ? (r.data as NoticiaTipo[]) : []))
       .catch(() => setTipos([]))
+    return () => ctrl.abort()
   }, [])
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      setSelectedTag(null)
-      fetchNoticias(search)
-    }, 350)
-    return () => clearTimeout(t)
-  }, [search, fetchNoticias])
+    const ctrl = new AbortController()
+    setLoading(true)
+    setSelectedTag(null)
+    getNoticias({ search: debouncedSearch || undefined, limit: 100, signal: ctrl.signal })
+      .then((result) => {
+        const data = result.data
+        setAllNoticias(Array.isArray(data) ? data : [])
+      })
+      .catch((err) => {
+        if ((err as Error)?.name === "AbortError") return
+        setAllNoticias([])
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setLoading(false)
+      })
+    return () => ctrl.abort()
+  }, [debouncedSearch])
 
   const availableTags = useMemo(() => {
     const tagSet = new Set<string>()

@@ -19,6 +19,7 @@ export async function getActividades(params?: {
   centroId?: number
   page?: number
   limit?: number
+  signal?: AbortSignal
 }): Promise<ActividadResponse> {
   const q = new URLSearchParams()
   if (params?.search) q.set("search", params.search)
@@ -26,11 +27,14 @@ export async function getActividades(params?: {
   if (params?.page) q.set("page", String(params.page))
   if (params?.limit) q.set("limit", String(params.limit))
   const qs = q.toString()
-  return request(`${BASE}${qs ? `?${qs}` : ""}`)
+  return request(`${BASE}${qs ? `?${qs}` : ""}`, { signal: params?.signal })
 }
 
-export async function getActividadBySlug(slug: string): Promise<ActividadResponse> {
-  return request(`${BASE}/${slug}`)
+export async function getActividadBySlug(
+  slug: string,
+  signal?: AbortSignal
+): Promise<ActividadResponse> {
+  return request(`${BASE}/${slug}`, { signal })
 }
 
 export async function createActividad(data: ActividadCreateData): Promise<ActividadResponse> {

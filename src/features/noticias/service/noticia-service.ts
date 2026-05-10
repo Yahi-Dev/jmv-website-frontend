@@ -7,6 +7,7 @@ export async function getNoticias(params?: {
   tipo?: string
   page?: number
   limit?: number
+  signal?: AbortSignal
 }): Promise<NoticiaResponse> {
   try {
     const query = new URLSearchParams()
@@ -15,7 +16,7 @@ export async function getNoticias(params?: {
     if (params?.page) query.set("page", String(params.page))
     if (params?.limit) query.set("limit", String(params.limit))
 
-    const response = await fetch(`/api/noticias?${query}`)
+    const response = await fetch(`/api/noticias?${query}`, { signal: params?.signal })
     const result = await response.json()
 
     if (!response.ok) {
@@ -24,14 +25,18 @@ export async function getNoticias(params?: {
 
     return result
   } catch (error) {
+    if ((error as Error)?.name === "AbortError") throw error
     console.error("Error al obtener noticias:", error)
     throw error
   }
 }
 
-export async function getNoticiaBySlug(slug: string): Promise<NoticiaResponse> {
+export async function getNoticiaBySlug(
+  slug: string,
+  signal?: AbortSignal
+): Promise<NoticiaResponse> {
   try {
-    const response = await fetch(`/api/noticias/${slug}`)
+    const response = await fetch(`/api/noticias/${slug}`, { signal })
     const result = await response.json()
 
     if (!response.ok) {
@@ -40,6 +45,7 @@ export async function getNoticiaBySlug(slug: string): Promise<NoticiaResponse> {
 
     return result
   } catch (error) {
+    if ((error as Error)?.name === "AbortError") throw error
     console.error("Error al obtener noticia:", error)
     throw error
   }
@@ -109,9 +115,9 @@ export async function deleteNoticia(id: number): Promise<NoticiaResponse> {
   }
 }
 
-export async function getNoticiaTipos(): Promise<NoticiaTipoResponse> {
+export async function getNoticiaTipos(signal?: AbortSignal): Promise<NoticiaTipoResponse> {
   try {
-    const response = await fetch("/api/noticias/tipos")
+    const response = await fetch("/api/noticias/tipos", { signal })
     const result = await response.json()
 
     if (!response.ok) {
@@ -120,6 +126,7 @@ export async function getNoticiaTipos(): Promise<NoticiaTipoResponse> {
 
     return result
   } catch (error) {
+    if ((error as Error)?.name === "AbortError") throw error
     console.error("Error al obtener tipos:", error)
     throw error
   }

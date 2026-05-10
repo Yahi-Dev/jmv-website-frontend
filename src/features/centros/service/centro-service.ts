@@ -27,17 +27,21 @@ export async function getCentros(params?: {
   search?: string
   page?: number
   limit?: number
+  signal?: AbortSignal
 }): Promise<CentroResponse> {
   const q = new URLSearchParams()
   if (params?.search) q.set("search", params.search)
   if (params?.page) q.set("page", String(params.page))
   if (params?.limit) q.set("limit", String(params.limit))
   const qs = q.toString()
-  return request(`/api/centros${qs ? `?${qs}` : ""}`)
+  return request(`/api/centros${qs ? `?${qs}` : ""}`, { signal: params?.signal })
 }
 
-export async function getCentroBySlug(slug: string): Promise<CentroResponse> {
-  return request(`/api/centros/${slug}`)
+export async function getCentroBySlug(
+  slug: string,
+  signal?: AbortSignal
+): Promise<CentroResponse> {
+  return request(`/api/centros/${slug}`, { signal })
 }
 
 export async function createCentro(data: CentroCreateData): Promise<CentroResponse> {

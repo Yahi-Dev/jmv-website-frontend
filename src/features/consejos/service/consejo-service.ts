@@ -4,9 +4,9 @@ import { ConsejoCreateData, MiembroCreateData } from '../schema/validation'
 
 
 
-export async function getConsejoActual(): Promise<ConsejoResponse> {
+export async function getConsejoActual(signal?: AbortSignal): Promise<ConsejoResponse> {
   try {
-    const response = await fetch('/api/consejos/actual')
+    const response = await fetch('/api/consejos/actual', { signal })
 
     // 404 significa que no hay consejo actual configurado, no es un error real
     if (response.status === 404) {

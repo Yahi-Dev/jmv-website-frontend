@@ -8,12 +8,27 @@ import { CountUp } from "@/src/features/home/ui-kit/CountUp"
 import { JMV, FONT_UI, FONT_BODY, FONT_DISPLAY } from "@/src/features/home/ui-kit/tokens"
 import { useConsejoActual } from "../hook/use-consejos"
 import { getClientUser } from "@/src/lib/client-auth"
-import { CargoConsejo } from "../model/types"
+import { CargoConsejo, ConsejoNacional } from "../model/types"
 import { MiembroCardEditorial } from "./MiembroCardEditorial"
 import { CoordinadorFeatured } from "./CoordinadorFeatured"
 
-export function ConsejoActualSectionEditorial() {
-  const { consejo, loading, error, isEmpty } = useConsejoActual()
+interface ConsejoActualSectionEditorialProps {
+  /** Cuando se provee, el componente no vuelve a llamar a `useConsejoActual()`. */
+  consejo?: ConsejoNacional | null
+  loading?: boolean
+  error?: string | null
+  isEmpty?: boolean
+}
+
+export function ConsejoActualSectionEditorial(
+  props: ConsejoActualSectionEditorialProps = {}
+) {
+  const externalConsejoProvided = props.consejo !== undefined
+  const fallback = useConsejoActual({ enabled: !externalConsejoProvided })
+  const consejo = externalConsejoProvided ? props.consejo : fallback.consejo
+  const loading = externalConsejoProvided ? props.loading ?? false : fallback.loading
+  const error = externalConsejoProvided ? props.error ?? null : fallback.error
+  const isEmpty = externalConsejoProvided ? props.isEmpty ?? !consejo : fallback.isEmpty
   const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {

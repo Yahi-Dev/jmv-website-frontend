@@ -9,7 +9,7 @@ export interface ActividadJmv {
   fecha: Date | string
   imagenUrl: string
   etiquetas: string[]
-  centro?: { id: number; nombreParroquia: string } | null
+  centro?: { id: number; slug: string; nombreParroquia: string } | null
   createdDate: Date | string
   createdById?: string | null
   modifiedDate?: Date | string | null

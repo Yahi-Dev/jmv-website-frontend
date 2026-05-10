@@ -260,3 +260,19 @@
   will-change: transform;
 }
 .jmv-marquee-track:hover { animation-play-state: paused; }
+
+/* WCAG 2.3.3: respeta la preferencia del SO de reducir movimiento.
+   Pausa todas las animaciones decorativas infinitas (spin, float, pulse, marquee)
+   y desactiva transiciones largas. No afecta animaciones de feedback < 200ms. */
+@media (prefers-reduced-motion: reduce) {
+  .jmv-spin-slow,
+  .jmv-float-slow,
+  .jmv-pulse-soft,
+  .jmv-marquee-track {
+    animation: none !important;
+  }
+  .jmv-coordinador-card,
+  .jmv-coordinador-card .jmv-coordinador-photo {
+    transition: none !important;
+  }
+}

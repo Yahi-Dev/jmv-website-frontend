@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { noticiaUpdateSchema } from "@/src/features/noticias/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { sanitizeRichHtml } from "@/src/lib/sanitize"
 
 // ── GET /api/noticias/[id] ─────────────────────────────────────────────────────
 export async function GET(
@@ -78,7 +79,7 @@ export async function PUT(
       data: {
         ...(data.titulo !== undefined && { titulo: data.titulo }),
         ...(data.descripcionBreve !== undefined && { descripcionBreve: data.descripcionBreve }),
-        ...(data.descripcionCompleta !== undefined && { descripcionCompleta: data.descripcionCompleta || null }),
+        ...(data.descripcionCompleta !== undefined && { descripcionCompleta: sanitizeRichHtml(data.descripcionCompleta) }),
         ...(data.imagenUrl !== undefined && { imagenUrl: data.imagenUrl }),
         ...(data.ubicacion !== undefined && { ubicacion: data.ubicacion }),
         ...(data.fecha !== undefined && { fecha: new Date(data.fecha) }),

@@ -14,7 +14,6 @@ import { NoticiaShareButtons } from "./NoticiaShareButtons"
 import { useNoticia } from "../hook/use-noticias"
 import { getNoticias } from "../service/noticia-service"
 import { NoticiaCardEditorial } from "./NoticiasList"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 interface Props {
   slug: string

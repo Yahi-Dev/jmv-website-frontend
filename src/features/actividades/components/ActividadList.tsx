@@ -1,7 +1,7 @@
 // src/features/actividades/components/ActividadList.tsx
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import Navbar from "@/src/components/Navbar"
@@ -13,6 +13,7 @@ import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-ki
 import { ActividadJmv } from "../model/types"
 import { getActividades } from "../service/actividad-service"
 import { getCentros } from "@/src/features/centros/service/centro-service"
+import { useDebouncedValue } from "@/src/hooks/use-debounced-value"
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover"
 import {
   Command,
@@ -22,11 +23,10 @@ import {
   CommandItem,
   CommandList,
 } from "@/src/components/ui/command"
-import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 export function ActividadList() {
   const [search, setSearch] = useState("")
-  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const debouncedSearch = useDebouncedValue(search, 350)
   const [selectedCentroId, setSelectedCentroId] = useState<number | null>(null)
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [tagsExpanded, setTagsExpanded] = useState(false)
@@ -35,41 +35,39 @@ export function ActividadList() {
   const [centros, setCentros] = useState<{ id: number; nombreParroquia: string }[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Debounce search
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 350)
-    return () => clearTimeout(t)
-  }, [search])
-
   // Load centros
   useEffect(() => {
-    getCentros({ limit: 200 })
+    const ctrl = new AbortController()
+    getCentros({ limit: 200, signal: ctrl.signal })
       .then((r) => {
         const data = Array.isArray(r.data) ? r.data : []
         setCentros(data.map((c: any) => ({ id: c.id, nombreParroquia: c.nombreParroquia })))
       })
       .catch(() => {})
+    return () => ctrl.abort()
   }, [])
 
-  const fetchActividades = useCallback(async () => {
-    setLoading(true)
-    try {
-      const r = await getActividades({
-        search: debouncedSearch || undefined,
-        centroId: selectedCentroId ?? undefined,
-        limit: 200,
-      })
-      setAllActividades(Array.isArray(r.data) ? r.data : [])
-    } catch {
-      setAllActividades([])
-    } finally {
-      setLoading(false)
-    }
-  }, [debouncedSearch, selectedCentroId])
-
   useEffect(() => {
-    fetchActividades()
-  }, [fetchActividades])
+    const ctrl = new AbortController()
+    setLoading(true)
+    getActividades({
+      search: debouncedSearch || undefined,
+      centroId: selectedCentroId ?? undefined,
+      limit: 200,
+      signal: ctrl.signal,
+    })
+      .then((r) => {
+        setAllActividades(Array.isArray(r.data) ? r.data : [])
+      })
+      .catch((err) => {
+        if ((err as Error)?.name === "AbortError") return
+        setAllActividades([])
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setLoading(false)
+      })
+    return () => ctrl.abort()
+  }, [debouncedSearch, selectedCentroId])
 
   const availableTags = useMemo(() => {
     const tagSet = new Set<string>()
@@ -82,17 +80,21 @@ export function ActividadList() {
     return allActividades.filter((a) => a.etiquetas.includes(selectedTag))
   }, [allActividades, selectedTag])
 
-  const now = Date.now()
-  const proximas = useMemo(
-    () => filtered.filter((a) => new Date(a.fecha).getTime() >= now).sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()),
-    [filtered, now]
-  )
-  const pasadas = useMemo(
-    () => filtered.filter((a) => new Date(a.fecha).getTime() < now).sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()),
-    [filtered, now]
-  )
+  const proximas = useMemo(() => {
+    const now = Date.now()
+    return filtered
+      .filter((a) => new Date(a.fecha).getTime() >= now)
+      .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime())
+  }, [filtered])
+  const pasadas = useMemo(() => {
+    const now = Date.now()
+    return filtered
+      .filter((a) => new Date(a.fecha).getTime() < now)
+      .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+  }, [filtered])
 
   const stats = useMemo(() => {
+    const now = Date.now()
     const centrosUnicos = new Set(allActividades.map((a) => a.centroId)).size
     const futuras = allActividades.filter((a) => new Date(a.fecha).getTime() >= now).length
     return {
@@ -100,7 +102,7 @@ export function ActividadList() {
       centros: centrosUnicos,
       proximas: futuras,
     }
-  }, [allActividades, now])
+  }, [allActividades])
 
   const clearFilters = () => {
     setSearch("")
