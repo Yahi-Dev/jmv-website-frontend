@@ -1,703 +1,847 @@
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { Input } from "@/src/components/ui/input"
-import { Label } from "@/src/components/ui/label"
-import { Textarea } from "@/src/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/src/components/ui/accordion"
-import {
-  Heart,
-  Users,
-  MapPin,
-  Phone,
-  Mail,
-  MessageCircle,
-  Send,
-  CheckCircle,
-  ArrowRight,
-  Sparkles,
-  Target,
-  Globe,
-  Star,
-} from "lucide-react"
-import Link from "next/link"
+"use client"
+
+import { useMemo, useState } from "react"
 import Navbar from "@/src/components/Navbar"
 import { FooterSection } from "@/src/components/shared/FooterSection"
+import { Eyebrow, Icon, Serif, type IconName } from "@/src/features/home/ui-kit/Primitives"
+import { Reveal } from "@/src/features/home/ui-kit/Reveal"
+import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/src/components/ui/accordion"
+import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
-// Local chapters data
-const chapters = [
+// ── Razones para unirse ──────────────────────────────────────────────────────
+const razones: { num: string; title: string; body: string; icon: IconName }[] = [
   {
-    name: "Santo Domingo",
-    description: "Capítulo principal ubicado en la capital del país",
-    contact: {
-      email: "santodomingo@jmvrd.org",
-      phone: "+1 (809) 555-0101",
-      whatsapp: "18095550101",
-    },
-    meetingDay: "Sábados 3:00 PM",
-    location: "Centro Pastoral San Vicente",
-    coordinator: "Ana María Rodríguez",
+    num: "01",
+    title: "Comunidad fraterna",
+    icon: "users",
+    body:
+      "Forma parte de una familia de jóvenes católicos que se acompañan en el camino de la fe, comparten alegrías y se sostienen en los momentos difíciles.",
   },
   {
-    name: "Santiago",
-    description: "Sirviendo a la región del Cibao con amor y dedicación",
-    contact: {
-      email: "santiago@jmvrd.org",
-      phone: "+1 (809) 555-0102",
-      whatsapp: "18095550102",
-    },
-    meetingDay: "Domingos 4:00 PM",
-    location: "Parroquia San Vicente de Paúl",
-    coordinator: "Carlos Martínez",
+    num: "02",
+    title: "Formación integral",
+    icon: "book",
+    body:
+      "Itinerario formativo en seis módulos: catequesis, oraciones, voluntariado, misión, podcast y guías. Recursos para crecer humana y espiritualmente.",
   },
   {
-    name: "La Vega",
-    description: "Comprometidos con el desarrollo integral de la región central",
-    contact: {
-      email: "lavega@jmvrd.org",
-      phone: "+1 (809) 555-0103",
-      whatsapp: "18095550103",
-    },
-    meetingDay: "Sábados 2:00 PM",
-    location: "Casa Parroquial La Inmaculada",
-    coordinator: "María González",
+    num: "03",
+    title: "Servicio transformador",
+    icon: "heart",
+    body:
+      "Misiones a parajes rurales, visitas a hogares de ancianos, acompañamiento a niños en bateyes. El servicio es donde el carisma vicentino se hace vida.",
   },
   {
-    name: "San Cristóbal",
-    description: "Llevando esperanza a las comunidades del sur",
-    contact: {
-      email: "sancristobal@jmvrd.org",
-      phone: "+1 (809) 555-0104",
-      whatsapp: "18095550104",
-    },
-    meetingDay: "Domingos 3:00 PM",
-    location: "Centro Juvenil San Vicente",
-    coordinator: "Pedro Jiménez",
+    num: "04",
+    title: "Espiritualidad mariana",
+    icon: "star",
+    body:
+      "Rosario, Liturgia de las Horas, novenas, retiros y peregrinaciones. María como modelo de discípula y la Medalla Milagrosa como signo cotidiano.",
+  },
+]
+
+// ── Provincias para el select ────────────────────────────────────────────────
+const PROVINCIAS = [
+  "Santo Domingo", "Distrito Nacional", "Santiago", "La Vega", "Higüey", "San Pedro de Macorís",
+  "Barahona", "Mao", "Puerto Plata", "San Juan de la Maguana", "Baní", "Moca", "Azua",
+  "Bonao", "Cotuí", "San Cristóbal", "San Francisco de Macorís", "Otra",
+]
+
+const FAQS = [
+  {
+    q: "¿Qué requisitos necesito para unirme?",
+    a:
+      "Tener entre 16 y 35 años, ser católico practicante (o estar en camino), y tener disposición para crecer en fe y servir a los más necesitados. No se requiere experiencia previa — te acompañamos en cada paso.",
   },
   {
-    name: "Barahona",
-    description: "Nuevo capítulo sirviendo a la región suroeste",
-    contact: {
-      email: "barahona@jmvrd.org",
-      phone: "+1 (809) 555-0105",
-      whatsapp: "18095550105",
-    },
-    meetingDay: "Sábados 4:00 PM",
-    location: "Parroquia Nuestra Señora del Rosario",
-    coordinator: "Luisa Fernández",
+    q: "¿Cuál es el proceso después de enviar mi solicitud?",
+    a:
+      "El coordinador del centro más cercano te contactará en los próximos días. Te invitará a un encuentro de bienvenida, donde conocerás a la comunidad. Empiezas como aspirante, sin compromiso formal — para discernir si JMV es tu camino.",
   },
   {
-    name: "Puerto Plata",
-    description: "Evangelizando en la costa norte con alegría",
-    contact: {
-      email: "puertoplata@jmvrd.org",
-      phone: "+1 (809) 555-0106",
-      whatsapp: "18095550106",
-    },
-    meetingDay: "Domingos 2:00 PM",
-    location: "Centro Pastoral San Felipe",
-    coordinator: "Roberto Díaz",
+    q: "¿Es necesario aportar dinero para participar?",
+    a:
+      "No. Ser parte de JMV es completamente gratuito. Algunas actividades especiales (retiros, misiones, encuentros nacionales) tienen un aporte voluntario para alimentación y transporte, pero siempre buscamos que ningún joven quede fuera por motivos económicos.",
+  },
+  {
+    q: "¿Cuánto tiempo debo dedicar?",
+    a:
+      "El compromiso mínimo es asistir al encuentro semanal del centro (aproximadamente 2 horas) y participar en al menos una actividad de servicio al mes. A partir de ahí, cada miembro dedica el tiempo que su vida le permite.",
+  },
+  {
+    q: "¿Qué actividades realizan?",
+    a:
+      "Encuentros formativos semanales, retiros espirituales, misiones a comunidades rurales, peregrinaciones marianas, vigilias, talleres de liderazgo, proyectos de servicio social y encuentros nacionales que reúnen a centros de todo el país.",
+  },
+  {
+    q: "¿Hay un centro cerca de mi parroquia?",
+    a:
+      "Tenemos centros en las principales diócesis del país: Santo Domingo, Santiago, La Vega, Higüey, Barahona, Puerto Plata, San Pedro, Baní, Moca y otras. En la sección de Centros puedes ver la lista completa con sus contactos.",
   },
 ]
 
 export default function UnetePage() {
+  // Form state
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    age: "",
+    provincia: "",
+    parroquia: "",
+    motivacion: "",
+    disponibilidad: "",
+    terms: false,
+  })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  const onChange = (k: keyof typeof form, v: string | boolean) =>
+    setForm((prev) => ({ ...prev, [k]: v }))
+
+  const isValid = useMemo(() => {
+    return (
+      form.firstName.trim().length >= 2 &&
+      form.lastName.trim().length >= 2 &&
+      /^\S+@\S+\.\S+$/.test(form.email) &&
+      form.phone.trim().length >= 7 &&
+      form.age.trim().length > 0 &&
+      form.provincia.trim().length > 0 &&
+      form.motivacion.trim().length >= 10 &&
+      form.terms
+    )
+  }, [form])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isValid) return
+    setSubmitting(true)
+    // TODO: wire up real API endpoint
+    await new Promise((r) => setTimeout(r, 800))
+    setSubmitting(false)
+    setSubmitted(true)
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-card/30 to-background">
-      {/* Navigation */}
+    <div className="jmv-kit-root" style={{ minHeight: "100vh", background: "#fff" }}>
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden lg:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
-        <div className="absolute inset-0 bg-[url('/images/pattern.png')] opacity-5" />
-        <div className="container relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <Badge
-              variant="secondary"
-              className="px-6 py-3 mb-8 text-sm font-medium bg-gradient-to-r from-secondary/10 to-accent/10 border-secondary/20"
+      {/* HERO */}
+      <section
+        style={{
+          background: JMV.white,
+          padding: "56px 32px 80px",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          aria-hidden
+          className="jmv-spin-slow"
+          style={{
+            position: "absolute",
+            top: -200,
+            right: -200,
+            width: 480,
+            height: 480,
+            borderRadius: "50%",
+            border: "1px dashed rgba(243,167,54,0.16)",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          aria-hidden
+          className="jmv-pulse-soft"
+          style={{
+            position: "absolute",
+            top: 80,
+            right: 80,
+            width: 260,
+            height: 260,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(19,159,204,0.10) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          aria-hidden
+          className="jmv-float-slow"
+          style={{
+            position: "absolute",
+            top: 220,
+            right: 220,
+            width: 12,
+            height: 12,
+            borderRadius: "50%",
+            background: JMV.gold,
+            opacity: 0.5,
+            pointerEvents: "none",
+          }}
+        />
+
+        <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative" }}>
+          <Reveal delay={0} y={12}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 14,
+                fontFamily: FONT_UI,
+                fontSize: 11,
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                color: JMV.mute,
+                marginBottom: 40,
+              }}
             >
-              <Heart className="w-4 h-4 mr-2 text-primary" />
-              Únete a Nosotros
-            </Badge>
-            <h1 className="mb-8 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-              <span className="text-transparent bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text">
-                Únete a JMV
-              </span>
-            </h1>
-            <p className="max-w-3xl mx-auto mb-12 text-xl leading-relaxed text-foreground/70">
-              Descubre tu vocación de servicio y forma parte de una familia que transforma vidas siguiendo el ejemplo de
-              María y San Vicente de Paúl
-            </p>
-            <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
-              <Button
-                size="lg"
-                className="px-8 py-4 text-lg shadow-xl bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-                asChild
-              >
-                <a href="#formulario">
-                  Completa tu solicitud
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </a>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="px-8 py-4 text-lg bg-transparent border-2 border-primary/20 hover:bg-primary/5"
-                asChild
-              >
-                <a href="#capitulos">Encuentra tu capítulo</a>
-              </Button>
+              <span style={{ display: "inline-block", width: 36, height: 1, background: JMV.gold }} />
+              <span>Únete</span>
+              <span style={{ opacity: 0.4 }}>·</span>
+              <span>JMV República Dominicana</span>
+              <span style={{ opacity: 0.4 }}>·</span>
+              <span style={{ color: JMV.celeste }}>Tu vocación te espera</span>
             </div>
+          </Reveal>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 80, alignItems: "end" }}>
+            <div>
+              <Reveal delay={120} y={20}>
+                <Eyebrow color={JMV.gold}>Únete a JMV</Eyebrow>
+              </Reveal>
+              <Reveal delay={220} y={32}>
+                <h1
+                  style={{
+                    fontFamily: FONT_DISPLAY,
+                    fontSize: "clamp(3rem, 7vw, 6.4rem)",
+                    fontWeight: 300,
+                    lineHeight: 1,
+                    letterSpacing: "-0.025em",
+                    color: JMV.ink,
+                    margin: "28px 0 0",
+                    fontVariationSettings: '"opsz" 144, "SOFT" 50',
+                  }}
+                >
+                  Camina con{" "}
+                  <span style={{ fontStyle: "italic", color: JMV.gold, fontWeight: 300 }}>nosotros</span>
+                  ,
+                  <br />
+                  vive el <span style={{ fontStyle: "italic", color: JMV.celeste, fontWeight: 300 }}>llamado</span>.
+                </h1>
+              </Reveal>
+            </div>
+
+            <Reveal delay={380} y={20}>
+              <div>
+                <p
+                  style={{
+                    fontFamily: FONT_BODY,
+                    fontSize: 17,
+                    lineHeight: 1.65,
+                    color: JMV.body,
+                    margin: 0,
+                    maxWidth: 440,
+                  }}
+                >
+                  Descubre tu vocación de servicio y forma parte de una familia que transforma vidas siguiendo el
+                  ejemplo de María y San Vicente de Paúl.
+                </p>
+                <div style={{ display: "flex", gap: 12, marginTop: 32, flexWrap: "wrap" }}>
+                  <a href="#solicitud" className="jmv-ghost-pill" style={{ textDecoration: "none" }}>
+                    Completar solicitud <Icon name="arrowUR" size={13} />
+                  </a>
+                </div>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
 
-      {/* Why Join Section */}
-      <section className="py-20 lg:py-32">
-        <div className="container">
-          <div className="mb-16 text-center">
-            <Badge variant="outline" className="px-4 py-2 mb-6 border-primary/20">
-              <Sparkles className="w-4 h-4 mr-2 text-primary" />
-              Beneficios
-            </Badge>
-            <h2 className="mb-6 text-4xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
-              ¿Por qué unirte a JMV?
-            </h2>
-            <p className="max-w-3xl mx-auto text-xl leading-relaxed text-foreground/70">
-              Ser parte de JMV significa crecer integralmente mientras sirves a los más necesitados
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="transition-all duration-300 border-0 group hover:shadow-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
-              <CardHeader className="pb-4 text-center">
-                <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 transition-transform duration-300 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 group-hover:scale-110">
-                  <Users className="w-10 h-10 text-primary" />
-                </div>
-                <CardTitle className="text-2xl font-bold">Comunidad Fraterna</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base leading-relaxed">
-                  Forma parte de una familia de jóvenes comprometidos que se apoyan mutuamente en el crecimiento
-                  espiritual y humano
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="transition-all duration-300 border-0 group hover:shadow-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
-              <CardHeader className="pb-4 text-center">
-                <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 transition-transform duration-300 rounded-2xl bg-gradient-to-br from-secondary/10 to-accent/10 group-hover:scale-110">
-                  <Target className="w-10 h-10 text-secondary" />
-                </div>
-                <CardTitle className="text-2xl font-bold">Formación Integral</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base leading-relaxed">
-                  Accede a programas de formación en liderazgo, espiritualidad, doctrina social y habilidades para la
-                  vida
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="transition-all duration-300 border-0 group hover:shadow-2xl bg-gradient-to-br from-card to-card/50 backdrop-blur-sm md:col-span-2 lg:col-span-1">
-              <CardHeader className="pb-4 text-center">
-                <div className="flex items-center justify-center w-20 h-20 mx-auto mb-6 transition-transform duration-300 rounded-2xl bg-gradient-to-br from-accent/10 to-primary/10 group-hover:scale-110">
-                  <Heart className="w-10 h-10 text-accent" />
-                </div>
-                <CardTitle className="text-2xl font-bold">Servicio Transformador</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base leading-relaxed">
-                  Participa en misiones, proyectos sociales y actividades que impactan positivamente en las comunidades
-                  más vulnerables
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form Section */}
-      <section id="formulario" className="py-20 lg:py-32 bg-gradient-to-br from-card/30 to-muted/20">
-        <div className="container">
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-12 text-center">
-              <Badge variant="outline" className="px-4 py-2 mb-6 border-primary/20">
-                <Send className="w-4 h-4 mr-2 text-primary" />
-                Solicitud
-              </Badge>
-              <h2 className="mb-6 text-4xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
-                Solicitud de Membresía
-              </h2>
-              <p className="text-lg text-foreground/70">
-                Completa este formulario y nos pondremos en contacto contigo para iniciar tu proceso de integración
+      {/* RAZONES */}
+      <section style={{ background: JMV.mist, padding: "120px 32px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <Reveal delay={0} y={24}>
+            <div style={{ maxWidth: 720, marginBottom: 72 }}>
+              <Eyebrow>Por qué unirte</Eyebrow>
+              <Serif size={56} weight={300} style={{ display: "block", marginTop: 24 }}>
+                Cuatro <span style={{ fontStyle: "italic", color: JMV.gold }}>razones</span> para dar el paso.
+              </Serif>
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: 17,
+                  lineHeight: 1.65,
+                  color: JMV.body,
+                  marginTop: 28,
+                  maxWidth: 560,
+                }}
+              >
+                JMV no es un grupo más — es un estilo de vida cristiano al servicio de los más necesitados.
+                Estas son las cuatro dimensiones que harán crecer tu fe y tu humanidad.
               </p>
             </div>
+          </Reveal>
 
-            <Card className="border-0 shadow-2xl bg-gradient-to-br from-background to-card/50 backdrop-blur-sm">
-              <CardHeader className="pb-8">
-                <CardTitle className="flex items-center gap-3 text-2xl">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary">
-                    <Send className="w-5 h-5 text-primary-foreground" />
-                  </div>
-                  Información Personal
-                </CardTitle>
-                <CardDescription className="text-base">
-                  Todos los campos marcados con * son obligatorios. Tu información será tratada con total
-                  confidencialidad.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form className="space-y-8">
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div className="space-y-3">
-                      <Label htmlFor="firstName" className="text-sm font-medium">
-                        Nombre *
-                      </Label>
-                      <Input
-                        id="firstName"
-                        placeholder="Tu nombre"
-                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <Label htmlFor="lastName" className="text-sm font-medium">
-                        Apellidos *
-                      </Label>
-                      <Input
-                        id="lastName"
-                        placeholder="Tus apellidos"
-                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div className="space-y-3">
-                      <Label htmlFor="email" className="text-sm font-medium">
-                        Correo Electrónico *
-                      </Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="tu@email.com"
-                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <Label htmlFor="phone" className="text-sm font-medium">
-                        Teléfono *
-                      </Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="+1 (809) 000-0000"
-                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div className="space-y-3">
-                      <Label htmlFor="age" className="text-sm font-medium">
-                        Edad *
-                      </Label>
-                      <Input
-                        id="age"
-                        type="number"
-                        min="16"
-                        max="35"
-                        placeholder="18"
-                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <Label htmlFor="occupation" className="text-sm font-medium">
-                        Ocupación
-                      </Label>
-                      <Input
-                        id="occupation"
-                        placeholder="Estudiante, Profesional, etc."
-                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div className="space-y-3">
-                      <Label htmlFor="province" className="text-sm font-medium">
-                        Provincia/Diócesis *
-                      </Label>
-                      <Select required>
-                        <SelectTrigger className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50">
-                          <SelectValue placeholder="Selecciona tu provincia" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="santo-domingo">Santo Domingo</SelectItem>
-                          <SelectItem value="santiago">Santiago</SelectItem>
-                          <SelectItem value="la-vega">La Vega</SelectItem>
-                          <SelectItem value="san-cristobal">San Cristóbal</SelectItem>
-                          <SelectItem value="barahona">Barahona</SelectItem>
-                          <SelectItem value="puerto-plata">Puerto Plata</SelectItem>
-                          <SelectItem value="san-pedro">San Pedro de Macorís</SelectItem>
-                          <SelectItem value="azua">Azua</SelectItem>
-                          <SelectItem value="moca">Moca</SelectItem>
-                          <SelectItem value="higuey">Higüey</SelectItem>
-                          <SelectItem value="otra">Otra</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-3">
-                      <Label htmlFor="parish" className="text-sm font-medium">
-                        Parroquia
-                      </Label>
-                      <Input
-                        id="parish"
-                        placeholder="Nombre de tu parroquia"
-                        className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label htmlFor="experience" className="text-sm font-medium">
-                      Experiencia en Movimientos Juveniles
-                    </Label>
-                    <Select>
-                      <SelectTrigger className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50">
-                        <SelectValue placeholder="Selecciona tu experiencia" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ninguna">Ninguna experiencia</SelectItem>
-                        <SelectItem value="poca">Poca experiencia (menos de 1 año)</SelectItem>
-                        <SelectItem value="moderada">Experiencia moderada (1-3 años)</SelectItem>
-                        <SelectItem value="amplia">Amplia experiencia (más de 3 años)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label htmlFor="motivation" className="text-sm font-medium">
-                      ¿Por qué quieres unirte a JMV? *
-                    </Label>
-                    <Textarea
-                      id="motivation"
-                      placeholder="Compártenos tu motivación para formar parte de JMV..."
-                      className="border-2 resize-none min-h-32 border-border/50 focus:border-primary/50 bg-background/50"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label htmlFor="availability" className="text-sm font-medium">
-                      Disponibilidad de Tiempo
-                    </Label>
-                    <Select>
-                      <SelectTrigger className="h-12 border-2 border-border/50 focus:border-primary/50 bg-background/50">
-                        <SelectValue placeholder="¿Cuánto tiempo puedes dedicar?" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pocas-horas">Pocas horas a la semana</SelectItem>
-                        <SelectItem value="fin-semana">Principalmente fines de semana</SelectItem>
-                        <SelectItem value="varias-horas">Varias horas durante la semana</SelectItem>
-                        <SelectItem value="tiempo-completo">Disponibilidad amplia</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label htmlFor="message" className="text-sm font-medium">
-                      Mensaje Adicional
-                    </Label>
-                    <Textarea
-                      id="message"
-                      placeholder="¿Hay algo más que te gustaría compartir con nosotros?"
-                      className="border-2 resize-none min-h-24 border-border/50 focus:border-primary/50 bg-background/50"
-                    />
-                  </div>
-
-                  <div className="flex items-start p-4 space-x-3 bg-muted/30 rounded-xl">
-                    <input type="checkbox" id="terms" className="mt-1 border-2 rounded border-border/50" required />
-                    <Label htmlFor="terms" className="text-sm leading-relaxed">
-                      Acepto los términos y condiciones y autorizo el tratamiento de mis datos personales según la
-                      política de privacidad de JMV RD *
-                    </Label>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full text-lg shadow-xl h-14 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90"
-                    size="lg"
+          <div style={{ borderTop: "1px solid " + JMV.line }}>
+            {razones.map((r, i) => (
+              <Reveal key={i} delay={i * 110} y={22}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "80px 1fr 1.3fr auto",
+                    gap: 48,
+                    alignItems: "center",
+                    padding: "40px 0",
+                    borderBottom: "1px solid " + JMV.line,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: FONT_UI,
+                      fontSize: 13,
+                      color: JMV.gold,
+                      letterSpacing: "0.18em",
+                      fontWeight: 500,
+                    }}
                   >
-                    <Send className="w-5 h-5 mr-2" />
-                    Enviar Solicitud
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Local Chapters Section */}
-      <section id="capitulos" className="py-20 lg:py-32">
-        <div className="container">
-          <div className="mb-16 text-center">
-            <Badge variant="outline" className="px-4 py-2 mb-6 border-primary/20">
-              <Globe className="w-4 h-4 mr-2 text-primary" />
-              Capítulos
-            </Badge>
-            <h2 className="mb-6 text-4xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
-              Capítulos Locales
-            </h2>
-            <p className="max-w-3xl mx-auto text-xl leading-relaxed text-foreground/70">
-              Encuentra el capítulo más cercano a ti y conecta directamente con nuestros coordinadores locales
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {chapters.map((chapter) => (
-              <Card
-                key={chapter.name}
-                className="transition-all duration-300 border-0 group hover:shadow-2xl bg-gradient-to-br from-background to-card/50 backdrop-blur-sm"
-              >
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <CardTitle className="text-xl font-bold">{chapter.name}</CardTitle>
-                    <Badge
-                      variant="secondary"
-                      className="bg-gradient-to-r from-primary/10 to-accent/10 text-primary border-primary/20"
-                    >
-                      Activo
-                    </Badge>
+                    {r.num}
                   </div>
-                  <CardDescription className="text-base leading-relaxed">{chapter.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-3 text-sm">
-                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
-                      <MapPin className="flex-shrink-0 w-4 h-4 text-primary" />
-                      <span>{chapter.location}</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
-                      <Users className="flex-shrink-0 w-4 h-4 text-secondary" />
-                      <span>{chapter.meetingDay}</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
-                      <Star className="flex-shrink-0 w-4 h-4 text-accent" />
-                      <span>Coord: {chapter.coordinator}</span>
-                    </div>
+                  <Serif size={42} weight={300}>
+                    {r.title}
+                  </Serif>
+                  <p
+                    style={{
+                      fontFamily: FONT_BODY,
+                      fontSize: 15.5,
+                      lineHeight: 1.65,
+                      color: JMV.body,
+                      margin: 0,
+                      maxWidth: 520,
+                    }}
+                  >
+                    {r.body}
+                  </p>
+                  <div
+                    style={{
+                      width: 52,
+                      height: 52,
+                      borderRadius: 999,
+                      border: "1px solid " + JMV.line,
+                      background: JMV.white,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: JMV.ink,
+                    }}
+                  >
+                    <Icon name={r.icon} size={20} />
                   </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      className="flex-1 bg-gradient-to-r from-secondary to-accent hover:from-secondary/90 hover:to-accent/90"
-                      asChild
-                    >
-                      <a
-                        href={`https://wa.me/${chapter.contact.whatsapp}?text=Hola, me interesa unirme al capítulo JMV ${chapter.name}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        WhatsApp
-                      </a>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="bg-transparent border-2 border-primary/20 hover:bg-primary/5"
-                      asChild
-                    >
-                      <a href={`mailto:${chapter.contact.email}`}>
-                        <Mail className="w-4 h-4" />
-                      </a>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="bg-transparent border-2 border-primary/20 hover:bg-primary/5"
-                      asChild
-                    >
-                      <a href={`tel:${chapter.contact.phone}`}>
-                        <Phone className="w-4 h-4" />
-                      </a>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 lg:py-32 bg-gradient-to-br from-card/30 to-muted/20">
-        <div className="container">
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-16 text-center">
-              <Badge variant="outline" className="px-4 py-2 mb-6 border-primary/20">
-                <MessageCircle className="w-4 h-4 mr-2 text-primary" />
-                FAQ
-              </Badge>
-              <h2 className="mb-6 text-4xl font-bold text-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text">
-                Preguntas Frecuentes
-              </h2>
-              <p className="text-xl text-foreground/70">Resolvemos las dudas más comunes sobre cómo unirse a JMV</p>
+      {/* SOLICITUD */}
+      <section
+        id="solicitud"
+        style={{
+          background: JMV.white,
+          padding: "120px 32px",
+          borderTop: "1px solid " + JMV.line,
+        }}
+      >
+        <div style={{ maxWidth: 880, margin: "0 auto" }}>
+          <Reveal delay={0} y={24}>
+            <div style={{ marginBottom: 56, textAlign: "center" }}>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <Eyebrow align="center">Solicitud</Eyebrow>
+              </div>
+              <Serif size={56} weight={300} style={{ display: "block", marginTop: 24 }}>
+                Cuéntanos un poco sobre <span style={{ fontStyle: "italic", color: JMV.gold }}>ti</span>.
+              </Serif>
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: 17,
+                  lineHeight: 1.65,
+                  color: JMV.body,
+                  marginTop: 24,
+                  maxWidth: 560,
+                  marginInline: "auto",
+                }}
+              >
+                Completa el formulario y el coordinador del centro más cercano te contactará para
+                acompañarte en tu proceso. Sin compromiso, sin costo — solo el primer paso.
+              </p>
             </div>
+          </Reveal>
 
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem
-                value="item-1"
-                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
+          {submitted ? (
+            <Reveal delay={0} y={20}>
+              <div
+                style={{
+                  background: JMV.paper,
+                  border: "1px solid " + JMV.line,
+                  borderLeft: `4px solid ${JMV.gold}`,
+                  borderRadius: 4,
+                  padding: "56px 48px",
+                  textAlign: "center",
+                }}
               >
-                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
-                  ¿Cuáles son los requisitos para unirme a JMV?
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
-                  Para unirte a JMV debes tener entre 16 y 35 años, ser católico practicante, tener disponibilidad para
-                  participar en las actividades formativas y de servicio, y mostrar compromiso con los valores
-                  cristianos y el carisma vicenciano. No se requiere experiencia previa en movimientos juveniles.
-                </AccordionContent>
-              </AccordionItem>
+                <div
+                  style={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: 999,
+                    background: JMV.gold,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#fff",
+                    marginBottom: 20,
+                  }}
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </div>
+                <Serif size={42} weight={300} style={{ display: "block" }}>
+                  Recibimos tu <span style={{ fontStyle: "italic", color: JMV.gold }}>solicitud</span>.
+                </Serif>
+                <p
+                  style={{
+                    fontFamily: FONT_BODY,
+                    fontSize: 16,
+                    lineHeight: 1.65,
+                    color: JMV.body,
+                    marginTop: 18,
+                    marginBottom: 0,
+                  }}
+                >
+                  Gracias, <strong style={{ color: JMV.ink }}>{form.firstName}</strong>. El coordinador del centro más
+                  cercano a {form.provincia} te contactará pronto al correo o teléfono que nos diste.
+                </p>
+              </div>
+            </Reveal>
+          ) : (
+            <Reveal delay={0} y={20}>
+              <form
+                onSubmit={handleSubmit}
+                style={{
+                  background: JMV.paper,
+                  border: "1px solid " + JMV.line,
+                  borderRadius: 4,
+                  padding: "48px",
+                }}
+              >
+                <FormGrid>
+                  <Field label="Nombre" required>
+                    <FormInput
+                      value={form.firstName}
+                      onChange={(v) => onChange("firstName", v)}
+                      placeholder="Tu nombre"
+                      required
+                    />
+                  </Field>
+                  <Field label="Apellidos" required>
+                    <FormInput
+                      value={form.lastName}
+                      onChange={(v) => onChange("lastName", v)}
+                      placeholder="Tus apellidos"
+                      required
+                    />
+                  </Field>
+                </FormGrid>
 
-              <AccordionItem
-                value="item-2"
-                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
-              >
-                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
-                  ¿Cuál es el proceso de integración?
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
-                  El proceso incluye: 1) Completar el formulario de solicitud, 2) Entrevista personal con el coordinador
-                  del capítulo, 3) Período de acompañamiento de 3 meses participando en actividades, 4) Formación básica
-                  sobre el carisma vicenciano, y 5) Compromiso formal con la misión de JMV.
-                </AccordionContent>
-              </AccordionItem>
+                <FormGrid>
+                  <Field label="Correo electrónico" required>
+                    <FormInput
+                      value={form.email}
+                      onChange={(v) => onChange("email", v)}
+                      placeholder="tu@email.com"
+                      type="email"
+                      required
+                    />
+                  </Field>
+                  <Field label="Teléfono" required>
+                    <FormInput
+                      value={form.phone}
+                      onChange={(v) => onChange("phone", v)}
+                      placeholder="+1 (809) 000-0000"
+                      type="tel"
+                      required
+                    />
+                  </Field>
+                </FormGrid>
 
-              <AccordionItem
-                value="item-3"
-                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
-              >
-                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
-                  ¿Qué actividades realizan los miembros de JMV?
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
-                  Los miembros participan en encuentros formativos semanales, retiros espirituales, misiones de verano,
-                  proyectos de servicio social, visitas a comunidades necesitadas, actividades de evangelización,
-                  talleres de liderazgo, y eventos de fraternidad. También hay oportunidades de liderazgo en diferentes
-                  áreas.
-                </AccordionContent>
-              </AccordionItem>
+                <FormGrid>
+                  <Field label="Edad" required>
+                    <FormInput
+                      value={form.age}
+                      onChange={(v) => onChange("age", v)}
+                      placeholder="Tu edad"
+                      type="number"
+                      required
+                    />
+                  </Field>
+                  <Field label="Provincia" required>
+                    <FormSelect
+                      value={form.provincia}
+                      onChange={(v) => onChange("provincia", v)}
+                      placeholder="Selecciona tu provincia"
+                      options={PROVINCIAS}
+                      required
+                    />
+                  </Field>
+                </FormGrid>
 
-              <AccordionItem
-                value="item-4"
-                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
-              >
-                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
-                  ¿Hay algún costo por pertenecer a JMV?
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
-                  La membresía en JMV es completamente gratuita. Sin embargo, para algunas actividades especiales como
-                  retiros, misiones o encuentros nacionales, puede haber una contribución voluntaria para cubrir gastos
-                  de alimentación y hospedaje. Siempre buscamos alternativas para que la situación económica no sea un
-                  impedimento.
-                </AccordionContent>
-              </AccordionItem>
+                <Field label="Parroquia">
+                  <FormInput
+                    value={form.parroquia}
+                    onChange={(v) => onChange("parroquia", v)}
+                    placeholder="Nombre de tu parroquia (opcional)"
+                  />
+                </Field>
 
-              <AccordionItem
-                value="item-5"
-                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
-              >
-                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
-                  ¿Cuánto tiempo debo dedicar a JMV?
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
-                  El compromiso mínimo incluye participar en el encuentro semanal (2-3 horas) y en al menos una
-                  actividad de servicio al mes. Los miembros más comprometidos pueden dedicar tiempo adicional a
-                  coordinación, formación de otros jóvenes, o proyectos especiales. La participación se adapta a tu
-                  disponibilidad y nivel de compromiso.
-                </AccordionContent>
-              </AccordionItem>
+                <Field label="¿Por qué quieres unirte a JMV?" required>
+                  <FormTextarea
+                    value={form.motivacion}
+                    onChange={(v) => onChange("motivacion", v)}
+                    placeholder="Cuéntanos brevemente qué te motiva a dar este paso..."
+                    rows={5}
+                    required
+                  />
+                </Field>
 
-              <AccordionItem
-                value="item-6"
-                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
-              >
-                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
-                  ¿Puedo participar si no vivo cerca de un capítulo?
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
-                  Si no hay un capítulo cerca de tu ubicación, puedes participar en actividades virtuales, eventos
-                  nacionales, y misiones. También te ayudamos a conectar con otros jóvenes de tu zona para eventualmente
-                  formar un nuevo capítulo. Contáctanos para explorar las opciones disponibles en tu región.
-                </AccordionContent>
-              </AccordionItem>
+                <Field label="Disponibilidad de tiempo">
+                  <FormSelect
+                    value={form.disponibilidad}
+                    onChange={(v) => onChange("disponibilidad", v)}
+                    placeholder="¿Cuánto tiempo puedes dedicar?"
+                    options={[
+                      "Pocas horas a la semana",
+                      "Principalmente fines de semana",
+                      "Varias horas durante la semana",
+                      "Disponibilidad amplia",
+                    ]}
+                  />
+                </Field>
 
-              <AccordionItem
-                value="item-7"
-                className="px-6 border-2 border-border/50 rounded-2xl bg-gradient-to-br from-background to-card/30 backdrop-blur-sm"
-              >
-                <AccordionTrigger className="text-lg font-semibold text-left transition-colors hover:text-primary">
-                  ¿Qué formación recibiré como miembro de JMV?
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 text-base leading-relaxed text-foreground/80">
-                  Recibirás formación integral que incluye: espiritualidad vicenciana, liderazgo cristiano, doctrina
-                  social de la Iglesia, habilidades de comunicación, gestión de proyectos sociales, y desarrollo
-                  personal. La formación es progresiva y se adapta a tu nivel de experiencia y responsabilidades dentro
-                  del movimiento.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
+                {/* Terms */}
+                <label
+                  style={{
+                    display: "flex",
+                    gap: 12,
+                    alignItems: "flex-start",
+                    padding: "16px 18px",
+                    background: JMV.white,
+                    border: "1px solid " + JMV.line,
+                    borderRadius: 4,
+                    marginTop: 24,
+                    cursor: "pointer",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={form.terms}
+                    onChange={(e) => onChange("terms", e.target.checked)}
+                    style={{ marginTop: 3, accentColor: JMV.gold, cursor: "pointer" }}
+                    required
+                  />
+                  <span
+                    style={{
+                      fontFamily: FONT_BODY,
+                      fontSize: 13.5,
+                      lineHeight: 1.55,
+                      color: JMV.body,
+                    }}
+                  >
+                    Acepto que JMV República Dominicana use mis datos para contactarme sobre mi solicitud,
+                    según su política de privacidad. <span style={{ color: JMV.gold }}>*</span>
+                  </span>
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={!isValid || submitting}
+                  style={{
+                    marginTop: 32,
+                    width: "100%",
+                    padding: "16px 28px",
+                    borderRadius: 999,
+                    background: !isValid || submitting ? JMV.line : JMV.ink,
+                    color: !isValid || submitting ? JMV.mute : "#fff",
+                    border: "none",
+                    fontFamily: FONT_UI,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    letterSpacing: "0.04em",
+                    cursor: !isValid || submitting ? "not-allowed" : "pointer",
+                    transition: "background .2s ease, color .2s ease",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 10,
+                  }}
+                >
+                  {submitting ? "Enviando..." : "Enviar mi solicitud"}
+                  {!submitting && <Icon name="arrowUR" size={14} color={!isValid ? JMV.mute : "#fff"} />}
+                </button>
+
+                <p
+                  style={{
+                    fontFamily: FONT_UI,
+                    fontSize: 12,
+                    color: JMV.mute,
+                    textAlign: "center",
+                    marginTop: 16,
+                    marginBottom: 0,
+                  }}
+                >
+                  Sin costo · Sin compromiso · Tu información es confidencial
+                </p>
+              </form>
+            </Reveal>
+          )}
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="relative py-20 overflow-hidden text-white bg-gradient-to-br from-primary via-secondary to-accent">
-        <div className="absolute inset-0 bg-black/10" />
-        <div className="container relative text-center">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex justify-center mb-8">
-              <div className="flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm">
-                <CheckCircle className="w-10 h-10 text-white" />
+      {/* FAQ */}
+      <section style={{ background: JMV.paper, padding: "120px 32px", borderTop: "1px solid " + JMV.line }}>
+        <div style={{ maxWidth: 880, margin: "0 auto" }}>
+          <Reveal delay={0} y={20}>
+            <div style={{ marginBottom: 56, textAlign: "center" }}>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <Eyebrow align="center">Preguntas frecuentes</Eyebrow>
               </div>
-            </div>
-            <h2 className="mb-6 text-4xl font-bold">¿Listo para dar el primer paso?</h2>
-            <p className="mb-12 text-xl leading-relaxed text-white/90">
-              Tu vocación de servicio te está esperando. Únete a una familia que transforma vidas y construye un mundo
-              más justo y fraterno.
-            </p>
-            <div className="flex flex-col gap-6 sm:flex-row sm:justify-center">
-              <Button
-                size="lg"
-                variant="secondary"
-                className="px-8 py-4 text-lg bg-white text-primary hover:bg-white/90"
-                asChild
+              <Serif size={56} weight={300} style={{ display: "block", marginTop: 24 }}>
+                Antes de dar el <span style={{ fontStyle: "italic", color: JMV.gold }}>paso</span>.
+              </Serif>
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: 17,
+                  lineHeight: 1.65,
+                  color: JMV.body,
+                  marginTop: 24,
+                  maxWidth: 560,
+                  marginInline: "auto",
+                }}
               >
-                <a href="#formulario">Completar solicitud</a>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="px-8 py-4 text-lg text-white bg-transparent border-2 border-white hover:bg-white hover:text-primary"
-                asChild
-              >
-                <a href="mailto:info@jmvrd.org">Contactar directamente</a>
-              </Button>
+                Las preguntas más comunes sobre cómo unirte a la familia JMV.
+              </p>
             </div>
-          </div>
+          </Reveal>
+
+          <Reveal delay={0} y={20}>
+            <Accordion type="single" collapsible className="space-y-2">
+              {FAQS.map((f, i) => (
+                <AccordionItem
+                  key={i}
+                  value={`q-${i}`}
+                  className="border-0"
+                  style={{
+                    background: JMV.white,
+                    border: "1px solid " + JMV.line,
+                    borderRadius: 4,
+                    overflow: "hidden",
+                  }}
+                >
+                  <AccordionTrigger
+                    className="px-6 py-5 hover:no-underline"
+                    style={{
+                      fontFamily: FONT_DISPLAY,
+                      fontSize: 18,
+                      fontWeight: 400,
+                      color: JMV.ink,
+                      letterSpacing: "-0.005em",
+                      textAlign: "left",
+                    }}
+                  >
+                    {f.q}
+                  </AccordionTrigger>
+                  <AccordionContent
+                    className="px-6 pb-5"
+                    style={{
+                      fontFamily: FONT_BODY,
+                      fontSize: 15.5,
+                      lineHeight: 1.75,
+                      color: JMV.body,
+                    }}
+                  >
+                    {f.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Reveal>
         </div>
       </section>
 
       <FooterSection />
     </div>
+  )
+}
+
+// ── Form helpers ─────────────────────────────────────────────────────────────
+
+function FormGrid({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+      {children}
+    </div>
+  )
+}
+
+function Field({
+  label,
+  required,
+  children,
+}: {
+  label: string
+  required?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <label
+        style={{
+          display: "block",
+          fontFamily: FONT_UI,
+          fontSize: 11.5,
+          fontWeight: 600,
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          color: JMV.body,
+          marginBottom: 10,
+        }}
+      >
+        {label}
+        {required && <span style={{ color: JMV.gold, marginLeft: 4 }}>*</span>}
+      </label>
+      {children}
+    </div>
+  )
+}
+
+const inputBase: React.CSSProperties = {
+  width: "100%",
+  padding: "12px 16px",
+  background: JMV.white,
+  border: "1px solid " + JMV.line,
+  borderRadius: 4,
+  fontFamily: FONT_BODY,
+  fontSize: 14.5,
+  color: JMV.ink,
+  outline: "none",
+  transition: "border-color .15s",
+}
+
+function FormInput({
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  required,
+}: {
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+  type?: string
+  required?: boolean
+}) {
+  return (
+    <input
+      type={type}
+      value={value}
+      required={required}
+      placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value)}
+      onFocus={(e) => (e.currentTarget.style.borderColor = JMV.ink)}
+      onBlur={(e) => (e.currentTarget.style.borderColor = JMV.line)}
+      style={inputBase}
+    />
+  )
+}
+
+function FormSelect({
+  value,
+  onChange,
+  options,
+  placeholder,
+  required,
+}: {
+  value: string
+  onChange: (v: string) => void
+  options: string[]
+  placeholder?: string
+  required?: boolean
+}) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      required={required}
+      onFocus={(e) => (e.currentTarget.style.borderColor = JMV.ink)}
+      onBlur={(e) => (e.currentTarget.style.borderColor = JMV.line)}
+      style={{
+        ...inputBase,
+        cursor: "pointer",
+        appearance: "none",
+        backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e")`,
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "right 14px center",
+        paddingRight: 38,
+      }}
+    >
+      <option value="" disabled>
+        {placeholder}
+      </option>
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
+    </select>
+  )
+}
+
+function FormTextarea({
+  value,
+  onChange,
+  placeholder,
+  rows = 4,
+  required,
+}: {
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+  rows?: number
+  required?: boolean
+}) {
+  return (
+    <textarea
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      required={required}
+      rows={rows}
+      onFocus={(e) => (e.currentTarget.style.borderColor = JMV.ink)}
+      onBlur={(e) => (e.currentTarget.style.borderColor = JMV.line)}
+      style={{
+        ...inputBase,
+        resize: "vertical",
+        minHeight: 100,
+        lineHeight: 1.55,
+      }}
+    />
   )
 }
