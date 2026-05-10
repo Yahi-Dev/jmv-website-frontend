@@ -1,6 +1,7 @@
 // src/features/libro-oracion/components/LibroOracionPage.tsx
 import { TableOfContents } from "./TableOfContents"
 import { ContentRenderer } from "./ContentRenderer"
+import { BackButton } from "./BackButton"
 import { libroOracion } from "../data"
 import type { Chapter } from "../types"
 
@@ -169,12 +170,15 @@ export function LibroOracionPage() {
 
       {/* Header bar */}
       <header className="relative z-10 border-b border-amber-700/20 bg-black/20 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-amber-500 text-lg">✝</span>
-            <span className="text-amber-200/70 text-xs uppercase tracking-widest font-medium">
-              JMV República Dominicana
-            </span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <BackButton />
+            <div className="hidden sm:flex items-center gap-2">
+              <span className="text-amber-500 text-lg">✝</span>
+              <span className="text-amber-200/70 text-xs uppercase tracking-widest font-medium">
+                JMV República Dominicana
+              </span>
+            </div>
           </div>
           <span className="text-amber-500/50 text-xs hidden sm:block">
             Libro de Oración

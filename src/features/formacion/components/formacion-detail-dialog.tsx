@@ -68,9 +68,21 @@ export function FormacionDetailDialog({
     if (formacion.enlace) {
       window.open(formacion.enlace, "_blank")
     } else if (formacion.ruta) {
+      const isCloudinary = formacion.ruta.startsWith("https://res.cloudinary.com/")
       const link = document.createElement("a")
-      link.href = formacion.ruta
-      link.download = formacion.titulo || "documento"
+      if (isCloudinary) {
+        // Route through our proxy so the response carries a
+        // Content-Disposition: attachment header with the proper filename.
+        const params = new URLSearchParams({
+          url: formacion.ruta,
+          name: formacion.titulo || "documento",
+        })
+        link.href = `/api/formacion/download?${params.toString()}`
+      } else {
+        // Legacy local-filesystem files (uploaded before Cloudinary)
+        link.href = formacion.ruta
+        link.download = formacion.titulo || "documento"
+      }
       link.click()
     }
     onOpenChange(false)

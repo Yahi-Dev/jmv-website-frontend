@@ -1,4 +1,5 @@
 import { Eyebrow, Serif } from "../ui-kit/Primitives"
+import { Reveal } from "../ui-kit/Reveal"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
 
 const values = [
@@ -13,17 +14,19 @@ export function ValuesSection() {
   return (
     <section style={{ background: JMV.white, padding: "140px 32px" }}>
       <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", marginBottom: 80 }}>
-          <Eyebrow align="center">Notas Distintivas</Eyebrow>
-          <Serif size={52} weight={300} style={{ display: "block", marginTop: 20 }}>
-            Cinco palabras que<br />nos <span style={{ fontStyle: "italic", color: JMV.gold }}>definen</span>.
-          </Serif>
-        </div>
+        <Reveal delay={0} y={20}>
+          <div style={{ textAlign: "center", marginBottom: 80 }}>
+            <Eyebrow align="center">Notas Distintivas</Eyebrow>
+            <Serif size={52} weight={300} style={{ display: "block", marginTop: 20 }}>
+              Cinco palabras que<br />nos <span style={{ fontStyle: "italic", color: JMV.gold }}>definen</span>.
+            </Serif>
+          </div>
+        </Reveal>
 
         <div>
           {values.map((v, i) => (
+            <Reveal key={i} delay={i * 90} y={22}>
             <div
-              key={i}
               className="jmv-values-row"
               style={{
                 display: "grid",
@@ -48,6 +51,7 @@ export function ValuesSection() {
                 {v.desc}
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

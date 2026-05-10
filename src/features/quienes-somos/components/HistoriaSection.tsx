@@ -1,4 +1,5 @@
 import { Eyebrow, Serif, PhotoTile } from "@/src/features/home/ui-kit/Primitives"
+import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 
 export function HistoriaSection() {
@@ -7,7 +8,7 @@ export function HistoriaSection() {
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.1fr", gap: 96, alignItems: "center" }}>
           {/* Left column — photo tile */}
-          <div>
+          <Reveal delay={0} y={32}>
             <PhotoTile h={560} kind="prayer" label="NUESTRA HISTORIA">
               {/* Decorative year overlay */}
               <div
@@ -27,10 +28,10 @@ export function HistoriaSection() {
                 1995
               </div>
             </PhotoTile>
-          </div>
+          </Reveal>
 
           {/* Right column — narrative */}
-          <div>
+          <Reveal delay={180} y={28}>
             <Eyebrow>Nuestra Historia</Eyebrow>
             <Serif size={56} weight={300} style={{ display: "block", marginTop: 24, maxWidth: 520 }}>
               Una tradición de <span style={{ fontStyle: "italic", color: JMV.gold }}>fe</span> y servicio.
@@ -65,7 +66,7 @@ export function HistoriaSection() {
                 transforman sus comunidades desde la fe y el amor cristiano.
               </p>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

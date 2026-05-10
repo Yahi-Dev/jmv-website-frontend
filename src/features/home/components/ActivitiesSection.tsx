@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { Eyebrow, Serif, Icon, Tag, PhotoTile } from "../ui-kit/Primitives"
+import { Reveal } from "../ui-kit/Reveal"
 import { JMV, FONT_DISPLAY, FONT_UI } from "../ui-kit/tokens"
 
 type Kind = "community" | "prayer" | "service" | "landscape" | "dark"
@@ -30,24 +31,29 @@ export function ActivitiesSection() {
     <section style={{ background: JMV.white, padding: "120px 32px", borderTop: "1px solid " + JMV.line }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 64 }}>
-          <div>
-            <Eyebrow>Actualidad</Eyebrow>
-            <Serif size={56} weight={300} style={{ display: "block", marginTop: 20 }}>
-              Próximos encuentros
-            </Serif>
-          </div>
-          <span
-            onClick={onAll}
-            className="jmv-arrow-link"
-            style={{ cursor: "pointer", fontFamily: FONT_UI, fontSize: 13.5, color: JMV.ink, display: "inline-flex", alignItems: "center", gap: 8, borderBottom: "1px solid " + JMV.ink, paddingBottom: 4 }}
-          >
-            Ver todos los eventos <Icon name="arrowUR" size={14} />
-          </span>
+          <Reveal delay={0} y={20}>
+            <div>
+              <Eyebrow>Actualidad</Eyebrow>
+              <Serif size={56} weight={300} style={{ display: "block", marginTop: 20 }}>
+                Próximos encuentros
+              </Serif>
+            </div>
+          </Reveal>
+          <Reveal delay={180} y={16}>
+            <span
+              onClick={onAll}
+              className="jmv-arrow-link"
+              style={{ cursor: "pointer", fontFamily: FONT_UI, fontSize: 13.5, color: JMV.ink, display: "inline-flex", alignItems: "center", gap: 8, borderBottom: "1px solid " + JMV.ink, paddingBottom: 4 }}
+            >
+              Ver todos los eventos <Icon name="arrowUR" size={14} />
+            </span>
+          </Reveal>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
           {items.map((a, i) => (
-            <div key={i} className="jmv-event-card" style={{ cursor: "pointer" }} onClick={onAll}>
+            <Reveal key={i} delay={i * 110} y={28}>
+            <div className="jmv-event-card" style={{ cursor: "pointer" }} onClick={onAll}>
               <PhotoTile h={260} label={a.type.toUpperCase()} kind={a.kind} />
               <div style={{ padding: "20px 4px 0" }}>
                 <div style={{ display: "flex", gap: 14, alignItems: "baseline", marginBottom: 12 }}>
@@ -76,6 +82,7 @@ export function ActivitiesSection() {
                 </div>
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

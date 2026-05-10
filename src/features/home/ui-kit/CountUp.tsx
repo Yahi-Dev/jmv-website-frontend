@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 type Props = {
   value: string
@@ -11,31 +11,49 @@ type Props = {
  * Count-up animation triggered when the element enters the viewport.
  * Parses a leading number from `value` and preserves whatever suffix follows
  * (e.g. "500+" → animates 0→500 with "+" suffix; "50 países" keeps " países").
+ *
+ * If `value` changes AFTER the first animation has played (e.g. async data
+ * arrives), we smoothly animate from the currently displayed value to the
+ * new target instead of leaving the counter stuck at the initial number.
  */
 export function CountUp({ value, duration = 2500 }: Props) {
   const ref = useRef<HTMLSpanElement>(null)
-  const startedRef = useRef(false)
+  const hasRunOnceRef = useRef(false)
+  const displayRef = useRef(0)
   const [display, setDisplay] = useState(0)
 
-  const match = value.match(/^([0-9]+(?:\.[0-9]+)?)(.*)$/)
-  const target = match ? parseFloat(match[1]) : 0
-  const decimals = match && match[1].includes(".") ? match[1].split(".")[1].length : 0
-  const suffix = match ? match[2] : ""
+  useEffect(() => {
+    displayRef.current = display
+  }, [display])
+
+  const parsed = useMemo(() => {
+    const m = value.match(/^([0-9]+(?:\.[0-9]+)?)(.*)$/)
+    if (!m) return null
+    return {
+      target: parseFloat(m[1]),
+      decimals: m[1].includes(".") ? m[1].split(".")[1].length : 0,
+      suffix: m[2],
+    }
+  }, [value])
 
   useEffect(() => {
     const el = ref.current
-    if (!el || !match) return
+    if (!el || !parsed) return
 
     let rafId = 0
 
-    const run = () => {
+    const animate = (from: number, to: number) => {
+      if (rafId) cancelAnimationFrame(rafId)
+      if (from === to) {
+        setDisplay(to)
+        return
+      }
       const startTime = performance.now()
       const step = (now: number) => {
         const elapsed = now - startTime
         const progress = Math.min(elapsed / duration, 1)
-        // ease-out cubic — starts fast, gently settles into the target
         const eased = 1 - Math.pow(1 - progress, 3)
-        setDisplay(target * eased)
+        setDisplay(from + (to - from) * eased)
         if (progress < 1) rafId = requestAnimationFrame(step)
       }
       rafId = requestAnimationFrame(step)
@@ -43,29 +61,37 @@ export function CountUp({ value, duration = 2500 }: Props) {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !startedRef.current) {
-          startedRef.current = true
-          run()
+        if (entry.isIntersecting && !hasRunOnceRef.current) {
+          hasRunOnceRef.current = true
+          animate(0, parsed.target)
         }
       },
       { threshold: 0.35 }
     )
 
     observer.observe(el)
+
+    // Already animated once, but the target just changed (async data, prop
+    // update, etc.). Smooth-animate from the current displayed value rather
+    // than snapping or leaving the counter stuck at the old number.
+    if (hasRunOnceRef.current) {
+      animate(displayRef.current, parsed.target)
+    }
+
     return () => {
       observer.disconnect()
       if (rafId) cancelAnimationFrame(rafId)
     }
-  }, [target, duration, match])
+  }, [parsed, duration])
 
-  if (!match) return <span ref={ref}>{value}</span>
+  if (!parsed) return <span ref={ref}>{value}</span>
 
-  const formatted = decimals > 0 ? display.toFixed(decimals) : Math.round(display).toString()
+  const formatted = parsed.decimals > 0 ? display.toFixed(parsed.decimals) : Math.round(display).toString()
 
   return (
     <span ref={ref}>
       {formatted}
-      {suffix}
+      {parsed.suffix}
     </span>
   )
 }

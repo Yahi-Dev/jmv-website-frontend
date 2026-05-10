@@ -1,4 +1,5 @@
 import { Eyebrow, Serif, Icon, type IconName } from "@/src/features/home/ui-kit/Primitives"
+import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 
 type Pillar = {
@@ -43,31 +44,33 @@ export function CarismaSection() {
   return (
     <section style={{ background: JMV.mist, padding: "120px 32px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ maxWidth: 720, marginBottom: 72 }}>
-          <Eyebrow>Nuestro Carisma</Eyebrow>
-          <Serif size={56} weight={300} style={{ display: "block", marginTop: 24 }}>
-            Cuatro <span style={{ fontStyle: "italic", color: JMV.gold }}>pilares</span> que nos sostienen.
-          </Serif>
-          <p
-            style={{
-              fontFamily: FONT_BODY,
-              fontSize: 17,
-              lineHeight: 1.65,
-              color: JMV.body,
-              marginTop: 28,
-              maxWidth: 560,
-            }}
-          >
-            Nuestra espiritualidad se fundamenta en cuatro dimensiones esenciales que dan sentido a cada
-            actividad, formación y obra de servicio que realizamos.
-          </p>
-        </div>
+        <Reveal delay={0} y={24}>
+          <div style={{ maxWidth: 720, marginBottom: 72 }}>
+            <Eyebrow>Nuestro Carisma</Eyebrow>
+            <Serif size={56} weight={300} style={{ display: "block", marginTop: 24 }}>
+              Cuatro <span style={{ fontStyle: "italic", color: JMV.gold }}>pilares</span> que nos sostienen.
+            </Serif>
+            <p
+              style={{
+                fontFamily: FONT_BODY,
+                fontSize: 17,
+                lineHeight: 1.65,
+                color: JMV.body,
+                marginTop: 28,
+                maxWidth: 560,
+              }}
+            >
+              Nuestra espiritualidad se fundamenta en cuatro dimensiones esenciales que dan sentido a cada
+              actividad, formación y obra de servicio que realizamos.
+            </p>
+          </div>
+        </Reveal>
 
         {/* Numbered list — matches ValuesSection rhythm */}
         <div style={{ borderTop: "1px solid " + JMV.line }}>
           {pillars.map((p, i) => (
+            <Reveal key={i} delay={i * 110} y={22}>
             <div
-              key={i}
               style={{
                 display: "grid",
                 gridTemplateColumns: "80px 1fr 1.3fr auto",
@@ -119,6 +122,7 @@ export function CarismaSection() {
                 <Icon name={p.icon} size={20} />
               </div>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { Eyebrow, Serif, PhotoTile } from "@/src/features/home/ui-kit/Primitives"
+import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_UI, FONT_BODY, FONT_DISPLAY } from "@/src/features/home/ui-kit/tokens"
 
 type Founder = {
@@ -36,31 +37,33 @@ export function FundadoresSection() {
     <section style={{ background: JMV.paper, padding: "120px 32px", borderTop: "1px solid " + JMV.line }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         {/* Header */}
-        <div style={{ maxWidth: 720, marginBottom: 80 }}>
-          <Eyebrow>Raíces Vicencianas</Eyebrow>
-          <Serif size={56} weight={300} style={{ display: "block", marginTop: 24 }}>
-            Herederos de un <span style={{ fontStyle: "italic", color: JMV.gold }}>legado</span> espiritual.
-          </Serif>
-          <p
-            style={{
-              fontFamily: FONT_BODY,
-              fontSize: 17,
-              lineHeight: 1.65,
-              color: JMV.body,
-              marginTop: 28,
-              maxWidth: 560,
-            }}
-          >
-            Nuestro carisma tiene su origen en dos santos franceses del siglo XVII cuya respuesta al clamor de
-            los pobres inspira hoy a miles de jóvenes en todo el mundo.
-          </p>
-        </div>
+        <Reveal delay={0} y={24}>
+          <div style={{ maxWidth: 720, marginBottom: 80 }}>
+            <Eyebrow>Raíces Vicencianas</Eyebrow>
+            <Serif size={56} weight={300} style={{ display: "block", marginTop: 24 }}>
+              Herederos de un <span style={{ fontStyle: "italic", color: JMV.gold }}>legado</span> espiritual.
+            </Serif>
+            <p
+              style={{
+                fontFamily: FONT_BODY,
+                fontSize: 17,
+                lineHeight: 1.65,
+                color: JMV.body,
+                marginTop: 28,
+                maxWidth: 560,
+              }}
+            >
+              Nuestro carisma tiene su origen en dos santos franceses del siglo XVII cuya respuesta al clamor de
+              los pobres inspira hoy a miles de jóvenes en todo el mundo.
+            </p>
+          </div>
+        </Reveal>
 
         {/* Cards grid */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
           {founders.map((f, i) => (
+            <Reveal key={i} delay={i * 150} y={36}>
             <article
-              key={i}
               style={{
                 background: JMV.white,
                 border: "1px solid " + JMV.line,
@@ -129,6 +132,7 @@ export function FundadoresSection() {
                 </p>
               </div>
             </article>
+            </Reveal>
           ))}
         </div>
       </div>

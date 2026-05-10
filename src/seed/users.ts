@@ -2,7 +2,7 @@
 import { auth } from "@/src/lib/auth";
 import { PrismaClient } from "@prisma/client";
 
-export async function seedUsers(prisma: PrismaClient) {
+export async function seedUsers(prisma: PrismaClient): Promise<string> {
   const testEmail = "yahinnieltheking01@gmail.com";
   const testPassword = "password123";
 
@@ -124,9 +124,10 @@ export async function seedUsers(prisma: PrismaClient) {
       },
     });
 
-    console.log("🎉 SEED COMPLETADO EXITOSAMENTE");
-    console.log("📋 CREDENCIALES: test@jmv.com / password123");
+    console.log("🎉 SEED USERS COMPLETADO EXITOSAMENTE");
+    console.log(`📋 CREDENCIALES: ${testEmail} / ${testPassword}`);
 
+    return userRes.user.id;
   } catch (error) {
     console.error("❌ Error en seed:", error);
     throw error;

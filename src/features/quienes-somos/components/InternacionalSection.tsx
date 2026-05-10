@@ -1,6 +1,7 @@
 "use client"
 
 import { Button, Icon, Serif } from "@/src/features/home/ui-kit/Primitives"
+import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 
 const stats = [
@@ -25,7 +26,7 @@ export function InternacionalSection() {
       <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 96, alignItems: "center" }}>
           {/* Left — intro */}
-          <div>
+          <Reveal delay={0} y={28}>
             <div
               style={{
                 display: "flex",
@@ -82,9 +83,10 @@ export function InternacionalSection() {
                 </Button>
               </a>
             </div>
-          </div>
+          </Reveal>
 
           {/* Right — stat grid */}
+          <Reveal delay={180} y={28}>
           <div
             style={{
               display: "grid",
@@ -122,6 +124,7 @@ export function InternacionalSection() {
               </div>
             ))}
           </div>
+          </Reveal>
         </div>
       </div>
     </section>

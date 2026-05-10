@@ -2,20 +2,22 @@
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react"
-import { Button } from "@/src/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card"
-import { Badge } from "@/src/components/ui/badge"
-import { Input } from "@/src/components/ui/input"
-import { MapPin, Filter, Search, Clock, ArrowRight, Sparkles, CalendarDays, Loader2, X } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import Navbar from "@/src/components/Navbar"
 import { FooterSection } from "@/src/components/shared/FooterSection"
-import { Evento, getTagColor } from "@/src/features/eventos/model/types"
-import { getEventos } from "@/src/features/eventos/service/evento-service"
+import { Eyebrow, Icon, Serif, Tag } from "@/src/features/home/ui-kit/Primitives"
+import { Reveal } from "@/src/features/home/ui-kit/Reveal"
+import { CountUp } from "@/src/features/home/ui-kit/CountUp"
+import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
+import { Evento } from "../model/types"
+import { getEventos } from "../service/evento-service"
+import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 export function EventosList() {
   const [search, setSearch] = useState("")
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [tagsExpanded, setTagsExpanded] = useState(false)
   const [allEventos, setAllEventos] = useState<Evento[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -46,222 +48,776 @@ export function EventosList() {
     return Array.from(tagSet).sort()
   }, [allEventos])
 
-  const eventos = useMemo(() => {
+  const filtered = useMemo(() => {
     if (!selectedTag) return allEventos
     return allEventos.filter((e) => e.etiquetas.includes(selectedTag))
   }, [allEventos, selectedTag])
+
+  const now = Date.now()
+  const proximos = useMemo(
+    () =>
+      filtered
+        .filter((e) => new Date(e.fecha).getTime() >= now)
+        .sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime()),
+    [filtered, now]
+  )
+  const pasados = useMemo(
+    () =>
+      filtered
+        .filter((e) => new Date(e.fecha).getTime() < now)
+        .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()),
+    [filtered, now]
+  )
+
+  const stats = useMemo(() => {
+    const futuros = allEventos.filter((e) => new Date(e.fecha).getTime() >= now)
+    const closest = futuros.length > 0
+      ? Math.round(
+          (new Date(futuros[0].fecha).getTime() - now) / (1000 * 60 * 60 * 24)
+        )
+      : 0
+    return {
+      total: allEventos.length,
+      proximos: futuros.length,
+      diasProximo: Math.max(0, closest),
+    }
+  }, [allEventos, now])
 
   const clearFilters = () => {
     setSearch("")
     setSelectedTag(null)
   }
-
-  const hasActiveFilters = !!search || !!selectedTag
+  const hasActive = !!search || !!selectedTag
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-card/30 to-background">
+    <div className="jmv-kit-root" style={{ minHeight: "100vh", background: "#fff" }}>
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative py-20 overflow-hidden lg:py-32">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5" />
-        <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5" />
-        <div className="container relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-6 py-3 mb-8 border rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Próximas Actividades</span>
+      {/* HERO */}
+      <section
+        style={{
+          background: JMV.white,
+          padding: "56px 32px 80px",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          aria-hidden
+          className="jmv-spin-slow"
+          style={{
+            position: "absolute",
+            top: -200,
+            right: -200,
+            width: 500,
+            height: 500,
+            borderRadius: "50%",
+            border: "1px dashed rgba(243,167,54,0.16)",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          aria-hidden
+          className="jmv-pulse-soft"
+          style={{
+            position: "absolute",
+            top: 80,
+            right: 60,
+            width: 280,
+            height: 280,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(19,159,204,0.10) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }}
+        />
+        <div
+          aria-hidden
+          className="jmv-float-slow"
+          style={{
+            position: "absolute",
+            top: 220,
+            right: 240,
+            width: 12,
+            height: 12,
+            borderRadius: "50%",
+            background: JMV.celeste,
+            opacity: 0.5,
+            pointerEvents: "none",
+          }}
+        />
+
+        <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative" }}>
+          <Reveal delay={0} y={12}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 14,
+                fontFamily: FONT_UI,
+                fontSize: 11,
+                letterSpacing: "0.24em",
+                textTransform: "uppercase",
+                color: JMV.mute,
+                marginBottom: 40,
+              }}
+            >
+              <span style={{ display: "inline-block", width: 36, height: 1, background: JMV.gold }} />
+              <span>Eventos</span>
+              <span style={{ opacity: 0.4 }}>·</span>
+              <span>JMV República Dominicana</span>
+              <span style={{ opacity: 0.4 }}>·</span>
+              <span style={{ color: JMV.gold }}>Calendario nacional</span>
             </div>
-            <h1 className="mb-6 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-              <span className="text-transparent bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text">
-                Eventos JMV
-              </span>
-            </h1>
-            <p className="max-w-2xl mx-auto text-xl leading-relaxed text-muted-foreground">
-              Descubre nuestras próximas actividades de formación, espiritualidad y servicio. Únete a una comunidad que
-              transforma vidas.
-            </p>
+          </Reveal>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 80, alignItems: "end" }}>
+            <div>
+              <Reveal delay={120} y={20}>
+                <Eyebrow color={JMV.gold}>Eventos JMV</Eyebrow>
+              </Reveal>
+              <Reveal delay={220} y={32}>
+                <h1
+                  style={{
+                    fontFamily: FONT_DISPLAY,
+                    fontSize: "clamp(3rem, 7vw, 6.4rem)",
+                    fontWeight: 300,
+                    lineHeight: 1,
+                    letterSpacing: "-0.025em",
+                    color: JMV.ink,
+                    margin: "28px 0 0",
+                    fontVariationSettings: '"opsz" 144, "SOFT" 50',
+                  }}
+                >
+                  Lo que <span style={{ fontStyle: "italic", color: JMV.gold, fontWeight: 300 }}>vivimos</span>
+                  <br />
+                  <span style={{ fontStyle: "italic", color: JMV.celeste, fontWeight: 300 }}>juntos</span>.
+                </h1>
+              </Reveal>
+            </div>
+
+            <Reveal delay={380} y={20}>
+              <p
+                style={{
+                  fontFamily: FONT_BODY,
+                  fontSize: 17,
+                  lineHeight: 1.65,
+                  color: JMV.body,
+                  margin: 0,
+                  maxWidth: 440,
+                }}
+              >
+                Asambleas, encuentros, retiros, peregrinaciones, vigilias. El calendario de la familia JMV-RD
+                — fechas, lugares, agendas e información para participar.
+              </p>
+            </Reveal>
           </div>
+
+          <Reveal delay={520} y={20}>
+            <div
+              style={{
+                marginTop: 80,
+                paddingTop: 24,
+                borderTop: "1px solid " + JMV.line,
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 32,
+              }}
+            >
+              {[
+                { k: "Eventos publicados", v: String(stats.total || 0), color: JMV.ink },
+                { k: "Próximos", v: String(stats.proximos || 0), color: JMV.celeste },
+                { k: "Días al próximo", v: String(stats.diasProximo || 0), color: JMV.gold },
+              ].map((s, i) => (
+                <div key={i}>
+                  <div
+                    style={{
+                      fontFamily: FONT_UI,
+                      fontSize: 10.5,
+                      letterSpacing: "0.22em",
+                      textTransform: "uppercase",
+                      color: JMV.mute,
+                      marginBottom: 10,
+                    }}
+                  >
+                    {s.k}
+                  </div>
+                  <Serif size={42} weight={300} style={{ color: s.color }}>
+                    <CountUp value={s.v} duration={1800} />
+                  </Serif>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Filters */}
-      <section className="sticky top-0 z-20 px-10 py-6 border-b border-border/50 bg-card/30 backdrop-blur-sm">
-        <div className="container space-y-4">
-          {/* Search row */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative group">
-              <Search className="absolute w-4 h-4 transition-colors -translate-y-1/2 left-4 top-1/2 text-muted-foreground group-focus-within:text-primary" />
-              <Input
-                placeholder="Buscar eventos..."
+      {/* FILTERS BAR (sticky compact) */}
+      <section
+        style={{
+          position: "sticky",
+          top: 64,
+          zIndex: 5,
+          background: "rgba(255,255,255,0.94)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          borderTop: "1px solid " + JMV.line,
+          borderBottom: "1px solid " + JMV.line,
+          padding: "12px 32px",
+        }}
+      >
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              flexWrap: "nowrap",
+              minHeight: 44,
+            }}
+          >
+            <div style={{ position: "relative", flex: "1 1 auto", maxWidth: 480 }}>
+              <span
+                style={{
+                  position: "absolute",
+                  left: 14,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: JMV.mute,
+                  pointerEvents: "none",
+                }}
+              >
+                <Icon name="search" size={14} />
+              </span>
+              <input
+                type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 h-11 sm:w-80 bg-background/80 border-border/50 focus:border-primary/50"
+                placeholder="Buscar eventos..."
+                style={{
+                  width: "100%",
+                  padding: "10px 36px 10px 38px",
+                  background: JMV.white,
+                  border: "1px solid " + JMV.line,
+                  borderRadius: 999,
+                  fontFamily: FONT_UI,
+                  fontSize: 13,
+                  color: JMV.ink,
+                  outline: "none",
+                  transition: "border-color .15s",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = JMV.ink)}
+                onBlur={(e) => (e.currentTarget.style.borderColor = JMV.line)}
               />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-4 py-2 text-sm border rounded-lg text-muted-foreground bg-background/60 border-border/50">
-                <Filter className="w-4 h-4" />
-                <span className="font-medium">
-                  {loading
-                    ? "Cargando..."
-                    : `${eventos.length} evento${eventos.length !== 1 ? "s" : ""}`}
-                </span>
-              </div>
-
-              {hasActiveFilters && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="h-9 gap-1.5 text-muted-foreground hover:text-foreground"
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  aria-label="Limpiar"
+                  style={{
+                    position: "absolute",
+                    right: 12,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    color: JMV.mute,
+                    fontSize: 18,
+                    width: 18,
+                    height: 18,
+                    lineHeight: 1,
+                  }}
                 >
-                  <X className="w-3.5 h-3.5" />
-                  Limpiar
-                </Button>
+                  ×
+                </button>
               )}
             </div>
+
+            {!loading && availableTags.length > 0 && (
+              <button
+                onClick={() => setTagsExpanded((v) => !v)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "8px 14px",
+                  borderRadius: 999,
+                  background: tagsExpanded || selectedTag ? JMV.gold : "transparent",
+                  color: tagsExpanded || selectedTag ? "#fff" : JMV.body,
+                  border: "1px solid " + (tagsExpanded || selectedTag ? JMV.gold : JMV.line),
+                  fontFamily: FONT_UI,
+                  fontSize: 12.5,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  transition: "all .15s ease",
+                  flexShrink: 0,
+                }}
+              >
+                Etiquetas
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    minWidth: 20,
+                    height: 18,
+                    padding: "0 5px",
+                    borderRadius: 999,
+                    background:
+                      tagsExpanded || selectedTag ? "rgba(255,255,255,0.25)" : JMV.line,
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: tagsExpanded || selectedTag ? "#fff" : JMV.body,
+                  }}
+                >
+                  {selectedTag ? 1 : availableTags.length}
+                </span>
+                <span
+                  aria-hidden
+                  style={{
+                    display: "inline-flex",
+                    transition: "transform .2s ease",
+                    transform: tagsExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                  }}
+                >
+                  <Icon
+                    name="chevron"
+                    size={11}
+                    color={tagsExpanded || selectedTag ? "#fff" : JMV.mute}
+                  />
+                </span>
+              </button>
+            )}
+
+            <span
+              style={{
+                fontFamily: FONT_UI,
+                fontSize: 12,
+                color: JMV.mute,
+                flexShrink: 0,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {loading ? "..." : `${filtered.length} evento${filtered.length !== 1 ? "s" : ""}`}
+            </span>
+
+            {hasActive && (
+              <button
+                onClick={clearFilters}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: JMV.mute,
+                  fontFamily: FONT_UI,
+                  fontSize: 12,
+                  cursor: "pointer",
+                  flexShrink: 0,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                × Limpiar
+              </button>
+            )}
           </div>
 
-          {/* Tag filter chips */}
-          {!loading && availableTags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {availableTags.map((tag) => {
-                const isActive = selectedTag === tag
-                return (
-                  <button
-                    key={tag}
-                    onClick={() => setSelectedTag(isActive ? null : tag)}
-                    className={`
-                      inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border
-                      transition-all duration-150 cursor-pointer
-                      ${isActive
-                        ? `${getTagColor(tag)} ring-2 ring-offset-1 ring-current/30 shadow-sm`
-                        : "border-border/50 text-muted-foreground bg-background/60 hover:border-primary/40 hover:text-primary"
-                      }
-                    `}
-                  >
-                    {isActive && <X className="w-3 h-3" />}
-                    {tag}
-                  </button>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Grid */}
-      <section className="px-10 py-20">
-        <div className="container">
-          {loading ? (
-            <div className="flex items-center justify-center py-32">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-          ) : eventos.length === 0 ? (
-            <div className="py-32 text-center">
-              <CalendarDays className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
-              <p className="text-xl font-medium text-muted-foreground">No hay eventos disponibles</p>
-              {hasActiveFilters && (
-                <div className="mt-4 space-y-2">
-                  <p className="text-sm text-muted-foreground">
-                    No se encontraron eventos con los filtros actuales.
-                  </p>
-                  <Button variant="outline" size="sm" onClick={clearFilters}>
-                    Limpiar filtros
-                  </Button>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateRows: tagsExpanded ? "1fr" : "0fr",
+              transition: "grid-template-rows .35s cubic-bezier(.2,.7,.2,1)",
+            }}
+          >
+            <div style={{ overflow: "hidden" }}>
+              {!loading && availableTags.length > 0 && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 6,
+                    paddingTop: tagsExpanded ? 12 : 0,
+                    transition: "padding-top .25s ease",
+                  }}
+                >
+                  {availableTags.map((tag) => {
+                    const active = selectedTag === tag
+                    return (
+                      <button
+                        key={tag}
+                        onClick={() => setSelectedTag(active ? null : tag)}
+                        style={{
+                          padding: "7px 14px",
+                          borderRadius: 999,
+                          fontFamily: FONT_UI,
+                          fontSize: 12.5,
+                          fontWeight: 500,
+                          cursor: "pointer",
+                          transition: "all .15s ease",
+                          background: active ? JMV.gold : "transparent",
+                          color: active ? "#fff" : JMV.body,
+                          border: "1px solid " + (active ? JMV.gold : JMV.line),
+                          flexShrink: 0,
+                        }}
+                      >
+                        {tag}
+                      </button>
+                    )
+                  })}
                 </div>
               )}
             </div>
-          ) : (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {eventos.map((evento) => (
-                <Card
-                  key={evento.id}
-                  className="overflow-hidden transition-all duration-300 cursor-pointer group hover:shadow-2xl hover:-translate-y-2 bg-card/80 backdrop-blur-sm border-border/50"
+          </div>
+        </div>
+      </section>
+
+      {/* CONTENT */}
+      <section style={{ background: JMV.white, padding: "80px 32px 120px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          {loading ? (
+            <p
+              style={{
+                fontFamily: FONT_BODY,
+                fontSize: 15,
+                color: JMV.mute,
+                textAlign: "center",
+                padding: "60px 0",
+              }}
+            >
+              Cargando eventos...
+            </p>
+          ) : filtered.length === 0 ? (
+            <div
+              style={{
+                padding: "80px 32px",
+                textAlign: "center",
+                border: "1px dashed " + JMV.line,
+                borderRadius: 4,
+                background: JMV.paper,
+              }}
+            >
+              <Serif size={28} weight={300} style={{ display: "block", marginBottom: 10 }}>
+                Sin resultados
+              </Serif>
+              <p style={{ fontFamily: FONT_BODY, fontSize: 14.5, color: JMV.mute, margin: 0 }}>
+                {hasActive
+                  ? "No hay eventos que coincidan con los filtros."
+                  : "Aún no hay eventos publicados."}
+              </p>
+              {hasActive && (
+                <button
+                  onClick={clearFilters}
+                  className="jmv-ghost-pill"
+                  style={{ marginTop: 24, textDecoration: "none" }}
                 >
-                  <div className="relative overflow-hidden aspect-video">
-                    <img
-                      src={
-                        evento.imagenUrl ||
-                        `/placeholder.svg?height=240&width=400&query=${encodeURIComponent(evento.titulo)}`
-                      }
-                      alt={evento.titulo}
-                      className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 transition-opacity duration-300 opacity-0 bg-linear-to-t from-black/60 via-transparent to-transparent group-hover:opacity-100" />
-
-                    {/* Tag badges on image */}
-                    <div className="absolute top-4 left-4 flex flex-wrap gap-1.5">
-                      {evento.etiquetas.slice(0, 2).map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="secondary"
-                          className={`bg-white/90 border text-xs ${getTagColor(tag)}`}
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                      {evento.etiquetas.length > 2 && (
-                        <Badge variant="secondary" className="text-xs bg-white/90">
-                          +{evento.etiquetas.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-
-                    {/* Date chip */}
-                    <div className="absolute px-3 py-1 text-sm font-medium rounded-full top-4 right-4 bg-background/90 text-primary">
-                      {new Date(evento.fecha).toLocaleDateString("es-DO", {
-                        day: "numeric",
-                        month: "short",
-                      })}
-                    </div>
-                  </div>
-
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-xl transition-colors duration-200 line-clamp-2 group-hover:text-primary">
-                      {evento.titulo}
-                    </CardTitle>
-                    <CardDescription className="leading-relaxed line-clamp-2 text-muted-foreground">
-                      {evento.descripcionBreve}
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent className="pt-0">
-                    <div className="mb-6 space-y-3">
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <div className="flex items-center justify-center w-8 h-8 mr-3 rounded-lg bg-primary/10">
-                          <Clock className="w-4 h-4 text-primary" />
-                        </div>
-                        <span>{evento.hora}</span>
-                      </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <div className="flex items-center justify-center w-8 h-8 mr-3 rounded-lg bg-secondary/10">
-                          <MapPin className="w-4 h-4 text-secondary" />
-                        </div>
-                        <span className="line-clamp-1">{evento.ubicacion}</span>
-                      </div>
-                    </div>
-
-                    <Button
-                      asChild
-                      className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 group"
-                    >
-                      <Link href={`/eventos/${evento.slug}`}>
-                        Ver detalles
-                        <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+                  Limpiar filtros <Icon name="arrowUR" size={13} />
+                </button>
+              )}
             </div>
+          ) : (
+            <>
+              {proximos.length > 0 && (
+                <section style={{ marginBottom: pasados.length > 0 ? 96 : 0 }}>
+                  <Reveal delay={0} y={20}>
+                    <div style={{ marginBottom: 36 }}>
+                      <Eyebrow color={JMV.celeste}>Próximamente</Eyebrow>
+                      <Serif size={44} weight={300} style={{ display: "block", marginTop: 16 }}>
+                        Eventos que <span style={{ fontStyle: "italic", color: JMV.celeste }}>vienen</span>.
+                      </Serif>
+                    </div>
+                  </Reveal>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+                      gap: 28,
+                    }}
+                  >
+                    {proximos.map((e, i) => (
+                      <Reveal key={e.id} delay={i * 80} y={28}>
+                        <EventoCardEditorial evento={e} variant="upcoming" />
+                      </Reveal>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {pasados.length > 0 && (
+                <section>
+                  <Reveal delay={0} y={20}>
+                    <div style={{ marginBottom: 36 }}>
+                      <Eyebrow color={JMV.gold}>{proximos.length > 0 ? "Memoria reciente" : "Eventos"}</Eyebrow>
+                      <Serif size={44} weight={300} style={{ display: "block", marginTop: 16 }}>
+                        {proximos.length > 0 ? "Lo que ya " : "Todos los "}
+                        <span style={{ fontStyle: "italic", color: JMV.gold }}>
+                          {proximos.length > 0 ? "celebramos" : "eventos"}
+                        </span>
+                        .
+                      </Serif>
+                    </div>
+                  </Reveal>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+                      gap: 28,
+                    }}
+                  >
+                    {pasados.map((e, i) => (
+                      <Reveal key={e.id} delay={i * 70} y={26}>
+                        <EventoCardEditorial evento={e} />
+                      </Reveal>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </>
           )}
         </div>
       </section>
 
       <FooterSection />
     </div>
+  )
+}
+
+export function EventoCardEditorial({
+  evento,
+  variant = "regular",
+}: {
+  evento: Evento
+  variant?: "regular" | "upcoming"
+}) {
+  const isUpcoming = variant === "upcoming"
+  const date = new Date(evento.fecha)
+  const day = date.getDate()
+  const monthShort = date.toLocaleDateString("es-DO", { month: "short" }).replace(".", "").toUpperCase()
+  const year = date.getFullYear()
+
+  return (
+    <Link
+      href={`/eventos/${evento.slug}`}
+      className="jmv-event-card"
+      style={{
+        cursor: "pointer",
+        background: JMV.white,
+        border: "1px solid " + JMV.line,
+        borderRadius: 4,
+        overflow: "hidden",
+        textDecoration: "none",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
+    >
+      <div
+        style={{
+          position: "relative",
+          aspectRatio: "16 / 11",
+          background: JMV.mist,
+          overflow: "hidden",
+        }}
+      >
+        {evento.imagenUrl ? (
+          <Image
+            src={evento.imagenUrl}
+            alt={evento.titulo}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            style={{ objectFit: "cover", transition: "transform .6s cubic-bezier(.2,.7,.2,1)" }}
+            className="jmv-miembro-img"
+          />
+        ) : (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: `linear-gradient(135deg, ${JMV.gold} 0%, #EFD9A0 100%)`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Icon name="calendar" size={40} color="rgba(255,255,255,0.6)" />
+          </div>
+        )}
+
+        {/* Date block top-left */}
+        <div
+          style={{
+            position: "absolute",
+            top: 14,
+            left: 14,
+            padding: "10px 14px",
+            background: "rgba(255,255,255,0.96)",
+            borderRadius: 6,
+            backdropFilter: "blur(8px)",
+            textAlign: "center",
+            minWidth: 56,
+            boxShadow: "0 4px 14px rgba(0,0,0,0.12)",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: FONT_DISPLAY,
+              fontSize: 24,
+              fontWeight: 400,
+              color: JMV.ink,
+              lineHeight: 1,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {day}
+          </div>
+          <div
+            style={{
+              fontFamily: FONT_UI,
+              fontSize: 9.5,
+              letterSpacing: "0.18em",
+              color: isUpcoming ? JMV.celeste : JMV.gold,
+              marginTop: 3,
+              fontWeight: 600,
+            }}
+          >
+            {monthShort} {year}
+          </div>
+        </div>
+
+        {isUpcoming && (
+          <div
+            style={{
+              position: "absolute",
+              top: 14,
+              right: 14,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "5px 11px",
+              background: JMV.celeste,
+              borderRadius: 999,
+              fontFamily: FONT_UI,
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              color: "#fff",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
+            }}
+          >
+            <span
+              className="jmv-pulse-soft"
+              style={{
+                display: "inline-block",
+                width: 6,
+                height: 6,
+                borderRadius: 999,
+                background: "#fff",
+              }}
+            />
+            Próximo
+          </div>
+        )}
+      </div>
+
+      <div style={{ padding: "20px 22px 22px", display: "flex", flexDirection: "column", flexGrow: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            fontFamily: FONT_UI,
+            fontSize: 11.5,
+            color: JMV.mute,
+            marginBottom: 12,
+          }}
+        >
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+            <Icon name="clock" size={11} color={isUpcoming ? JMV.celeste : JMV.gold} />
+            {evento.hora}
+          </span>
+          <span style={{ color: JMV.line }}>·</span>
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              flex: 1,
+              minWidth: 0,
+            }}
+          >
+            <Icon name="pin" size={11} color={JMV.mute} />
+            <span
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {evento.ubicacion}
+            </span>
+          </span>
+        </div>
+
+        <h3
+          style={{
+            fontFamily: FONT_DISPLAY,
+            fontSize: 22,
+            fontWeight: 400,
+            color: JMV.ink,
+            margin: "0 0 10px",
+            lineHeight: 1.2,
+            letterSpacing: "-0.005em",
+          }}
+        >
+          {evento.titulo}
+        </h3>
+
+        <p
+          style={{
+            fontFamily: FONT_BODY,
+            fontSize: 14,
+            lineHeight: 1.6,
+            color: JMV.body,
+            margin: 0,
+            marginBottom: 16,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          {evento.descripcionBreve}
+        </p>
+
+        {evento.etiquetas.length > 0 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+            {evento.etiquetas.slice(0, 3).map((t) => (
+              <Tag key={t} tone={isUpcoming ? "celeste" : "gold"}>
+                {t}
+              </Tag>
+            ))}
+            {evento.etiquetas.length > 3 && (
+              <Tag tone="neutral">+{evento.etiquetas.length - 3}</Tag>
+            )}
+          </div>
+        )}
+
+        <div
+          style={{
+            marginTop: "auto",
+            paddingTop: 12,
+            borderTop: "1px solid " + JMV.line,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontFamily: FONT_UI,
+            fontSize: 12.5,
+            color: JMV.ink,
+            fontWeight: 500,
+          }}
+        >
+          <span>Ver detalles</span>
+          <Icon name="arrowUR" size={13} color={isUpcoming ? JMV.celeste : JMV.gold} />
+        </div>
+      </div>
+    </Link>
   )
 }

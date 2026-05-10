@@ -1,17 +1,17 @@
 import Navbar from "@/src/components/Navbar"
 import { FooterSection } from "@/src/components/shared/FooterSection"
-import { HeroSection } from "./HeroSection"
-import { ModulesSection } from "./ModulesSection"
-import { ResourcesSection } from "./ResourcesSection"
+import { HeroFormacion } from "./HeroFormacion"
+import { ModulosFormacionSection } from "./ModulosFormacionSection"
+import { RecursosFormacionSection } from "./RecursosFormacionSection"
+import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 
 export default function FormacionPage() {
   return (
-    <div className="min-h-screen">
+    <div className="jmv-kit-root" style={{ minHeight: "100vh", background: "#fff" }}>
       <Navbar />
-      <HeroSection />
-      <ModulesSection />
-      {/* <FormacionSection /> */}
-      <ResourcesSection />
+      <HeroFormacion />
+      <ModulosFormacionSection />
+      <RecursosFormacionSection />
       <FooterSection />
     </div>
   )

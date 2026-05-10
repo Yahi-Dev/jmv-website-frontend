@@ -9,15 +9,33 @@ import { getClientUser, signOut } from "@/src/lib/client-auth"
 import { Button, Icon, Logo } from "@/src/features/home/ui-kit/Primitives"
 import { JMV, FONT_DISPLAY, FONT_UI } from "@/src/features/home/ui-kit/tokens"
 
-const links = [
+type SubLink = { href: string; label: string }
+type NavLink = { href: string; id: string; label: string; submenu?: SubLink[] }
+
+const links: NavLink[] = [
   { href: "/", id: "home", label: "Inicio" },
   { href: "/quienes-somos", id: "about", label: "Quiénes Somos" },
   { href: "/formacion", id: "formacion", label: "Formación" },
   { href: "/libro-oracion", id: "libro", label: "Libro de Oración" },
   { href: "/centros", id: "centros", label: "Centros" },
   { href: "/consejos", id: "consejo", label: "Consejo" },
-  { href: "/noticias", id: "actualidad", label: "Actualidad" },
+  {
+    href: "/noticias",
+    id: "actualidad",
+    label: "Actualidad",
+    submenu: [
+      { href: "/noticias", label: "Noticias" },
+      { href: "/actividades", label: "Actividades" },
+      { href: "/eventos", label: "Eventos" },
+    ],
+  },
 ]
+
+// "Active" includes children of a submenu so the parent stays highlighted.
+function isLinkActive(l: NavLink, pathname: string) {
+  if (pathname === l.href) return true
+  return l.submenu?.some((s) => s.href === pathname) ?? false
+}
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -25,11 +43,13 @@ export default function Navbar() {
   const [user, setUser] = useState<any>(null)
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null)
 
   const linksContainerRef = useRef<HTMLDivElement>(null)
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const indicatorRef = useRef<HTMLSpanElement>(null)
   const initializedRef = useRef(false)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -42,15 +62,13 @@ export default function Navbar() {
     getClientUser().then(setUser).catch(() => setUser(null))
   }, [pathname])
 
-  // Move the indicator to the active link using direct DOM mutation. The
-  // transition lives in jmv-ui-kit.css so React can't clobber it on re-render.
   useEffect(() => {
     const moveIndicator = () => {
       const container = linksContainerRef.current
       const indicator = indicatorRef.current
       if (!container || !indicator) return
 
-      const activeIndex = links.findIndex((l) => l.href === pathname)
+      const activeIndex = links.findIndex((l) => isLinkActive(l, pathname))
       if (activeIndex === -1) {
         indicator.style.opacity = "0"
         return
@@ -65,32 +83,37 @@ export default function Navbar() {
       const width = linkRect.width
 
       if (!initializedRef.current) {
-        // First paint: snap into place without animation via CSS class
         indicator.classList.add("jmv-nav-indicator--instant")
         indicator.style.left = `${left}px`
         indicator.style.width = `${width}px`
         indicator.style.opacity = "1"
-        indicator.getBoundingClientRect() // force reflow
+        indicator.getBoundingClientRect()
         indicator.classList.remove("jmv-nav-indicator--instant")
         initializedRef.current = true
       } else {
-        // Subsequent navigations: CSS transition slides the bar smoothly
         indicator.style.left = `${left}px`
         indicator.style.width = `${width}px`
         indicator.style.opacity = "1"
       }
     }
 
-    // Wait one frame so fonts/layout are stable before measuring
     const raf = requestAnimationFrame(moveIndicator)
-
-    // Also re-measure on resize in case the layout reflows
     window.addEventListener("resize", moveIndicator)
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener("resize", moveIndicator)
     }
   }, [pathname])
+
+  // Hover open + delayed close so the cursor can travel from trigger to panel
+  const openDropdown = (id: string) => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    setOpenDropdownId(id)
+  }
+  const closeDropdownDeferred = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    closeTimerRef.current = setTimeout(() => setOpenDropdownId(null), 140)
+  }
 
   const handleLogout = async () => {
     try {
@@ -157,8 +180,11 @@ export default function Navbar() {
           style={{ display: "flex", gap: 28, fontFamily: FONT_UI, fontSize: 13.5, position: "relative" }}
         >
           {links.map((l, i) => {
-            const active = pathname === l.href
-            return (
+            const active = isLinkActive(l, pathname)
+            const hasSubmenu = !!l.submenu?.length
+            const isOpen = openDropdownId === l.id
+
+            const trigger = (
               <Link
                 key={l.href}
                 href={l.href}
@@ -170,10 +196,112 @@ export default function Navbar() {
                   fontWeight: active ? 600 : 450,
                   paddingBottom: 4,
                   transition: "color .15s",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
                 }}
+                aria-haspopup={hasSubmenu ? "menu" : undefined}
+                aria-expanded={hasSubmenu ? isOpen : undefined}
               >
                 {l.label}
+                {hasSubmenu && (
+                  <span
+                    aria-hidden
+                    style={{
+                      display: "inline-flex",
+                      transition: "transform .2s ease",
+                      transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      marginTop: 1,
+                    }}
+                  >
+                    <Icon name="chevron" size={11} />
+                  </span>
+                )}
               </Link>
+            )
+
+            if (!hasSubmenu) return trigger
+
+            return (
+              <div
+                key={l.href}
+                style={{ position: "relative" }}
+                onMouseEnter={() => openDropdown(l.id)}
+                onMouseLeave={closeDropdownDeferred}
+              >
+                {trigger}
+
+                {/* Dropdown panel — wrapper has paddingTop so the cursor
+                    bridge between trigger and panel doesn't leave the area. */}
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    paddingTop: 14,
+                    pointerEvents: isOpen ? "auto" : "none",
+                  }}
+                >
+                  <div
+                    role="menu"
+                    style={{
+                      minWidth: 200,
+                      background: JMV.white,
+                      border: "1px solid " + JMV.line,
+                      borderRadius: 8,
+                      padding: 6,
+                      boxShadow: "0 14px 40px -12px rgba(11,16,32,0.18)",
+                      opacity: isOpen ? 1 : 0,
+                      transform: isOpen ? "translateY(0)" : "translateY(-8px)",
+                      transition: "opacity .2s ease, transform .2s ease",
+                    }}
+                  >
+                    {l.submenu!.map((s) => {
+                      const subActive = pathname === s.href
+                      return (
+                        <Link
+                          key={s.href}
+                          href={s.href}
+                          role="menuitem"
+                          onClick={() => setOpenDropdownId(null)}
+                          className="jmv-dropdown-item"
+                          style={{
+                            display: "block",
+                            padding: "10px 14px",
+                            borderRadius: 5,
+                            fontFamily: FONT_UI,
+                            fontSize: 13.5,
+                            color: subActive ? JMV.ink : JMV.body,
+                            fontWeight: subActive ? 600 : 450,
+                            background: subActive ? JMV.mist : "transparent",
+                            textDecoration: "none",
+                            transition: "background .15s, color .15s",
+                            position: "relative",
+                          }}
+                        >
+                          {subActive && (
+                            <span
+                              aria-hidden
+                              style={{
+                                position: "absolute",
+                                left: 4,
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                width: 3,
+                                height: 16,
+                                borderRadius: 2,
+                                background: JMV.gold,
+                              }}
+                            />
+                          )}
+                          {s.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
             )
           })}
 
@@ -262,24 +390,62 @@ export default function Navbar() {
             <SheetContent side="right" style={{ paddingTop: 40, overflowY: "auto", width: 288 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 4, fontFamily: FONT_UI }}>
                 {links.map((l) => {
-                  const active = pathname === l.href
+                  const active = isLinkActive(l, pathname)
                   return (
-                    <Link
-                      key={l.href}
-                      href={l.href}
-                      onClick={() => setMobileOpen(false)}
-                      style={{
-                        padding: "10px 12px",
-                        borderRadius: 6,
-                        textDecoration: "none",
-                        color: active ? JMV.ink : JMV.mute,
-                        fontWeight: active ? 600 : 450,
-                        fontSize: 14,
-                        background: active ? JMV.mist : "transparent",
-                      }}
-                    >
-                      {l.label}
-                    </Link>
+                    <div key={l.href}>
+                      <Link
+                        href={l.href}
+                        onClick={() => setMobileOpen(false)}
+                        style={{
+                          padding: "10px 12px",
+                          borderRadius: 6,
+                          textDecoration: "none",
+                          color: active ? JMV.ink : JMV.mute,
+                          fontWeight: active ? 600 : 450,
+                          fontSize: 14,
+                          background: active ? JMV.mist : "transparent",
+                          display: "block",
+                        }}
+                      >
+                        {l.label}
+                      </Link>
+                      {l.submenu && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 2, marginBottom: 6, paddingLeft: 16 }}>
+                          {l.submenu.map((s) => {
+                            const subActive = pathname === s.href
+                            return (
+                              <Link
+                                key={s.href}
+                                href={s.href}
+                                onClick={() => setMobileOpen(false)}
+                                style={{
+                                  padding: "8px 12px",
+                                  borderRadius: 5,
+                                  textDecoration: "none",
+                                  color: subActive ? JMV.ink : JMV.mute,
+                                  fontWeight: subActive ? 600 : 450,
+                                  fontSize: 13,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 8,
+                                }}
+                              >
+                                <span
+                                  aria-hidden
+                                  style={{
+                                    width: 4,
+                                    height: 4,
+                                    borderRadius: 999,
+                                    background: subActive ? JMV.gold : JMV.line,
+                                  }}
+                                />
+                                {s.label}
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
                   )
                 })}
                 <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px solid " + JMV.line }}>

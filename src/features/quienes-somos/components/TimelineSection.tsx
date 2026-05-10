@@ -1,4 +1,5 @@
 import { Eyebrow, Serif } from "@/src/features/home/ui-kit/Primitives"
+import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 
 type Milestone = {
@@ -45,6 +46,7 @@ export function TimelineSection() {
     <section style={{ background: JMV.white, padding: "120px 32px" }}>
       <div style={{ maxWidth: 1080, margin: "0 auto" }}>
         {/* Header */}
+        <Reveal delay={0} y={24}>
         <div style={{ textAlign: "center", marginBottom: 80, maxWidth: 640, marginInline: "auto" }}>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <Eyebrow align="center">Nuestra Trayectoria</Eyebrow>
@@ -64,12 +66,13 @@ export function TimelineSection() {
             Un recorrido por los hitos más importantes en la historia de JMV República Dominicana.
           </p>
         </div>
+        </Reveal>
 
         {/* Timeline rows — same rhythm as CarismaSection */}
         <div style={{ borderTop: "1px solid " + JMV.line }}>
           {milestones.map((m, i) => (
+            <Reveal key={i} delay={i * 100} y={22}>
             <div
-              key={i}
               style={{
                 display: "grid",
                 gridTemplateColumns: "180px 1fr 1.2fr",
@@ -118,6 +121,7 @@ export function TimelineSection() {
                 {m.body}
               </p>
             </div>
+            </Reveal>
           ))}
         </div>
       </div>

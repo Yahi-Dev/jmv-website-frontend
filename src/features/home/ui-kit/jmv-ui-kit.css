@@ -34,6 +34,94 @@
 .jmv-nav-link { transition: color 0.15s; }
 .jmv-nav-link:hover { color: #0B1020; }
 
+/* Hide scrollbar on horizontally-scrollable chip rows. The row is still
+   scrollable via wheel/touch/drag, but the bar doesn't take vertical space
+   and doesn't visually clutter the sticky filters. */
+.jmv-chip-scroll::-webkit-scrollbar { display: none; }
+.jmv-chip-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Editorial article body — for HTML content rendered from TipTap / RichText.
+   Used in /noticias/[slug] (and any other long-form article page). */
+.jmv-article-body { color: #4B5563; }
+.jmv-article-body > * + * { margin-top: 1.1em; }
+.jmv-article-body h1,
+.jmv-article-body h2,
+.jmv-article-body h3,
+.jmv-article-body h4 {
+  font-family: 'Fraunces', 'Newsreader', Georgia, serif;
+  font-weight: 400;
+  color: #0B1020;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+}
+.jmv-article-body h1 { font-size: 2.2rem; }
+.jmv-article-body h2 { font-size: 1.85rem; }
+.jmv-article-body h3 { font-size: 1.5rem; }
+.jmv-article-body h4 { font-size: 1.25rem; }
+.jmv-article-body p { margin: 0; line-height: 1.8; }
+.jmv-article-body strong { color: #0B1020; font-weight: 600; }
+.jmv-article-body em { font-style: italic; }
+.jmv-article-body a {
+  color: #19168D;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color .15s;
+}
+.jmv-article-body a:hover { color: #139FCC; }
+.jmv-article-body ul,
+.jmv-article-body ol { padding-left: 1.4em; margin: 0; }
+.jmv-article-body li { margin: 0.35em 0; line-height: 1.7; }
+.jmv-article-body ul li::marker { color: #F3A736; }
+.jmv-article-body ol li::marker { color: #19168D; font-weight: 600; }
+.jmv-article-body blockquote {
+  margin: 1.4em 0;
+  padding: 4px 0 4px 22px;
+  border-left: 3px solid #F3A736;
+  font-family: 'Fraunces', 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.25em;
+  line-height: 1.5;
+  color: #0B1020;
+}
+.jmv-article-body code {
+  font-family: 'Menlo', 'Monaco', monospace;
+  font-size: 0.92em;
+  background: #F1F1F4;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #0B1020;
+}
+.jmv-article-body pre {
+  background: #F1F1F4;
+  border: 1px solid #E7E7EC;
+  border-radius: 4px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-size: 0.92em;
+  line-height: 1.6;
+}
+.jmv-article-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 1.4em 0;
+}
+.jmv-article-body hr {
+  border: none;
+  border-top: 1px solid #E7E7EC;
+  margin: 2em 0;
+}
+
+/* Navbar dropdown items — subtle hover bg + shift on inactive items */
+.jmv-dropdown-item:hover {
+  background: #F1F1F4 !important;
+  color: #0B1020 !important;
+}
+
 /* Sliding gold underline indicator — transition lives here so React can't
    overwrite it on re-render. Direct DOM mutations of left/width trigger it. */
 .jmv-nav-indicator {
@@ -95,6 +183,64 @@
   transition: background-position .55s cubic-bezier(.4,0,.2,1);
 }
 .jmv-values-row:hover .jmv-values-word { background-position: 0 0; }
+
+/* Council member card — richer hover with overlay slide-up */
+.jmv-miembro-card {
+  position: relative;
+}
+.jmv-miembro-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 50px -22px rgba(25, 22, 141, 0.35);
+  border-color: rgba(25, 22, 141, 0.30) !important;
+}
+.jmv-miembro-card:hover .jmv-miembro-img {
+  transform: scale(1.06);
+}
+/* Dark overlay that slides up over the photo on hover */
+.jmv-miembro-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 22px 22px 18px;
+  background: linear-gradient(180deg, rgba(25,22,141,0) 0%, rgba(25,22,141,0.85) 70%, rgba(11,16,32,0.95) 100%);
+  color: #fff;
+  transform: translateY(102%);
+  transition: transform .45s cubic-bezier(.2,.7,.2,1);
+  pointer-events: none;
+}
+.jmv-miembro-card:hover .jmv-miembro-overlay { transform: translateY(0); }
+
+/* Featured coordinator card — bigger glow + image float */
+.jmv-coordinador-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform .4s ease, box-shadow .4s ease;
+}
+.jmv-coordinador-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 30px 70px -28px rgba(243, 167, 54, 0.4);
+}
+.jmv-coordinador-card .jmv-coordinador-photo {
+  transition: transform .8s cubic-bezier(.2,.7,.2,1);
+}
+.jmv-coordinador-card:hover .jmv-coordinador-photo {
+  transform: scale(1.04);
+}
+
+/* Decorative slow-spin / float for hero ornaments */
+@keyframes jmv-spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes jmv-float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-12px) translateX(6px); }
+}
+@keyframes jmv-pulse-soft {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.08); }
+}
+.jmv-spin-slow { animation: jmv-spin-slow 60s linear infinite; }
+.jmv-float-slow { animation: jmv-float 8s ease-in-out infinite; }
+.jmv-pulse-soft { animation: jmv-pulse-soft 4s ease-in-out infinite; }
 
 /* Footer hover effects */
 .jmv-ft-link:hover { color: #F3A736 !important; }
