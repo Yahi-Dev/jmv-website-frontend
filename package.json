@@ -11,6 +11,9 @@
     "db:reset": "prisma migrate reset && npm run db:seed",
     "create:feature": "node ./src/scripts/create-feature.mjs"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "^6.19.2",
