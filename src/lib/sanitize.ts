@@ -1,4 +1,4 @@
-import DOMPurify from "isomorphic-dompurify"
+import sanitizeHtml from "sanitize-html"
 
 /**
  * Etiquetas permitidas para HTML generado por el editor MinimalTiptap.
@@ -32,12 +32,14 @@ const ALLOWED_TAGS = [
   "div",
 ]
 
-const ALLOWED_ATTR = ["href", "src", "alt", "title", "target", "rel", "class"]
-
 /**
  * Sanitiza HTML producido por un editor enriquecido (TipTap) antes de
- * persistirlo. Bloquea <script>, atributos `on*`, `javascript:` URIs y
- * cualquier etiqueta/atributo fuera de la lista permitida.
+ * persistirlo. Bloquea <script>, <style>, <iframe>, atributos `on*`,
+ * `style`, `javascript:` URIs y cualquier etiqueta/atributo fuera de la
+ * lista permitida.
+ *
+ * Usa `sanitize-html` (puro, sin jsdom) para que funcione de forma
+ * confiable en el runtime serverless.
  *
  * Devuelve `null` si la entrada es nula/indefinida o si tras sanitizar
  * queda vacío.
@@ -47,13 +49,17 @@ export function sanitizeRichHtml(input: unknown): string | null {
   const trimmed = input.trim()
   if (!trimmed) return null
 
-  const clean = DOMPurify.sanitize(trimmed, {
-    ALLOWED_TAGS,
-    ALLOWED_ATTR,
-    ALLOW_DATA_ATTR: false,
-    KEEP_CONTENT: true,
-    FORBID_TAGS: ["script", "style", "iframe", "object", "embed", "form"],
-    FORBID_ATTR: ["style", "onerror", "onload", "onclick"],
+  const clean = sanitizeHtml(trimmed, {
+    allowedTags: ALLOWED_TAGS,
+    allowedAttributes: {
+      "*": ["href", "src", "alt", "title", "target", "rel", "class"],
+    },
+    // Solo esquemas seguros; bloquea javascript: y similares.
+    allowedSchemes: ["http", "https", "mailto", "tel"],
+    allowedSchemesByTag: { img: ["http", "https", "data"] },
+    allowProtocolRelative: false,
+    // Elimina por completo el contenido de etiquetas peligrosas.
+    nonTextTags: ["script", "style", "textarea", "noscript", "iframe"],
   })
 
   return clean.trim() || null
