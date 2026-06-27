@@ -60,6 +60,18 @@ export function sanitizeRichHtml(input: unknown): string | null {
     allowProtocolRelative: false,
     // Elimina por completo el contenido de etiquetas peligrosas.
     nonTextTags: ["script", "style", "textarea", "noscript", "iframe"],
+    // Defensa en profundidad contra "tab-nabbing": todo enlace recibe
+    // rel="noopener noreferrer" para que la pestaña abierta no pueda
+    // manipular window.opener ni filtrar el Referer del sitio.
+    transformTags: {
+      a: (tagName, attribs) => ({
+        tagName,
+        attribs: {
+          ...attribs,
+          rel: "noopener noreferrer",
+        },
+      }),
+    },
   })
 
   return clean.trim() || null

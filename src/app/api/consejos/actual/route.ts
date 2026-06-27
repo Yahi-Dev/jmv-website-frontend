@@ -3,33 +3,41 @@ import { NextRequest } from 'next/server'
 import prisma from '@/src/lib/prisma'
 import { sendBadRequest, sendNotFound, sendServerError, sendSuccess } from '@/src/utils/httpResponse'
 import { requireAdmin } from "@/src/lib/server-auth"
+import { getPublicCached } from "@/src/lib/redis"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const consejoActual = await prisma.consejoNacional.findFirst({
-      where: { 
-        isActual: true,
-        deleted: false
-      },
-      include: {
-        miembros: {
-          where: { deleted: false },
-          include: {
-            user: {
-              select: {
-                name: true,
-                email: true,
-                image: true
+    // El consejo actual cambia muy rara vez: se sirve desde caché Upstash a
+    // visitantes anónimos (TTL 120s). Los administradores ven datos frescos.
+    const consejoActual = await getPublicCached(
+      req,
+      'cache:consejo:actual',
+      () => prisma.consejoNacional.findFirst({
+        where: {
+          isActual: true,
+          deleted: false
+        },
+        include: {
+          miembros: {
+            where: { deleted: false },
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  email: true,
+                  image: true
+                }
               }
-            }
-          },
-          orderBy: [
-            { cargo: 'asc' }, // Ordenar por cargo
-            { estado: 'asc' }  // Titulares primero
-          ]
+            },
+            orderBy: [
+              { cargo: 'asc' }, // Ordenar por cargo
+              { estado: 'asc' }  // Titulares primero
+            ]
+          }
         }
-      }
-    })
+      }),
+      120
+    )
 
     if (!consejoActual) {
       return sendNotFound('No hay consejo actual configurado')
