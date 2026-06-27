@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getSessionCookie } from 'better-auth/cookies'
 import { loginRateLimit } from './lib/rate-limit'
 import { sendTooManyRequests } from './utils/httpResponse';
 
@@ -12,6 +13,19 @@ const RATE_LIMITED_ENDPOINTS = {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const method = request.method;
+
+  // ── Protección del panel admin (gate optimista por cookie de sesión en el edge) ──
+  // La validación real (DB) la hacen el guard server-side de cada ruta /api y el layout.
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    const sessionCookie = getSessionCookie(request);
+    if (!sessionCookie) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.search = '';
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next();
+  }
 
   // Verificar si es un endpoint protegido
   const endpointConfig = RATE_LIMITED_ENDPOINTS[pathname as keyof typeof RATE_LIMITED_ENDPOINTS];
@@ -80,6 +94,8 @@ function getClientIP(request: NextRequest): string | null {
 
 export const config = {
   matcher: [
+    '/admin',
+    '/admin/:path*',
     '/api/auth/sign-in/email',
     '/api/auth/forgot-password',
     '/api/auth/reset-password'

@@ -45,7 +45,9 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: false,
-    allowSignUp: true,
+    // Registro público deshabilitado: los administradores se crean por seed/invitación.
+    // (Evita que cualquiera se auto-registre y obtenga una sesión válida.)
+    allowSignUp: false,
 
     sendResetPassword: async ({ user, url }) => {
       console.log("📧 Enviando email de reset password a:", user.email);
