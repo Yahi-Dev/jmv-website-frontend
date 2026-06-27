@@ -316,6 +316,8 @@ model Testimonios {
   deletedDate  DateTime?
   deletedById  String?
   deletedByIp  String?
+
+  @@index([deleted, createdDate])
 }
 
 model Formacion {
@@ -325,6 +327,8 @@ model Formacion {
   modulo       ModulosFormacion?
   enlace      String?
   ruta        String?
+
+  @@index([deleted, createdDate])
   
 
   createdDate  DateTime  @default(now())
@@ -355,6 +359,7 @@ model ConsejoNacional {
   deletedDate  DateTime?
   deletedById  String?
 
+  @@index([deleted, isActual, fechaInicio])
   @@map("consejos_nacionales")
 }
 
@@ -386,6 +391,7 @@ model MiembroConsejo {
   deletedDate  DateTime?
   deletedById  String?
 
+  @@index([consejoId, deleted])
   @@map("miembros_consejo")
 }
 
@@ -440,6 +446,7 @@ model Evento {
   deletedDate  DateTime?
   deletedById  String?
 
+  @@index([deleted, fecha])
   @@map("eventos")
 }
 
@@ -465,6 +472,8 @@ model Noticia {
   deletedDate  DateTime?
   deletedById  String?
 
+  @@index([deleted, fecha])
+  @@index([deleted, tipo, fecha])
   @@map("noticias")
 }
 
@@ -507,6 +516,7 @@ model CentroJmv {
   deletedDate  DateTime?
   deletedById  String?
 
+  @@index([deleted, nombreParroquia])
   @@map("centros_jmv")
 }
 
@@ -531,6 +541,7 @@ model ActividadJmv {
   deletedDate  DateTime?
   deletedById  String?
 
+  @@index([deleted, centroId, fecha])
   @@map("actividades_jmv")
 }
 
@@ -552,6 +563,7 @@ model MiembroCentroJmv {
   deletedDate  DateTime?
   deletedById  String?
 
+  @@index([centroId, deleted])
   @@map("miembros_centro_jmv")
 }
 
@@ -575,6 +587,7 @@ model ComunidadJmv {
   deletedDate  DateTime?
   deletedById  String?
 
+  @@index([centroId, deleted])
   @@map("comunidades_jmv")
 }
 
