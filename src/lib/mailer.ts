@@ -18,7 +18,8 @@ export async function sendEmail({ to, subject, text, html }: EmailOptions) {
     }
 
     const port = parseInt(process.env.MAIL_PORT as string, 10);
-    const isSsl = port === 465; 
+    const isSsl = port === 465;
+    const isLocal = process.env.MAIL_HOST === "127.0.0.1" || process.env.MAIL_HOST === "localhost";
     const transportConfig: any = {
       host: process.env.MAIL_HOST,
       port,
@@ -27,9 +28,11 @@ export async function sendEmail({ to, subject, text, html }: EmailOptions) {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD,
       },
+      // Validar el certificado TLS del servidor SMTP (evita MITM). Solo se
+      // desactiva para SMTP local de desarrollo.
       tls: {
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: !isLocal,
+      },
     };
 
     // Handle Herd Pro authentication - try multiple approaches
@@ -62,13 +65,7 @@ export async function sendEmail({ to, subject, text, html }: EmailOptions) {
     // Send email
     const info = await transporter.sendMail(mailOptions);
 
-    console.log("✅ Email sent successfully:", {
-      messageId: info.messageId,
-      to,
-      subject,
-      accepted: info.accepted,
-      rejected: info.rejected,
-    });
+    console.log("Email enviado:", info.messageId);
 
     return {
       success: true,
@@ -76,11 +73,7 @@ export async function sendEmail({ to, subject, text, html }: EmailOptions) {
       info,
     };
   } catch (error) {
-    console.error("❌ Failed to send email:", {
-      error: error instanceof Error ? error.message : "Unknown error",
-      to,
-      subject,
-    });
+    console.error("Fallo al enviar email:", error instanceof Error ? error.message : "Unknown error");
 
     throw new Error(`Email sending failed: ${error instanceof Error ? error.message : "Unknown error"}`);
   }

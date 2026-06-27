@@ -50,8 +50,6 @@ export const auth = betterAuth({
     allowSignUp: false,
 
     sendResetPassword: async ({ user, url }) => {
-      console.log("📧 Enviando email de reset password a:", user.email);
-      
       try {
         const html = resetPasswordTemplate({
           url,
@@ -61,16 +59,14 @@ export const auth = betterAuth({
           supportEmail: "soporte@jmv.org",
         });
 
-        const emailResult = await sendEmail({
+        await sendEmail({
           to: user.email,
           subject: "Restablece tu contraseña - JMV",
           html,
           text: resetPasswordText({ url, appName: "JMV República Dominicana" }),
         });
-
-        console.log("✅ Email de reset password enviado:", emailResult);
       } catch (error) {
-        console.error("❌ Error enviando email de reset password:", error);
+        console.error("Error enviando email de reset password");
         throw error; // Relanzar para que Better Auth maneje el error
       }
     },
@@ -78,41 +74,23 @@ export const auth = betterAuth({
     resetPassword: {
       expiresIn: 60 * 60,
       onSuccess: async (user: any) => {
-        console.log("🔄 Ejecutando onSuccess para reset password");
-        console.log("📋 Datos del usuario recibidos:", {
-          id: user?.id,
-          email: user?.email,
-          name: user?.name,
-          firstName: user?.firstName
-        });
-
         try {
           let userEmail = user?.email;
           let userName = user?.firstName || user?.name;
 
-          // Si no tenemos email, buscar en la base de datos
+          // Si no tenemos email, resolver por id (sin heurísticas que adivinen).
           if (!userEmail && user?.id) {
-            console.log("🔍 Buscando usuario en BD con ID:", user.id);
             const dbUser = await prisma.user.findUnique({
               where: { id: user.id },
               select: { email: true, firstName: true, name: true },
             });
-            
             if (dbUser) {
               userEmail = dbUser.email;
               userName = dbUser.firstName || dbUser.name || userName;
-              console.log("✅ Usuario encontrado en BD:", { email: userEmail, name: userName });
-            } else {
-              console.warn("⚠️ Usuario no encontrado en BD con ID:", user.id);
             }
           }
 
-          if (!userEmail) {
-            console.error("❌ No se pudo obtener el email del usuario");
-            return;
-          }
-
-          console.log("📧 Preparando email de confirmación para:", userEmail);
+          if (!userEmail) return;
 
           const html = passwordUpdatedTemplate({
             userName: userName || "Usuario JMV",
@@ -121,19 +99,14 @@ export const auth = betterAuth({
             supportEmail: "soporte@jmv.org",
           });
 
-          const emailResult = await sendEmail({
+          await sendEmail({
             to: userEmail,
             subject: "Contraseña actualizada - JMV",
             html,
             text: passwordUpdatedText({ appName: "JMV República Dominicana" }),
           });
-
-          console.log("✅ Email de confirmación enviado exitosamente a:", userEmail);
-          console.log("📨 Resultado del envío:", emailResult);
-
-        } catch (err) {
-          console.error("💥 Error crítico en onSuccess:", err);
-          // No relanzar el error para no interrumpir el flujo de reset
+        } catch {
+          // No interrumpir el flujo de reset por un fallo de email.
         }
       },
     },
