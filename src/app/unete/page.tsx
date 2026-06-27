@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { toast } from "sonner"
 import Navbar from "@/src/components/Navbar"
 import { FooterSection } from "@/src/components/shared/FooterSection"
 import { Eyebrow, Icon, Serif, type IconName } from "@/src/features/home/ui-kit/Primitives"
@@ -122,10 +123,35 @@ export default function UnetePage() {
     e.preventDefault()
     if (!isValid) return
     setSubmitting(true)
-    // TODO: wire up real API endpoint
-    await new Promise((r) => setTimeout(r, 800))
-    setSubmitting(false)
-    setSubmitted(true)
+    try {
+      const res = await fetch("/api/unete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: form.firstName.trim(),
+          apellidos: form.lastName.trim(),
+          email: form.email.trim(),
+          telefono: form.phone.trim(),
+          edad: Number(form.age),
+          provincia: form.provincia,
+          parroquia: form.parroquia.trim() || undefined,
+          motivacion: form.motivacion.trim(),
+          disponibilidad: form.disponibilidad || undefined,
+          aceptaTerminos: form.terms,
+        }),
+      })
+      const json = await res.json().catch(() => null)
+      if (!res.ok) {
+        toast.error(json?.message || "No se pudo enviar tu solicitud. Intenta nuevamente.")
+        setSubmitting(false)
+        return
+      }
+      setSubmitting(false)
+      setSubmitted(true)
+    } catch {
+      toast.error("Ocurrió un error de conexión. Intenta nuevamente.")
+      setSubmitting(false)
+    }
   }
 
   return (

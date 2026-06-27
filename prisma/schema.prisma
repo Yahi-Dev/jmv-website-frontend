@@ -608,3 +608,33 @@ model EtapaComunidadJmv {
 
   @@map("etapas_comunidad_jmv")
 }
+
+// Solicitudes enviadas desde la página pública /unete.
+model SolicitudUnete {
+  id             Int       @id @default(autoincrement())
+  nombre         String    @db.VarChar(80)
+  apellidos      String    @db.VarChar(80)
+  email          String    @db.VarChar(150)
+  telefono       String    @db.VarChar(40)
+  edad           Int
+  provincia      String    @db.VarChar(80)
+  parroquia      String?   @db.VarChar(150)
+  motivacion     String    @db.VarChar(1000)
+  disponibilidad String?   @db.VarChar(80)
+
+  // nueva | contactada | descartada
+  estado         String    @default("nueva") @db.VarChar(20)
+
+  createdDate    DateTime  @default(now())
+  createdByIp    String?
+
+  modifiedDate   DateTime?
+  modifiedById   String?
+
+  deleted        Boolean   @default(false)
+  deletedDate    DateTime?
+  deletedById    String?
+
+  @@index([deleted, createdDate])
+  @@map("solicitudes_unete")
+}

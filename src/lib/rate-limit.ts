@@ -336,3 +336,10 @@ export const loginRateLimit = new RateLimitService({
   windowMs: 15 * 60 * 1000, // 15 minutos
   blockDurationMs: 60 * 60 * 1000, // 1 hora
 })
+
+// Configuración para el formulario público de "Únete" (anti-spam).
+export const uneteRateLimit = new RateLimitService({
+  maxAttempts: 5, // 5 solicitudes
+  windowMs: 60 * 60 * 1000, // por hora
+  blockDurationMs: 60 * 60 * 1000, // bloqueo de 1 hora al excederse
+})
