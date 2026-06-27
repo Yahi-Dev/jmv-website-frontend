@@ -4,38 +4,38 @@ import { sendSuccess, sendBadRequest, sendNotFound, sendServerError } from '@/sr
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id: idParam } = await params;
   try {
-    const id = Number(context.params.id);
+    const id = Number(idParam);
 
     if (Number.isNaN(id) || !Number.isInteger(id) || id <= 0) {
       return sendBadRequest('ID de formación inválido', {
-        idProvided: context.params.id,
+        idProvided: idParam,
         expected: 'Número entero positivo',
-        example: '/api/formacion/123'
+        example: '/api/formacion/123',
       });
     }
-    
+
     const formacion = await prisma.formacion.findUnique({
       where: { id },
     });
 
     if (!formacion) {
-      return sendNotFound(`No se encontró la formación con ID ${context.params.id}`);
+      return sendNotFound(`No se encontró la formación con ID ${idParam}`);
     }
 
     if (formacion.deleted) {
-      return sendNotFound(`La formación con ID ${context.params.id} fue eliminada`);
+      return sendNotFound(`La formación con ID ${idParam} fue eliminada`);
     }
 
-    return sendSuccess({
-      Data: formacion,
-      Total: 1
-    }, `Formación "${formacion.titulo}" obtenida exitosamente`);
-
+    return sendSuccess(
+      { Data: formacion, Total: 1 },
+      `Formación "${formacion.titulo}" obtenida exitosamente`
+    );
   } catch (error) {
-    console.error('[GET_FORMACION_BY_ID_ERROR] ID:', context.params.id, error);
-    return sendServerError(`Error al obtener la formación con ID ${context.params.id}`, error);
+    console.error('[GET_FORMACION_BY_ID_ERROR]', error);
+    return sendServerError(`Error al obtener la formación con ID ${idParam}`, error);
   }
 }

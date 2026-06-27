@@ -9,20 +9,20 @@ import { sendSuccess, sendBadRequest, sendNotFound, sendServerError } from '@/sr
  */
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id: idParam } = await params;
   try {
-    const id = Number(context.params.id);
+    const id = Number(idParam);
 
-    // ✅ Validación robusta del ID
     if (isNaN(id) || !Number.isInteger(id) || id <= 0) {
       return sendBadRequest('ID de testimonio inválido', {
-        idProvided: context.params.id,
+        idProvided: idParam,
         expected: 'Número entero positivo',
-        example: '/api/testimonios/123'
+        example: '/api/testimonios/123',
       });
     }
-    
+
     const testimonio = await prisma.testimonios.findUnique({
       where: { id },
       select: {
@@ -34,28 +34,21 @@ export async function GET(
         deleted: true,
         createdDate: true,
         modifiedDate: true,
-        createdById: true,
-        modifiedById: true,
-        // Campos de auditoría si son necesarios
-      }
+      },
     });
 
-    // ✅ Verificar existencia y estado
     if (!testimonio) {
-      console.warn(`❌ Testimonio ID ${id} no encontrado`);
-      return sendNotFound(`No se encontró el testimonio con ID ${context.params.id}`, {
-        suggestion: "Verifica que el ID sea correcto o que el testimonio exista"
+      return sendNotFound(`No se encontró el testimonio con ID ${idParam}`, {
+        suggestion: 'Verifica que el ID sea correcto o que el testimonio exista',
       });
     }
 
     if (testimonio.deleted) {
-      console.warn(`❌ Testimonio ID ${id} está eliminado`);
-      return sendNotFound(`El testimonio con ID ${context.params.id} fue eliminado`, {
-        suggestion: "Los testimonios eliminados no están disponibles"
+      return sendNotFound(`El testimonio con ID ${idParam} fue eliminado`, {
+        suggestion: 'Los testimonios eliminados no están disponibles',
       });
     }
 
-    // Preparar datos para respuesta
     const data = {
       id: testimonio.id,
       nombre: testimonio.nombre,
@@ -64,26 +57,19 @@ export async function GET(
       iglesia: testimonio.iglesia,
       createdDate: testimonio.createdDate,
       modifiedDate: testimonio.modifiedDate,
-      // Podemos agregar campos calculados si es necesario
       tieneModificaciones: testimonio.modifiedDate !== null,
       antiguedad: Math.floor(
-        (new Date().getTime() - new Date(testimonio.createdDate).getTime()) / 
-        (1000 * 60 * 60 * 24)
-      ) // Días desde creación
+        (new Date().getTime() - new Date(testimonio.createdDate).getTime()) /
+          (1000 * 60 * 60 * 24)
+      ),
     };
-    
-    // ✅ Respuesta exitosa con metadata
-    return sendSuccess({
-      Data: data,
-      Total: 1 // Siempre 1 para un item individual
-    }, `Testimonio "${data.nombre}" obtenido exitosamente`);
 
-  } catch (error) {
-    console.error('[GET_TESTIMONIO_BY_ID_ERROR] ID:', context.params.id, error);
-    
-    return sendServerError(
-      `Error al obtener el testimonio con ID ${context.params.id}`, 
-      error
+    return sendSuccess(
+      { Data: data, Total: 1 },
+      `Testimonio "${data.nombre}" obtenido exitosamente`
     );
+  } catch (error) {
+    console.error('[GET_TESTIMONIO_BY_ID_ERROR]', error);
+    return sendServerError(`Error al obtener el testimonio con ID ${idParam}`, error);
   }
 }

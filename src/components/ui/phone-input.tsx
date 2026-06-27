@@ -3,7 +3,7 @@
 
 import PhoneInput, { type FlagProps } from "react-phone-number-input"
 import "react-phone-number-input/style.css"
-import Flags from "country-flag-icons/react/3x2"
+import * as Flags from "country-flag-icons/react/3x2"
 
 // Render country flags as inline SVGs from country-flag-icons (no HTTP requests)
 function SvgFlag({ country, countryName }: FlagProps) {

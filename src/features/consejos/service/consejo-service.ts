@@ -13,7 +13,7 @@ export async function getConsejoActual(signal?: AbortSignal): Promise<ConsejoRes
       return {
         success: true,
         message: "No hay consejo actual configurado",
-        data: null
+        data: undefined
       }
     }
 
@@ -29,7 +29,7 @@ export async function getConsejoActual(signal?: AbortSignal): Promise<ConsejoRes
       return {
         success: true,
         message: result.message || "No hay consejo actual configurado",
-        data: null
+        data: undefined
       }
     }
 

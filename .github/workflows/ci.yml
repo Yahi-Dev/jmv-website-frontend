@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    env:
+      # Valores ficticios: prisma generate solo necesita que la variable exista.
+      DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
+      DIRECT_URL: postgresql://user:pass@localhost:5432/db?schema=public
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci --legacy-peer-deps
+
+      - name: Generar cliente Prisma
+        run: npx prisma generate
+
+      - name: Typecheck (gate obligatorio)
+        run: npx tsc --noEmit
+
+      - name: Lint (informativo)
+        run: npm run lint
+        continue-on-error: true

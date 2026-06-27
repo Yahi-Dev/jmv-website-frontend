@@ -115,6 +115,7 @@ interface DataTableProps<TData, TValue> {
   onRowClick?: (row: TData) => void
   dateColumnId?: string
   showDateRangeFilter?: boolean
+  isLoading?: boolean
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────

@@ -30,9 +30,6 @@ const securityHeaders = [
 ]
 
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     unoptimized: true,
   },
