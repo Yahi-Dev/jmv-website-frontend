@@ -74,17 +74,19 @@ export async function proxy(request: NextRequest) {
 
 function getClientIP(request: NextRequest): string | null {
   try {
-    const forwarded = request.headers.get('x-forwarded-for');
     const realIP = request.headers.get('x-real-ip');
     const cfConnectingIP = request.headers.get('cf-connecting-ip');
+    const forwarded = request.headers.get('x-forwarded-for');
 
+    // x-real-ip (Vercel) y cf-connecting-ip (Cloudflare) los fija el proveedor y
+    // NO son falsificables por el cliente. Se prefieren antes que x-forwarded-for,
+    // cuyo primer valor sí puede falsear el cliente para evadir el rate limit.
+    if (realIP) return realIP;
+    if (cfConnectingIP) return cfConnectingIP;
     if (forwarded) {
-      const ips = forwarded.split(',').map(ip => ip.trim());
+      const ips = forwarded.split(',').map(ip => ip.trim()).filter(Boolean);
       return ips[0] || null;
     }
-
-    if (cfConnectingIP) return cfConnectingIP;
-    if (realIP) return realIP;
 
     return process.env.NODE_ENV === 'development' ? '127.0.0.1' : null;
   } catch {
