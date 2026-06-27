@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { miembroUpdateSchema } from "@/src/features/centros/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 
 // ── PUT /api/centros/[id]/miembros/[miembroId] ────────────────────────────────
 export async function PUT(
@@ -16,6 +17,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string; miembroId: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { miembroId: midParam } = await params
     const miembroId = Number.parseInt(midParam)
     if (isNaN(miembroId)) return sendBadRequest("ID inválido")
@@ -57,6 +61,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string; miembroId: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { miembroId: midParam } = await params
     const miembroId = Number.parseInt(midParam)
     if (isNaN(miembroId)) return sendBadRequest("ID inválido")

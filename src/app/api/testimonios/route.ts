@@ -4,6 +4,7 @@ import { sendBadRequest, sendCreated, sendNotFound, sendServerError, sendSuccess
 import { Prisma } from '@prisma/client';
 import { testimonioCreateSchema, testimonioUpdateSchema } from '@/src/features/testimonios/schema/validation';
 import { auth } from '@/src/lib/auth';
+import { requireAdmin } from "@/src/lib/server-auth";
 
 export async function GET(req: NextRequest) {
   try {
@@ -63,6 +64,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
     const body = await req.json();
     const parsed = testimonioCreateSchema.safeParse(body);
 
@@ -124,6 +127,8 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
     const { searchParams } = new URL(request.url);
     const id = Number(searchParams.get('id'));
     
@@ -171,15 +176,17 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
     const { searchParams } = new URL(request.url);
     const idParam = searchParams.get('id');
     const id = idParam !== null ? Number(idParam) : null;
-    
+
     if (id === null || !Number.isInteger(id) || id <= 0) {
       return sendBadRequest('ID inválido. Debe proporcionar un ID numérico válido');
     }
 
-    const testimonio = await prisma.testimonios.findUnique({ 
+    const testimonio = await prisma.testimonios.findUnique({
       where: { id },
       select: {
         id: true,

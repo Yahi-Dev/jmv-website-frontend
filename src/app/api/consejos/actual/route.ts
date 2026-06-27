@@ -2,6 +2,7 @@
 import { NextRequest } from 'next/server'
 import prisma from '@/src/lib/prisma'
 import { sendBadRequest, sendNotFound, sendServerError, sendSuccess } from '@/src/utils/httpResponse'
+import { requireAdmin } from "@/src/lib/server-auth"
 
 export async function GET() {
   try {
@@ -45,6 +46,9 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const body = await req.json()
     const { consejoId } = body
 

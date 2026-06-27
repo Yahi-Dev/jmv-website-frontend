@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { actividadUpdateSchema } from "@/src/features/actividades/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 
 const INCLUDE = {
   centro: { select: { id: true, slug: true, nombreParroquia: true } },
@@ -38,6 +39,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 // ── PUT /api/actividades/[id] ─────────────────────────────────────────────────
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idParam } = await params
     const id = Number.parseInt(idParam)
     if (isNaN(id) || id < 1) return sendBadRequest("ID inválido")
@@ -79,6 +83,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 // ── DELETE /api/actividades/[id] ──────────────────────────────────────────────
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idParam } = await params
     const id = Number.parseInt(idParam)
     if (isNaN(id) || id < 1) return sendBadRequest("ID inválido")

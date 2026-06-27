@@ -10,6 +10,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { miembroCreateSchema } from "@/src/features/centros/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 
 // ── GET /api/centros/[id]/miembros ────────────────────────────────────────────
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -35,6 +36,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 // ── POST /api/centros/[id]/miembros ───────────────────────────────────────────
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idParam } = await params
     const centroId = Number.parseInt(idParam)
     if (isNaN(centroId)) return sendBadRequest("ID inválido")

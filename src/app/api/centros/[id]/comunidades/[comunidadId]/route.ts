@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { comunidadUpdateSchema } from "@/src/features/centros/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 
 // ── PUT /api/centros/[id]/comunidades/[comunidadId] ───────────────────────────
 export async function PUT(
@@ -16,6 +17,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string; comunidadId: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { comunidadId: cidParam } = await params
     const comunidadId = Number.parseInt(cidParam)
     if (isNaN(comunidadId)) return sendBadRequest("ID inválido")
@@ -59,6 +63,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string; comunidadId: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { comunidadId: cidParam } = await params
     const comunidadId = Number.parseInt(cidParam)
     if (isNaN(comunidadId)) return sendBadRequest("ID inválido")

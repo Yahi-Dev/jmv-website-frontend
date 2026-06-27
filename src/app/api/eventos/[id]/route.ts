@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { eventoUpdateSchema } from "@/src/features/eventos/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 import { sanitizeRichHtml } from "@/src/lib/sanitize"
 
 // ── GET /api/eventos/[id] ─────────────────────────────────────────────────────
@@ -45,6 +46,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idParam } = await params
     const id = Number(idParam)
 
@@ -108,6 +112,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idParam } = await params
     const id = Number(idParam)
 

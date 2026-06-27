@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { centroUpdateSchema } from "@/src/features/centros/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 
 const INCLUDE = {
   miembros: { where: { deleted: false }, orderBy: { createdDate: "asc" as const } },
@@ -41,6 +42,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 // ── PUT /api/centros/[id] ─────────────────────────────────────────────────────
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idParam } = await params
     const id = Number.parseInt(idParam)
     if (isNaN(id) || id < 1) return sendBadRequest("ID inválido")
@@ -87,6 +91,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 // ── DELETE /api/centros/[id] ──────────────────────────────────────────────────
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idParam } = await params
     const id = Number.parseInt(idParam)
     if (isNaN(id) || id < 1) return sendBadRequest("ID inválido")

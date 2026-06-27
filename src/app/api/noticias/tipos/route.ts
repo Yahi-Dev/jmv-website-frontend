@@ -8,6 +8,7 @@ import {
   sendServerError,
 } from "@/src/utils/httpResponse"
 import { z } from "zod"
+import { requireAdmin } from "@/src/lib/server-auth"
 
 const createTipoSchema = z.object({
   nombre: z.string().min(2, "Mínimo 2 caracteres").max(100, "Máximo 100 caracteres").trim(),
@@ -30,6 +31,9 @@ export async function GET() {
 // ── POST /api/noticias/tipos ───────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const body = await req.json()
     const parsed = createTipoSchema.safeParse(body)
 

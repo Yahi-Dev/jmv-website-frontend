@@ -4,6 +4,7 @@ import { sendBadRequest, sendCreated, sendNotFound, sendServerError, sendSuccess
 import { Prisma } from '@prisma/client';
 import { formacionCreateSchema, formacionUpdateSchema } from '@/src/features/formacion/schema/validation';
 import { auth } from '@/src/lib/auth';
+import { requireAdmin } from "@/src/lib/server-auth";
 import { z } from 'zod';
 import { sanitizeRichHtml } from '@/src/lib/sanitize';
 
@@ -51,6 +52,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
     const body = await req.json();
     const parsed = formacionCreateSchema.safeParse(body);
 
@@ -102,9 +105,11 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
     const { searchParams } = new URL(request.url);
     const idParam = searchParams.get('id');
-    
+
     // Validar el ID del parámetro de consulta
     if (!idParam) {
       return sendBadRequest('ID es requerido en los parámetros de consulta');
@@ -165,15 +170,17 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
     const { searchParams } = new URL(request.url);
     const idParam = searchParams.get('id');
     const id = idParam !== null ? Number(idParam) : null;
-    
+
     if (id === null || !Number.isInteger(id) || id <= 0) {
       return sendBadRequest('ID inválido. Debe proporcionar un ID numérico válido');
     }
 
-    const formacion = await prisma.formacion.findUnique({ 
+    const formacion = await prisma.formacion.findUnique({
       where: { id },
     });
 

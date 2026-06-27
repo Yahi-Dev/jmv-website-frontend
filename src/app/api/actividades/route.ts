@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { actividadCreateSchema } from "@/src/features/actividades/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 import { Prisma } from "@prisma/client"
 
 function generateSlug(titulo: string, id: number): string {
@@ -71,6 +72,9 @@ export async function GET(req: NextRequest) {
 // ── POST /api/actividades ──────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const body = await req.json()
     const parsed = actividadCreateSchema.safeParse(body)
 

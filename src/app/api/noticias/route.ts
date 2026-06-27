@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { noticiaCreateSchema } from "@/src/features/noticias/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 import { Prisma } from "@prisma/client"
 import { sanitizeRichHtml } from "@/src/lib/sanitize"
 
@@ -72,6 +73,9 @@ export async function GET(req: NextRequest) {
 // ── POST /api/noticias ─────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const body = await req.json()
     const parsed = noticiaCreateSchema.safeParse(body)
 

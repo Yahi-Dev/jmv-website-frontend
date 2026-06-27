@@ -9,6 +9,7 @@ import {
 } from "@/src/utils/httpResponse"
 import { centroCreateSchema } from "@/src/features/centros/schema/validation"
 import { auth } from "@/src/lib/auth"
+import { requireAdmin } from "@/src/lib/server-auth"
 import { Prisma } from "@prisma/client"
 
 function generateSlug(nombre: string, id: number): string {
@@ -71,6 +72,9 @@ export async function GET(req: NextRequest) {
 // ── POST /api/centros ──────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const body = await req.json()
     const parsed = centroCreateSchema.safeParse(body)
 

@@ -3,15 +3,19 @@ import prisma from '@/src/lib/prisma'
 import { sendBadRequest, sendNotFound, sendServerError, sendSuccess } from '@/src/utils/httpResponse'
 import { consejoUpdateSchema } from '@/src/features/consejos/schema/validation'
 import { auth } from '@/src/lib/auth'
+import { requireAdmin } from "@/src/lib/server-auth"
 
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idString } = await params
     const id = parseInt(idString)
-    
+
     if (isNaN(id)) {
       return sendBadRequest('ID de consejo inválido')
     }
@@ -111,9 +115,12 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const { id: idString } = await params
     const id = parseInt(idString)
-    
+
     if (isNaN(id)) {
       return sendBadRequest('ID de consejo inválido')
     }

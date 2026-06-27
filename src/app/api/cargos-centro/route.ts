@@ -7,6 +7,7 @@ import {
   sendBadRequest,
   sendServerError,
 } from "@/src/utils/httpResponse"
+import { requireAdmin } from "@/src/lib/server-auth"
 
 // ── GET /api/cargos-centro ────────────────────────────────────────────────────
 export async function GET() {
@@ -24,6 +25,8 @@ export async function GET() {
 // ── POST /api/cargos-centro ───────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
     const body = await req.json()
     const nombre = (body?.nombre ?? "").toString().trim()
     if (!nombre || nombre.length > 100)

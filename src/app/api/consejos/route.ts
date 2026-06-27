@@ -4,6 +4,7 @@ import prisma from '@/src/lib/prisma'
 import { sendBadRequest, sendCreated, sendServerError, sendSuccess } from '@/src/utils/httpResponse'
 import { consejoCreateSchema } from '@/src/features/consejos/schema/validation'
 import { auth } from '@/src/lib/auth'
+import { requireAdmin } from "@/src/lib/server-auth"
 
 export async function GET(req: NextRequest) {
   try {
@@ -38,6 +39,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const guard = await requireAdmin()
+    if (!guard.ok) return guard.response
+
     const body = await req.json()
     const parsed = consejoCreateSchema.safeParse(body)
 
