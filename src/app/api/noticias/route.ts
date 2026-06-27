@@ -12,6 +12,7 @@ import { auth } from "@/src/lib/auth"
 import { requireAdmin } from "@/src/lib/server-auth"
 import { Prisma } from "@prisma/client"
 import { sanitizeRichHtml } from "@/src/lib/sanitize"
+import { withPublicCache } from "@/src/lib/http-cache"
 
 // ── Slug generator ─────────────────────────────────────────────────────────────
 function generateSlug(titulo: string, id: number): string {
@@ -60,10 +61,10 @@ export async function GET(req: NextRequest) {
       prisma.noticia.count({ where }),
     ])
 
-    return sendSuccess(
+    return withPublicCache(req, sendSuccess(
       { Data: noticias, Total: total, Page: page },
       "Noticias obtenidas exitosamente"
-    )
+    ), { sMaxAge: 60, swr: 300 })
   } catch (error) {
     console.error("Error fetching noticias:", error)
     return sendServerError("Error al obtener las noticias", error)

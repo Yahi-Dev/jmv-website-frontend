@@ -12,6 +12,7 @@ import { auth } from "@/src/lib/auth"
 import { requireAdmin } from "@/src/lib/server-auth"
 import { Prisma } from "@prisma/client"
 import { sanitizeRichHtml } from "@/src/lib/sanitize"
+import { withPublicCache } from "@/src/lib/http-cache"
 
 // ── Slug generator ────────────────────────────────────────────────────────────
 function generateSlug(titulo: string, id: number): string {
@@ -44,7 +45,7 @@ export async function GET(req: NextRequest) {
       if (!evento) {
         return sendSuccess({ Data: null }, "Evento no encontrado")
       }
-      return sendSuccess({ Data: evento }, "Evento obtenido exitosamente")
+      return withPublicCache(req, sendSuccess({ Data: evento }, "Evento obtenido exitosamente"), { sMaxAge: 60, swr: 300 })
     }
 
     const where: Prisma.EventoWhereInput = {
@@ -70,10 +71,10 @@ export async function GET(req: NextRequest) {
       prisma.evento.count({ where }),
     ])
 
-    return sendSuccess(
+    return withPublicCache(req, sendSuccess(
       { Data: eventos, Total: total, Page: page },
       "Eventos obtenidos exitosamente"
-    )
+    ), { sMaxAge: 60, swr: 300 })
   } catch (error) {
     console.error("Error fetching eventos:", error)
     return sendServerError("Error al obtener los eventos", error)

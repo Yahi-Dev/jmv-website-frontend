@@ -11,6 +11,7 @@ import { actividadCreateSchema } from "@/src/features/actividades/schema/validat
 import { auth } from "@/src/lib/auth"
 import { requireAdmin } from "@/src/lib/server-auth"
 import { Prisma } from "@prisma/client"
+import { withPublicCache } from "@/src/lib/http-cache"
 
 function generateSlug(titulo: string, id: number): string {
   const base = titulo
@@ -59,10 +60,10 @@ export async function GET(req: NextRequest) {
       prisma.actividadJmv.count({ where }),
     ])
 
-    return sendSuccess(
+    return withPublicCache(req, sendSuccess(
       { Data: actividades, Total: total, Page: page },
       "Actividades obtenidas exitosamente"
-    )
+    ), { sMaxAge: 60, swr: 300 })
   } catch (error) {
     console.error("Error fetching actividades:", error)
     return sendServerError("Error al obtener las actividades", error)

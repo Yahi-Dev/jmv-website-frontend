@@ -7,6 +7,7 @@ import { auth } from '@/src/lib/auth';
 import { requireAdmin } from "@/src/lib/server-auth";
 import { z } from 'zod';
 import { sanitizeRichHtml } from '@/src/lib/sanitize';
+import { withPublicCache } from '@/src/lib/http-cache';
 
 export async function GET(req: NextRequest) {
   try {
@@ -38,11 +39,11 @@ export async function GET(req: NextRequest) {
       prisma.formacion.count({ where })
     ])
 
-    return sendSuccess({
+    return withPublicCache(req, sendSuccess({
       Data: formaciones,
       Total: total,
       Page: page
-    }, "Formaciones obtenidas exitosamente")
+    }, "Formaciones obtenidas exitosamente"), { sMaxAge: 120, swr: 600 })
 
   } catch (error: unknown) {
     console.error("Error fetching formaciones:", error)

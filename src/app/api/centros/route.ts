@@ -11,6 +11,7 @@ import { centroCreateSchema } from "@/src/features/centros/schema/validation"
 import { auth } from "@/src/lib/auth"
 import { requireAdmin } from "@/src/lib/server-auth"
 import { Prisma } from "@prisma/client"
+import { withPublicCache } from "@/src/lib/http-cache"
 
 function generateSlug(nombre: string, id: number): string {
   const base = nombre
@@ -59,10 +60,10 @@ export async function GET(req: NextRequest) {
       prisma.centroJmv.count({ where }),
     ])
 
-    return sendSuccess(
+    return withPublicCache(req, sendSuccess(
       { Data: centros, Total: total, Page: page },
       "Centros obtenidos exitosamente"
-    )
+    ), { sMaxAge: 60, swr: 300 })
   } catch (error) {
     console.error("Error fetching centros:", error)
     return sendServerError("Error al obtener los centros", error)
