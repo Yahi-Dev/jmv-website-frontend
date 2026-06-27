@@ -276,3 +276,351 @@
     transition: none !important;
   }
 }
+
+/* =============================================================================
+   GLOBAL OVERFLOW PROTECTION
+   Ensure no element causes horizontal scroll on any screen size.
+   ============================================================================= */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+.jmv-kit-root {
+  overflow-x: hidden;
+}
+.jmv-kit-root img,
+.jmv-kit-root video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* =============================================================================
+   RESPONSIVE LAYER
+   Most components in this codebase use inline styles. Targeting them at
+   breakpoints requires CSS attribute selectors with !important to override
+   the inline cascade. All rules scoped under .jmv-kit-root to avoid bleeding
+   into admin areas. Dialog content rendered in portals also matched without
+   the scope (Radix portals out of the wrapper).
+   ============================================================================= */
+
+/* ── TABLET & BELOW (≤ 1023px) ───────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  /* Two-column heros and editorial content grids → stack to 1 column */
+  .jmv-kit-root [style*="grid-template-columns: 1.3fr 1fr"],
+  .jmv-kit-root [style*="grid-template-columns: 1.2fr 1fr"],
+  .jmv-kit-root [style*="grid-template-columns: 1.4fr 1fr"],
+  .jmv-kit-root [style*="grid-template-columns: 1.1fr 1fr"],
+  .jmv-kit-root [style*="grid-template-columns: 1.05fr 1.4fr"],
+  .jmv-kit-root [style*="grid-template-columns: 1fr 1.1fr"],
+  .jmv-kit-root [style*="grid-template-columns: 1fr 1.2fr"],
+  .jmv-kit-root [style*="grid-template-columns: 1fr 1.25fr"],
+  .jmv-kit-root [style*="grid-template-columns: 1fr 2fr"],
+  .jmv-kit-root [style*="grid-template-columns: 2fr 1fr"],
+  .jmv-kit-root [style*="grid-template-columns: minmax(0, 2fr) 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Numbered editorial rows (Carisma/Values/Timeline) → stack */
+  .jmv-kit-root [style*="grid-template-columns: 80px 1fr 1.3fr auto"],
+  .jmv-kit-root [style*="grid-template-columns: 64px 1fr auto"],
+  .jmv-kit-root [style*="grid-template-columns: 180px 1fr 1.2fr"],
+  .jmv-kit-root [style*="grid-template-columns: 120px 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Stats 4-col → 2-col */
+  .jmv-kit-root [style*="grid-template-columns: repeat(4, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 24px !important;
+  }
+
+  /* Hero banner heights — smaller on tablet */
+  .jmv-kit-root [style*="height: 560px"],
+  .jmv-kit-root [style*="height: 540px"],
+  .jmv-kit-root [style*="height: 520px"] {
+    height: 420px !important;
+  }
+
+  /* Section vertical padding — reduce on tablet */
+  .jmv-kit-root section[style*="padding: 120px"],
+  .jmv-kit-root section[style*="padding: 100px"],
+  .jmv-kit-root section[style*="padding: 140px"] {
+    padding-top: 80px !important;
+    padding-bottom: 80px !important;
+  }
+
+  /* Side-by-side stat block in Consejos period card */
+  .jmv-kit-root [style*="grid-template-columns: 1fr 1fr"] {
+    /* keep 2-col here, only override on smaller breakpoints */
+  }
+
+  /* Sticky sidebars stop being sticky when stacked */
+  .jmv-kit-root aside[style*="position: sticky"] {
+    position: static !important;
+  }
+
+  /* Activities home grid: dynamic repeat(N, 1fr) → max 2 cols on tablet */
+  .jmv-kit-root [style*="grid-template-columns: repeat(4, 1fr)"][style*="gap: 24px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Pillars 4-col grid (home) — stack to 2 with borders adjusted */
+  .jmv-kit-root [style*="grid-template-columns: repeat(4, 1fr)"][style*="border-top"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── MOBILE (≤ 767px) ────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Inner 1fr 1fr grids (hero description + buttons row, etc.) → stack */
+  .jmv-kit-root [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* Hero "auto 1fr" (giant quote + text) — keep auto but tighten the gap */
+  .jmv-kit-root [style*="grid-template-columns: auto 1fr"] {
+    gap: 20px !important;
+  }
+
+  /* Hero giant quotation mark size reduction */
+  .jmv-kit-root [style*="font-size: 120px"][style*="line-height: 0.8"] {
+    font-size: 64px !important;
+  }
+  .jmv-kit-root [style*="font-size: 140px"] {
+    font-size: 72px !important;
+  }
+
+  /* Stats 3-col → 1-col */
+  .jmv-kit-root [style*="grid-template-columns: repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  /* Stats 4-col → 1-col on mobile (overrides the tablet 2-col) */
+  .jmv-kit-root [style*="grid-template-columns: repeat(4, 1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  /* Reduce side padding everywhere */
+  .jmv-kit-root section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  .jmv-kit-root footer {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Hero banner — even shorter on mobile */
+  .jmv-kit-root [style*="height: 560px"],
+  .jmv-kit-root [style*="height: 540px"],
+  .jmv-kit-root [style*="height: 520px"] {
+    height: 340px !important;
+  }
+
+  /* Sticky filter bars: allow wrap so search + chips/combobox can stack */
+  .jmv-kit-root section[style*="position: sticky"] [style*="flex-wrap: nowrap"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Search inputs inside sticky bars — full width when wrapping */
+  .jmv-kit-root section[style*="position: sticky"] [style*="width: 280px"] {
+    width: 100% !important;
+  }
+
+  /* Footer 4-col → 1-col */
+  .jmv-kit-root footer [style*="grid-template-columns: 1.4fr 1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Footer bottom row stacks */
+  .jmv-kit-root footer [style*="justify-content: space-between"][style*="flex-wrap: wrap"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  /* Hero serif headlines — Serif primitives without clamp() */
+  .jmv-kit-root span[style*="font-family: 'Fraunces'"][style*="font-size: 72px"],
+  .jmv-kit-root [style*="font-family: 'Fraunces'"][style*="font-size: 64px"] {
+    font-size: 44px !important;
+  }
+  .jmv-kit-root [style*="font-family: 'Fraunces'"][style*="font-size: 56px"] {
+    font-size: 38px !important;
+  }
+  .jmv-kit-root [style*="font-family: 'Fraunces'"][style*="font-size: 52px"] {
+    font-size: 36px !important;
+  }
+  .jmv-kit-root [style*="font-family: 'Fraunces'"][style*="font-size: 48px"] {
+    font-size: 34px !important;
+  }
+  .jmv-kit-root [style*="font-family: 'Fraunces'"][style*="font-size: 44px"],
+  .jmv-kit-root [style*="font-family: 'Fraunces'"][style*="font-size: 42px"] {
+    font-size: 32px !important;
+  }
+
+  /* Big sidebar date display (events/activities detail) */
+  .jmv-kit-root [style*="font-family: 'Fraunces'"][style*="font-size: 88px"] {
+    font-size: 64px !important;
+  }
+
+  /* Hero meta rows — wrap and reduce gap */
+  .jmv-kit-root [style*="letter-spacing: 0.24em"][style*="text-transform: uppercase"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Hide decorative ornaments to reduce visual noise & save paint */
+  .jmv-kit-root .jmv-spin-slow,
+  .jmv-kit-root .jmv-pulse-soft {
+    display: none !important;
+  }
+
+  /* Reduce sticky filter padding */
+  .jmv-kit-root section[style*="position: sticky"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  /* Hero flip card height adjustment */
+  .jmv-kit-root [style*="perspective: 1800"] {
+    height: 360px !important;
+  }
+
+  /* Hide navbar wordmark on mobile — keep only logo + actions */
+  .jmv-nav-wordmark { display: none !important; }
+
+  /* Top meta row on hero — wrap and shrink text */
+  .jmv-kit-root [style*="font-size: 12px"][style*="letter-spacing: 0.06em"] {
+    font-size: 10px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Inner hero "1.2fr 1fr" with photo+caption — already collapsed but ensure
+     the right-column 20+ "Centros en RD" block doesn't overflow */
+  .jmv-kit-root [style*="font-size: 42px"][style*="font-weight: 400"] {
+    font-size: 32px !important;
+  }
+
+  /* All max-width containers respect viewport */
+  .jmv-kit-root [style*="max-width: 1280"],
+  .jmv-kit-root [style*="max-width: 1080"],
+  .jmv-kit-root [style*="max-width: 1040"],
+  .jmv-kit-root [style*="max-width: 980"],
+  .jmv-kit-root [style*="max-width: 880"] {
+    max-width: 100% !important;
+  }
+
+  /* Hide top meta-row gold/celeste accents text if overflows */
+  .jmv-kit-root [style*="letter-spacing: 0.24em"][style*="font-size: 11px"] {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+}
+
+/* ── COMPACT TABLET / LARGE PHONE (≤ 600px) ─────────────────────────────── */
+@media (max-width: 600px) {
+  /* Hero stats grids 4-col/3-col → 2 col */
+  .jmv-kit-root [style*="grid-template-columns: repeat(2, 1fr)"][style*="gap: 18px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Reduce all hero typography that don't use clamp() */
+  .jmv-kit-root h1[style*="font-size: clamp"] {
+    font-size: clamp(2rem, 9vw, 3.5rem) !important;
+    line-height: 1.05 !important;
+  }
+
+  /* Reduce hero spacing */
+  .jmv-kit-root section[style*="padding: 56px 32px"] {
+    padding-top: 32px !important;
+    padding-bottom: 56px !important;
+  }
+
+  /* Section vertical paddings even tighter */
+  .jmv-kit-root section[style*="padding: 120px"],
+  .jmv-kit-root section[style*="padding: 100px"],
+  .jmv-kit-root section[style*="padding: 140px"] {
+    padding-top: 56px !important;
+    padding-bottom: 56px !important;
+  }
+
+  /* Tabs and chip rows — wrap freely */
+  .jmv-kit-root [style*="flex-wrap: wrap"][style*="gap: 10px"],
+  .jmv-kit-root [style*="flex-wrap: wrap"][style*="gap: 12px"] {
+    gap: 8px !important;
+  }
+
+  /* Hero banner heights even shorter */
+  .jmv-kit-root [style*="height: 560px"],
+  .jmv-kit-root [style*="height: 540px"],
+  .jmv-kit-root [style*="height: 520px"] {
+    height: 300px !important;
+  }
+
+  /* Flip card height shorter */
+  .jmv-kit-root [style*="perspective: 1800"] {
+    height: 300px !important;
+  }
+
+  /* Logo inside flip card smaller */
+  .jmv-kit-root [style*="perspective: 1800"] img {
+    max-width: 160px !important;
+    height: auto !important;
+  }
+}
+
+/* ── EXTRA SMALL (≤ 479px) ──────────────────────────────────────────────── */
+@media (max-width: 479px) {
+  /* All multi-col stats → 1 col */
+  .jmv-kit-root [style*="grid-template-columns: repeat(2, 1fr)"][style*="gap: 24px"],
+  .jmv-kit-root [style*="grid-template-columns: repeat(2, 1fr)"][style*="gap: 18px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Tighter section padding */
+  .jmv-kit-root section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Smaller hero banners */
+  .jmv-kit-root [style*="height: 560px"],
+  .jmv-kit-root [style*="height: 540px"],
+  .jmv-kit-root [style*="height: 520px"] {
+    height: 280px !important;
+  }
+}
+
+/* ── DIALOG CONTENT (rendered via Radix portal, outside .jmv-kit-root) ───── */
+@media (max-width: 767px) {
+  /* Member/Coordinator dialog grids → stack */
+  [role="dialog"] [style*="grid-template-columns: 1fr 1.25fr"],
+  [role="dialog"] [style*="grid-template-columns: 1.05fr 1.4fr"],
+  [role="dialog"] [style*="grid-template-columns: 1fr 1.2fr"] {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+  }
+
+  /* Dialog padding tighter on mobile */
+  [role="dialog"] [style*="padding: 56px 56px"],
+  [role="dialog"] [style*="padding: 48px 48px"] {
+    padding: 28px !important;
+  }
+
+  /* Dialog full-screen-ish on mobile */
+  [role="dialog"][class*="max-w"] {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    border-radius: 0 !important;
+    max-height: 100vh !important;
+  }
+}

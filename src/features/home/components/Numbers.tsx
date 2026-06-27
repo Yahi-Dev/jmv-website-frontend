@@ -4,7 +4,7 @@ import { Reveal } from "../ui-kit/Reveal"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
 
 const stats = [
-  { n: "1847", t: "Año de fundación", d: "Medalla Milagrosa" },
+  { n: "1830", t: "Nuestro origen", d: "Medalla Milagrosa" },
   { n: "60+", t: "Países", d: "Presencia internacional" },
   { n: "20+", t: "Centros en RD", d: "Comunidades locales" },
   { n: "500+", t: "Jóvenes activos", d: "En formación constante" },

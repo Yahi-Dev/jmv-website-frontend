@@ -241,12 +241,19 @@ export function PhotoTile({
   h = 360,
   label,
   kind = "community",
+  src,
+  alt,
+  objectPosition = "center",
   children,
   style = {},
 }: {
   h?: number
   label?: string
   kind?: TileKind
+  /** Optional real image path (e.g. "/santos/san-vicente-de-paul.jpg"). Falls back to the gradient when omitted. */
+  src?: string
+  alt?: string
+  objectPosition?: string
   children?: ReactNode
   style?: CSSProperties
 }) {
@@ -269,6 +276,14 @@ export function PhotoTile({
         ...style,
       }}
     >
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={alt || label || "JMV"}
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition }}
+        />
+      ) : null}
       <div
         style={{
           position: "absolute",
@@ -278,6 +293,16 @@ export function PhotoTile({
           mixBlendMode: "overlay",
         }}
       />
+      {src ? (
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to top, rgba(11,16,32,0.55) 0%, rgba(11,16,32,0) 45%)",
+          }}
+        />
+      ) : null}
       <div
         style={{
           position: "absolute",
@@ -286,8 +311,9 @@ export function PhotoTile({
           fontFamily: FONT_UI,
           fontSize: 10,
           letterSpacing: "0.2em",
-          color: "rgba(255,255,255,0.75)",
+          color: "rgba(255,255,255,0.85)",
           textTransform: "uppercase",
+          zIndex: 1,
         }}
       >
         {label || "JMV RD"}

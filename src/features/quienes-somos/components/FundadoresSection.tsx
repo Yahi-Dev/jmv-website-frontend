@@ -1,4 +1,5 @@
-import { Eyebrow, Serif, PhotoTile } from "@/src/features/home/ui-kit/Primitives"
+import { Eyebrow, Serif } from "@/src/features/home/ui-kit/Primitives"
+import { PhotoCycler } from "@/src/features/home/ui-kit/PhotoCycler"
 import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_UI, FONT_BODY, FONT_DISPLAY } from "@/src/features/home/ui-kit/tokens"
 
@@ -8,27 +9,57 @@ type Founder = {
   role: string
   quote: string
   body: string
-  kind: "prayer" | "landscape" | "service" | "community"
+  imgs: string[]
 }
 
 const founders: Founder[] = [
   {
     name: "San Vicente de Paúl",
     years: "1581 — 1660",
-    role: "Fundador de la familia vicentina",
+    role: "Fundador de la Familia Vicentina",
     quote: "La caridad es inventiva hasta el infinito.",
     body:
-      "Sacerdote francés dedicado enteramente a los pobres. Fundó la Congregación de la Misión y, junto a Santa Luisa, las Hijas de la Caridad. Su espíritu de servicio humilde y práctico sigue siendo el corazón de nuestra espiritualidad.",
-    kind: "prayer",
+      "Sacerdote francés que entregó su vida a los pobres. Fundó la Congregación de la Misión y, junto a Santa Luisa, las Hijas de la Caridad. Su espíritu de servicio humilde y práctico es el corazón de nuestro carisma.",
+    imgs: [
+      "/sanvicentedepaul/san-vicente-de-paul-495x600.webp",
+      "/sanvicentedepaul/san-vicente-de-paul-08-739x1024-1-e1695714807967.jpg",
+      "/sanvicentedepaul/San-Vicente-de-PaUL-e1618320959926.jpg",
+      "/sanvicentedepaul/san_vicente_de_paul.jpg",
+    ],
   },
   {
     name: "Santa Luisa de Marillac",
     years: "1591 — 1660",
-    role: "Cofundadora · Madre de los pobres",
+    role: "Cofundadora de las Hijas de la Caridad",
     quote: "Amen mucho a los pobres y Dios los amará.",
     body:
-      "Mujer de oración profunda y acción decidida. Junto a San Vicente dio vida a las Hijas de la Caridad y organizó obras de auxilio para enfermos, niños abandonados y ancianos. Su legado inspira nuestra manera de servir con ternura y eficacia.",
-    kind: "landscape",
+      "Mujer de oración profunda y acción decidida. Junto a San Vicente dio vida a las Hijas de la Caridad y organizó obras de auxilio para enfermos, niños abandonados y ancianos. Su legado inspira nuestra manera de servir.",
+    imgs: [
+      "/santa-luisa-de-marillac/Santa-Luisa-de-Marillac.jpg",
+      "/santa-luisa-de-marillac/5366d68fabf540bea6501b860ff49a0b.jpg",
+      "/santa-luisa-de-marillac/042823-stluisa.jpg",
+    ],
+  },
+  {
+    name: "Santa Catalina Labouré",
+    years: "1806 — 1876",
+    role: "Vidente de la Medalla Milagrosa",
+    quote: "¡Oh María, sin pecado concebida, rogad por nosotros que recurrimos a Vos!",
+    body:
+      "Hija de la Caridad a quien la Virgen se apareció en 1830, en la rue du Bac de París, encargándole acuñar la Medalla Milagrosa. De aquellas apariciones nace la Asociación que hoy es JMV. Fue declarada santa por Pío XII en 1947.",
+    imgs: [
+      "/santa-catalina-laboure/santa-catalina-laboure.webp",
+      "/santa-catalina-laboure/1732103213890.jpg",
+    ],
+  },
+  {
+    name: "Federico Ozanam",
+    years: "1813 — 1853",
+    role: "Fundador de las Conferencias de San Vicente de Paúl",
+    quote: "La única ley que debe gobernar los actos humanos es la del amor.",
+    body:
+      "Laico, profesor y padre de familia. Movido por la fe ante la pobreza de su tiempo, fundó en 1833 las Conferencias de San Vicente de Paúl. Fue beatificado por Juan Pablo II en 1997, durante la Jornada Mundial de la Juventud.",
+    imgs: ["/federico-ozanam/Frederic-Ozanam-768x576-1.jpg"],
   },
 ]
 
@@ -53,8 +84,8 @@ export function FundadoresSection() {
                 maxWidth: 560,
               }}
             >
-              Nuestro carisma tiene su origen en dos santos franceses del siglo XVII cuya respuesta al clamor de
-              los pobres inspira hoy a miles de jóvenes en todo el mundo.
+              Nuestro carisma se enraíza en grandes figuras de la Familia Vicentina —santos y laicos— que
+              respondieron al clamor de los pobres y cuyo testimonio sigue inspirando hoy a los jóvenes de JMV.
             </p>
           </div>
         </Reveal>
@@ -73,7 +104,7 @@ export function FundadoresSection() {
                 flexDirection: "column",
               }}
             >
-              <PhotoTile h={320} kind={f.kind} label={f.name.toUpperCase()} />
+              <PhotoCycler images={f.imgs} h={360} label={f.name.toUpperCase()} startDelay={i * 1200} />
 
               <div style={{ padding: "36px 36px 40px" }}>
                 <div

@@ -62,7 +62,7 @@ export function HeroSection() {
         {/* Top meta row */}
         <Reveal delay={0} y={10}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 56, fontFamily: FONT_UI, fontSize: 12, color: JMV.mute, letterSpacing: "0.06em" }}>
-            <span>EST. 1847 · JMV INTERNACIONAL</span>
+            <span>DESDE 1830 · JMV INTERNACIONAL</span>
             <span>REPÚBLICA DOMINICANA · {new Date().getFullYear()}</span>
           </div>
         </Reveal>

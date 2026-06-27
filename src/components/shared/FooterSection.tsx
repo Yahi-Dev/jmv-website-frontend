@@ -167,8 +167,8 @@ export function FooterSection() {
             © {new Date().getFullYear()} JMV República Dominicana
           </span>
           <span style={{ display: "flex", alignItems: "center", gap: 22 }}>
-            <Link href="#" className="jmv-ft-bottom-link" style={{ color: "rgba(255,255,255,0.55)", textDecoration: "none", transition: "color .15s" }}>Privacidad</Link>
-            <Link href="#" className="jmv-ft-bottom-link" style={{ color: "rgba(255,255,255,0.55)", textDecoration: "none", transition: "color .15s" }}>Términos</Link>
+            <Link href="/privacidad" className="jmv-ft-bottom-link" style={{ color: "rgba(255,255,255,0.55)", textDecoration: "none", transition: "color .15s" }}>Privacidad</Link>
+            <Link href="/terminos" className="jmv-ft-bottom-link" style={{ color: "rgba(255,255,255,0.55)", textDecoration: "none", transition: "color .15s" }}>Términos</Link>
             <a href="https://jmvinter.org/" target="_blank" rel="noopener noreferrer" className="jmv-ft-bottom-link" style={{ color: "rgba(255,255,255,0.55)", textDecoration: "none", transition: "color .15s" }}>JMV Internacional</a>
           </span>
         </div>

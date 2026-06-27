@@ -3,11 +3,11 @@ import { Reveal } from "../ui-kit/Reveal"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
 
 const values = [
-  { word: "Eclesial", desc: "Miembros vivos de la Iglesia católica." },
-  { word: "Laical", desc: "Una vocación laical dentro de la Familia Vicenciana." },
-  { word: "Mariana", desc: "María, primera discípula, es nuestra guía." },
-  { word: "Misionera", desc: "Enviados a anunciar el Evangelio con obras." },
-  { word: "Vicentina", desc: "Al estilo y carisma de San Vicente de Paúl." },
+  { word: "Laical", desc: "Jóvenes laicos al servicio de la Iglesia, en la Familia Vicenciana." },
+  { word: "Eclesial", desc: "Grupo apostólico en la Iglesia desde 1847." },
+  { word: "Mariana", desc: "María, Madre de la Iglesia, es nuestro Modelo y Animadora." },
+  { word: "Misionera", desc: "Enviados a anunciar el Evangelio en todas partes." },
+  { word: "Vicentina", desc: "Al estilo de San Vicente de Paúl, al servicio de los pobres." },
 ]
 
 export function ValuesSection() {
@@ -47,7 +47,7 @@ export function ValuesSection() {
               >
                 {v.word}
               </div>
-              <div style={{ fontFamily: FONT_BODY, fontSize: 15, color: JMV.mute, maxWidth: 340, textAlign: "right", lineHeight: 1.5 }}>
+              <div style={{ fontFamily: FONT_BODY, fontSize: 15, color: JMV.mute, maxWidth: 520, textAlign: "right", lineHeight: 1.5 }}>
                 {v.desc}
               </div>
             </div>

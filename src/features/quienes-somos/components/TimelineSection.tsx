@@ -10,34 +10,28 @@ type Milestone = {
 
 const milestones: Milestone[] = [
   {
-    year: "1995",
-    title: "Fundación del primer centro",
+    year: "1830",
+    title: "El origen",
     body:
-      "Se establece el primer centro de JMV en Santo Domingo, marcando el inicio del movimiento en República Dominicana con un grupo de 12 jóvenes visionarios.",
+      "La Virgen María se aparece a Santa Catalina Labouré en la rue du Bac, en París, y pide acuñar la Medalla Milagrosa. Es el comienzo de la Asociación Mariana.",
   },
   {
-    year: "2001",
-    title: "Expansión nacional",
+    year: "1847",
+    title: "Aprobación pontificia",
     body:
-      "Apertura de centros en Santiago, La Vega y otras ciudades importantes, consolidando nuestra presencia a nivel nacional con más de 150 jóvenes activos.",
+      "El Papa Pío IX aprueba la Asociación. Para entonces ya se habían formado en Francia los quince primeros grupos —los “Cenáculos Marianos”—, siendo Benigna Hairón la primera Hija de María.",
   },
   {
-    year: "2008",
-    title: "Reconocimiento oficial",
+    year: "1870",
+    title: "Expansión mundial",
     body:
-      "La Conferencia del Episcopado Dominicano reconoce oficialmente a JMV como movimiento juvenil católico nacional, validando nuestro compromiso y dedicación.",
+      "La Asociación se extiende por Europa, Asia, África y América. Hacia 1870 ya cuenta con 338 centros en funcionamiento.",
   },
   {
-    year: "2015",
-    title: "Programa de misiones",
+    year: "Hoy",
+    title: "JMV en República Dominicana",
     body:
-      "Lanzamiento del programa nacional de misiones juveniles, llevando esperanza a comunidades rurales y marginadas, impactando más de 50 comunidades.",
-  },
-  {
-    year: "2024",
-    title: "Renovación digital",
-    body:
-      "Implementación de nuevas plataformas digitales para fortalecer la formación y comunicación entre todos los centros del país.",
+      "Como parte de la Familia Vicentina mundial, JMV está presente en la República Dominicana, formando jóvenes en la fe, la oración y el servicio a los más necesitados.",
   },
 ]
 
@@ -63,7 +57,7 @@ export function TimelineSection() {
               marginTop: 24,
             }}
           >
-            Un recorrido por los hitos más importantes en la historia de JMV República Dominicana.
+            Un recorrido por los hitos que dieron origen y forma a la Juventud Mariana Vicenciana.
           </p>
         </div>
         </Reveal>

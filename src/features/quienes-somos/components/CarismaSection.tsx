@@ -12,31 +12,31 @@ type Pillar = {
 const pillars: Pillar[] = [
   {
     num: "01",
-    title: "Formación",
-    icon: "book",
+    title: "Comunidad Juvenil",
+    icon: "users",
     body:
-      "Crecimiento integral de la persona a través de la catequesis, el estudio de la Doctrina Social de la Iglesia y el desarrollo de habilidades de liderazgo cristiano.",
+      "Jóvenes que se reúnen en comunidad para crecer juntos en la fe, la amistad y el acompañamiento mutuo en el camino cristiano.",
   },
   {
     num: "02",
-    title: "Oración",
+    title: "Espiritualidad",
     icon: "star",
     body:
-      "Vida espiritual profunda centrada en la Eucaristía, la devoción mariana y la contemplación, siguiendo el ejemplo de María en su entrega total a Dios.",
+      "Vida de oración y devoción mariana, centrada en la Eucaristía y en el ejemplo de María, primera discípula, en su entrega total a Dios.",
   },
   {
     num: "03",
-    title: "Servicio",
+    title: "Apostolado",
     icon: "heart",
     body:
-      "Compromiso activo con los más pobres y marginados, llevando esperanza y dignidad a través de obras concretas de caridad y justicia social.",
+      "Evangelización y servicio a los más pobres y marginados al estilo de San Vicente de Paúl, llevando esperanza con obras concretas de caridad.",
   },
   {
     num: "04",
-    title: "Misión",
-    icon: "hand",
+    title: "Formación",
+    icon: "book",
     body:
-      "Evangelización activa y testimonio de vida cristiana, llevando el mensaje del Evangelio a todos los rincones de nuestra sociedad.",
+      "Crecimiento integral de la persona a través de la catequesis y el camino catecumenal propio de JMV, que acompaña cada etapa de la fe.",
   },
 ]
 

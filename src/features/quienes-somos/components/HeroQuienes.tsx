@@ -76,7 +76,7 @@ export function HeroQuienes() {
             <span style={{ opacity: 0.4 }}>·</span>
             <span>JMV República Dominicana</span>
             <span style={{ opacity: 0.4 }}>·</span>
-            <span style={{ color: JMV.gold }}>Desde 1995</span>
+            <span style={{ color: JMV.gold }}>Desde 1830</span>
           </div>
         </Reveal>
 
@@ -147,10 +147,10 @@ export function HeroQuienes() {
           }}
         >
           {[
-            { k: "Fundación", v: "1995" },
-            { k: "Centros Activos", v: "15+" },
-            { k: "Jóvenes", v: "500+" },
-            { k: "Presencia Mundial", v: "50 países" },
+            { k: "Origen", v: "1830" },
+            { k: "Aprobación pontificia", v: "1847" },
+            { k: "Pilares", v: "4" },
+            { k: "Notas distintivas", v: "5" },
           ].map((s, i) => (
             <div key={i}>
               <div

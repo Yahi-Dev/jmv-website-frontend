@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useLayoutEffect, useRef, useState, type FocusEvent, type KeyboardEvent } from "react"
-import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet"
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/src/components/ui/sheet"
 import { getClientUser, signOut } from "@/src/lib/client-auth"
 import { Button, Icon, Logo } from "@/src/features/home/ui-kit/Primitives"
 import { JMV, FONT_DISPLAY, FONT_UI } from "@/src/features/home/ui-kit/tokens"
@@ -189,7 +189,7 @@ export default function Navbar() {
           <div style={{ transition: "all .3s ease", width: scrolled ? 36 : 64, height: scrolled ? 36 : 64 }}>
             <Logo size={scrolled ? 36 : 64} />
           </div>
-          <div style={{ lineHeight: 1.1 }}>
+          <div className="jmv-nav-wordmark" style={{ lineHeight: 1.1 }}>
             <div
               style={{
                 fontFamily: FONT_DISPLAY,
@@ -198,11 +198,12 @@ export default function Navbar() {
                 letterSpacing: "-0.01em",
                 fontWeight: 500,
                 transition: "font-size .3s ease",
+                whiteSpace: "nowrap",
               }}
             >
               Juventud Mariana Vicenciana
             </div>
-            <div style={{ fontFamily: FONT_UI, fontSize: 11, color: JMV.mute, marginTop: 2, letterSpacing: "0.06em" }}>
+            <div style={{ fontFamily: FONT_UI, fontSize: 11, color: JMV.mute, marginTop: 2, letterSpacing: "0.06em", whiteSpace: "nowrap" }}>
               República Dominicana
             </div>
           </div>
@@ -426,6 +427,21 @@ export default function Navbar() {
               </button>
             </SheetTrigger>
             <SheetContent side="right" style={{ paddingTop: 40, overflowY: "auto", width: 288 }}>
+              <SheetTitle
+                style={{
+                  position: "absolute",
+                  width: 1,
+                  height: 1,
+                  padding: 0,
+                  margin: -1,
+                  overflow: "hidden",
+                  clip: "rect(0,0,0,0)",
+                  whiteSpace: "nowrap",
+                  border: 0,
+                }}
+              >
+                Menú de navegación
+              </SheetTitle>
               <div style={{ display: "flex", flexDirection: "column", gap: 4, fontFamily: FONT_UI }}>
                 {links.map((l) => {
                   const active = isLinkActive(l, pathname)

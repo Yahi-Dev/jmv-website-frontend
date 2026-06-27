@@ -5,10 +5,10 @@ import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 
 const stats = [
-  { k: "Países", v: "50+" },
-  { k: "Miembros", v: "1.2M" },
+  { k: "Origen", v: "1830" },
+  { k: "Aprobación pontificia", v: "1847" },
+  { k: "Centros en 1870", v: "338" },
   { k: "Continentes", v: "5" },
-  { k: "Años", v: "175+" },
 ]
 
 export function InternacionalSection() {
@@ -64,12 +64,12 @@ export function InternacionalSection() {
                 maxWidth: 520,
               }}
             >
-              JMV es un movimiento con presencia en más de 50 países. Como parte de la gran familia vicentina,
-              JMV República Dominicana está conectada con jóvenes de todos los continentes que comparten el mismo
-              carisma de fe y servicio.
+              JMV forma parte de la gran Familia Vicentina, presente en los cinco continentes y unida por el
+              carisma de San Vicente de Paúl: anunciar a los pobres la Buena Nueva del amor de Dios mediante el
+              servicio. JMV República Dominicana camina unida a esta familia mundial.
             </p>
 
-            <div style={{ marginTop: 40, display: "flex", gap: 12 }}>
+            <div style={{ marginTop: 40, display: "flex", gap: 12, flexWrap: "wrap" }}>
               <a
                 href="https://jmvinter.org/"
                 target="_blank"
@@ -79,6 +79,17 @@ export function InternacionalSection() {
                 <Button variant="dark" size="lg">
                   <Icon name="globe" size={16} />
                   Visitar JMV Internacional
+                  <Icon name="arrowUR" size={14} />
+                </Button>
+              </a>
+              <a
+                href="https://dominicanasolidaria.org/organizacion/juventud-mariana-vicentina-jmv/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: "none" }}
+              >
+                <Button variant="outline" size="lg">
+                  JMV en República Dominicana
                   <Icon name="arrowUR" size={14} />
                 </Button>
               </a>

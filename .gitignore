@@ -2,7 +2,10 @@
 
 # dependencies
 /node_modules
+/.pnp
+.pnp.*
 
+# uploaded media (generated at runtime, not source)
 /public/formacion
 /public/consejos
 /public/miembros
@@ -10,11 +13,10 @@
 # next.js
 /.next/
 /out/
-
-# production
 /build
 
-# debug
+# debug logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -30,10 +32,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# claude
+# unused package-manager lockfile (project uses npm)
+/pnpm-lock.yaml
+
+# editor / OS junk
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# agent / spec tooling (not part of the app)
 .agent
 .agents
 .claude
 .kiro
-
-.vercel
+skills-lock.json

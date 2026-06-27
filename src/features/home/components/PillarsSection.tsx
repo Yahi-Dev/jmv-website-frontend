@@ -3,10 +3,10 @@ import { Reveal } from "../ui-kit/Reveal"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
 
 const pillars = [
-  { num: "01", title: "Comunidad Juvenil", desc: "Crecimiento espiritual y humano a través de la catequesis y el liderazgo cristiano." },
-  { num: "02", title: "Espiritualidad", desc: "Oración y contemplación siguiendo el ejemplo de María y San Vicente." },
-  { num: "03", title: "Apostolado", desc: "Compromiso con los más necesitados a través de obras de caridad." },
-  { num: "04", title: "Formación", desc: "Fraternidad y apoyo mutuo en el camino de fe y servicio." },
+  { num: "01", title: "Comunidad Juvenil", desc: "Jóvenes que caminan juntos en fraternidad, vida compartida y apoyo mutuo en la fe." },
+  { num: "02", title: "Espiritualidad", desc: "Oración y contemplación siguiendo el ejemplo de María y San Vicente de Paúl." },
+  { num: "03", title: "Apostolado", desc: "Servicio y evangelización al estilo vicenciano, junto a los más necesitados." },
+  { num: "04", title: "Formación", desc: "Crecimiento integral a través de la catequesis y el camino catecumenal de JMV." },
 ]
 
 export function PillarsSection() {
