@@ -11,43 +11,22 @@ export async function GET(req: NextRequest) {
     if (count <= 0 || count > 100) {
       return sendBadRequest('El parámetro count debe ser entre 1 y 100');
     }
-    
-    // Obtener todos los testimonios no eliminados
-    const totalTestimonios = await prisma.testimonios.count({
-      where: { deleted: false }
-    });
 
-    if (totalTestimonios === 0) {
-      return sendSuccess({
-        Data: [],
-        Total: 0
-      }, "No hay testimonios disponibles");
+    const total = await prisma.testimonios.count({ where: { deleted: false } });
+
+    if (total === 0) {
+      return sendSuccess({ Data: [], Total: 0 }, "No hay testimonios disponibles");
     }
 
-    // Si hay menos testimonios que el count solicitado, devolver todos
-    const takeCount = Math.min(count, totalTestimonios);
+    // Muestreo barato por OFFSET aleatorio en vez de ORDER BY RANDOM() (que hace
+    // full scan + sort de toda la tabla en cada request). Aprovecha el índice
+    // [deleted, createdDate] y nunca lee más de `takeCount` filas.
+    const takeCount = Math.min(count, total);
+    const maxSkip = Math.max(0, total - takeCount);
+    const skip = Math.floor(Math.random() * (maxSkip + 1));
 
-    // Obtener IDs aleatorios
-    const randomIds = await prisma.$queryRaw<{id: number}[]>`
-      SELECT id FROM "Testimonios" 
-      WHERE deleted = false 
-      ORDER BY RANDOM() 
-      LIMIT ${takeCount}
-    `;
-
-    if (randomIds.length === 0) {
-      return sendSuccess({
-        Data: [],
-        Total: 0
-      }, "No se encontraron testimonios aleatorios");
-    }
-
-    // Obtener los testimonios completos
     const testimonios = await prisma.testimonios.findMany({
-      where: {
-        id: { in: randomIds.map(r => r.id) },
-        deleted: false
-      },
+      where: { deleted: false },
       select: {
         id: true,
         nombre: true,
@@ -56,14 +35,15 @@ export async function GET(req: NextRequest) {
         iglesia: true,
         createdDate: true,
       },
-      orderBy: { createdDate: "desc" }
+      orderBy: { createdDate: "desc" },
+      skip,
+      take: takeCount,
     });
 
-    return sendSuccess({
-      Data: testimonios,
-      Total: testimonios.length
-    }, `${testimonios.length} testimonios aleatorios obtenidos exitosamente`);
-
+    return sendSuccess(
+      { Data: testimonios, Total: testimonios.length },
+      `${testimonios.length} testimonios obtenidos exitosamente`
+    );
   } catch (error) {
     console.error("Error fetching random testimonios:", error);
     return sendServerError("Error al obtener testimonios aleatorios", error);
