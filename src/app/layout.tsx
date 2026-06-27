@@ -5,6 +5,7 @@ import { Inter, Source_Sans_3, Fraunces } from "next/font/google"
 import "./globals.css"
 import "@/src/features/home/ui-kit/jmv-ui-kit.css"
 import { Toaster } from "@/src/components/ui/sonner"
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -86,6 +87,8 @@ export default function RootLayout({
       <body className="min-h-screen font-sans antialiased bg-background text-foreground">
         {children}
         <Toaster />
+        {/* Analítica de Vercel: componente invisible, sin impacto visual. */}
+        <Analytics />
       </body>
     </html>
   )
