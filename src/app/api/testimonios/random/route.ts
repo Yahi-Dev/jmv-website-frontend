@@ -2,6 +2,7 @@
 import { NextRequest } from 'next/server';
 import prisma from '@/src/lib/prisma';
 import { sendSuccess, sendBadRequest, sendServerError } from '@/src/utils/httpResponse';
+import { withPublicCache } from '@/src/lib/http-cache';
 
 export async function GET(req: NextRequest) {
   try {
@@ -40,10 +41,12 @@ export async function GET(req: NextRequest) {
       take: takeCount,
     });
 
-    return sendSuccess(
+    // Caché de CDN corta (30s) para anónimos: ofrece descarga masiva del origen
+    // conservando rotación frecuente del muestreo aleatorio.
+    return withPublicCache(req, sendSuccess(
       { Data: testimonios, Total: testimonios.length },
       `${testimonios.length} testimonios obtenidos exitosamente`
-    );
+    ), { sMaxAge: 30, swr: 120 });
   } catch (error) {
     console.error("Error fetching random testimonios:", error);
     return sendServerError("Error al obtener testimonios aleatorios", error);

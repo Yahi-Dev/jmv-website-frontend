@@ -5,19 +5,11 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/src/com
 import { Icon } from "@/src/features/home/ui-kit/Primitives"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 import { CARGO_LABELS, CargoConsejo, MiembroConsejo } from "../model/types"
-
-function maskPhone(phone?: string): string | undefined {
-  if (!phone) return undefined
-  const digits = phone.replace(/\D/g, "")
-  return `••• •• •${digits.slice(-4)}`
-}
-
-function maskEmail(email?: string): string | undefined {
-  if (!email) return undefined
-  const [u, d] = email.split("@")
-  const mu = u.length <= 2 ? "••" : u[0] + "•".repeat(Math.max(1, u.length - 2)) + u.slice(-1)
-  return `${mu}@${d}`
-}
+// Máscaras idempotentes compartidas con el servidor: para visitantes anónimos
+// el backend ya envía el dato enmascarado (el real no sale del servidor); para
+// administradores envía el dato completo y se enmascara aquí. El resultado
+// visual es idéntico en ambos casos.
+import { maskEmail, maskPhone } from "@/src/lib/mask"
 
 interface Props {
   open: boolean

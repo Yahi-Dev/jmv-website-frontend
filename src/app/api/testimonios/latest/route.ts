@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 import prisma from '@/src/lib/prisma';
 import { sendSuccess, sendBadRequest, sendServerError } from '@/src/utils/httpResponse';
 import { getPublicCached } from '@/src/lib/redis';
+import { withPublicCache } from '@/src/lib/http-cache';
 
 export async function GET(req: NextRequest) {
   try {
@@ -38,10 +39,10 @@ export async function GET(req: NextRequest) {
       60
     );
 
-    return sendSuccess({
+    return withPublicCache(req, sendSuccess({
       Data: testimonios,
       Total: testimonios.length
-    }, `${testimonios.length} testimonios más recientes obtenidos exitosamente`);
+    }, `${testimonios.length} testimonios más recientes obtenidos exitosamente`), { sMaxAge: 60, swr: 300 });
 
   } catch (error) {
     console.error("Error fetching latest testimonios:", error);
