@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Eyebrow, Serif } from "@/src/features/home/ui-kit/Primitives"
+import { Eyebrow, Icon, Serif } from "@/src/features/home/ui-kit/Primitives"
 import { Reveal } from "@/src/features/home/ui-kit/Reveal"
 import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "@/src/features/home/ui-kit/tokens"
 import {
@@ -160,7 +160,7 @@ export function EstructuraSection() {
                     background: lerpColor("#100E66", "#139FCC", t),
                     color: "#fff",
                     textAlign: "center",
-                    padding: "14px 18px",
+                    padding: "14px 44px",
                     border: "none",
                     borderRadius: 3,
                     fontFamily: FONT_UI,
@@ -171,6 +171,26 @@ export function EstructuraSection() {
                   }}
                 >
                   {nivel.title}
+                  <span
+                    className="jmv-orgband-plus"
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      right: 12,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 22,
+                      height: 22,
+                      borderRadius: 999,
+                      background: "rgba(255,255,255,0.18)",
+                      color: "#fff",
+                    }}
+                  >
+                    <Icon name="plus" size={13} />
+                  </span>
                 </button>
               )
             })}
@@ -285,6 +305,8 @@ export function EstructuraSection() {
           box-shadow: 0 10px 28px rgba(16, 14, 102, 0.28);
           z-index: 2;
         }
+        .jmv-kit-root .jmv-orgband-plus { transition: background .25s ease; }
+        .jmv-kit-root .jmv-orgband:hover .jmv-orgband-plus { background: rgba(255,255,255,0.34); }
         .jmv-kit-root .jmv-orgband:focus-visible {
           outline: 2px solid ${JMV.gold};
           outline-offset: 3px;
