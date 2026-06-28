@@ -1,3 +1,5 @@
+import { withSentryConfig } from "@sentry/nextjs"
+
 /** @type {import('next').NextConfig} */
 
 // Cabeceras de seguridad aplicadas a todas las rutas.
@@ -43,4 +45,18 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+// withSentryConfig añade la subida de source maps (solo si hay SENTRY_AUTH_TOKEN
+// en el entorno de build) y la instrumentación de Sentry. NO modifica las
+// cabeceras de seguridad ni la CSP de arriba. Compatible con Turbopack.
+export default withSentryConfig(nextConfig, {
+  org: "ampirics",
+  project: "javascript-nextjs",
+  // Sube source maps a Sentry solo si el token está presente (no rompe el build local).
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // Logs del plugin solo en CI.
+  silent: !process.env.CI,
+  // Mejor resolución de stack traces.
+  widenClientFileUpload: true,
+  // Borra los source maps locales tras subirlos (no se exponen públicamente).
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
+})
