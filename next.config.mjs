@@ -33,7 +33,12 @@ const securityHeaders = [
 
 const nextConfig = {
   images: {
-    unoptimized: true,
+    // Optimización vía la CDN de Cloudinary mediante un loader custom
+    // (f_auto/q_auto/c_limit/w). Las imágenes que no son de Cloudinary se
+    // sirven sin cambios. No usa el optimizador de Vercel (sin cuota) y no
+    // requiere remotePatterns. Ver src/lib/cloudinary-loader.ts.
+    loader: "custom",
+    loaderFile: "./src/lib/cloudinary-loader.ts",
   },
   async headers() {
     return [
