@@ -107,7 +107,7 @@ export function HeroSection() {
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ color: JMV.ink, fontFamily: FONT_DISPLAY, fontSize: 42, fontWeight: 400, lineHeight: 1 }}>
-                    +7
+                    7
                   </div>
                   <div style={{ marginTop: 4, letterSpacing: "0.14em", fontSize: 10.5, textTransform: "uppercase" }}>Centros en RD</div>
                 </div>
