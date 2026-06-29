@@ -29,12 +29,15 @@ export function CountUp({ value, duration = 2500 }: Props) {
   }, [display])
 
   const parsed = useMemo(() => {
-    const m = value.match(/^([0-9]+(?:\.[0-9]+)?)(.*)$/)
+    // Captura un prefijo opcional no numérico (p. ej. "+" en "+300"), el número
+    // a animar, y el sufijo (p. ej. "+" en "60+" o " países" en "50 países").
+    const m = value.match(/^([^0-9]*)([0-9]+(?:\.[0-9]+)?)(.*)$/)
     if (!m) return null
     return {
-      target: parseFloat(m[1]),
-      decimals: m[1].includes(".") ? m[1].split(".")[1].length : 0,
-      suffix: m[2],
+      prefix: m[1],
+      target: parseFloat(m[2]),
+      decimals: m[2].includes(".") ? m[2].split(".")[1].length : 0,
+      suffix: m[3],
     }
   }, [value])
 
@@ -99,6 +102,7 @@ export function CountUp({ value, duration = 2500 }: Props) {
 
   return (
     <span ref={ref}>
+      {parsed.prefix}
       {formatted}
       {parsed.suffix}
     </span>

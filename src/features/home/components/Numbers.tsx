@@ -6,8 +6,8 @@ import { JMV, FONT_DISPLAY, FONT_UI, FONT_BODY } from "../ui-kit/tokens"
 const stats = [
   { n: "1830", t: "Nuestro origen", d: "Medalla Milagrosa" },
   { n: "60+", t: "Países", d: "Presencia internacional" },
-  { n: "7", t: "Centros en RD", d: "Comunidades locales" },
-  { n: "300", t: "Jóvenes activos", d: "En formación constante" },
+  { n: "+7", t: "Centros en RD", d: "Comunidades locales" },
+  { n: "+300", t: "Jóvenes activos", d: "En formación constante" },
 ]
 
 export function Numbers() {
